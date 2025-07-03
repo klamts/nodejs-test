@@ -2642,16 +2642,19 @@ const port = 5000;
 //   console.log(`Server running at http://${ip}:${port}`);
 // });
 
-app.listen(5000, () => {
-  console.log('✅ Server chạy tại http://localhost:5000');
-});
+// app.listen(5000, () => {
+//   console.log('✅ Server chạy tại http://localhost:5000');
+// });
 
 //const port = 3000;
 // Lắng nghe trên tất cả các IP của máy
 // app.listen(port, '0.0.0.0', () => {
 //   console.log(`Server running at http://0.0.0.0:${port}`);
 // });
-
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`✅ Server đang chạy tại port ${PORT}`);
+});
 // Debug CSDL
 db.all("SELECT * FROM videos", (err, rows) => {
   if (err) {

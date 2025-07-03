@@ -1,0 +1,23 @@
+<!-- subject.ejs -->
+<ul>
+  <% if (videos.length === 0) { %>
+  <p style="color: red;">❗Không có video nào cho môn học này.</p>
+  <% } %>
+  <% videos.forEach(video => { %>
+    <li>
+      <a href="/video/<%= video.id %>"> Video tiếng anh <%= video.title %></a>
+      
+      
+
+    </li>
+
+  <% }) %>
+  <hr>
+<p>
+
+  <li><a href="/learnwithvideo/3">📚 Xem video</a></li>
+  <li><a href="/practice-pronunciation-ourworld1-unit8">📚 Luyện tập phát âm ourworld1 -unit88</a></li>
+  <li><a href="/my-book-reports">📚 Xem phiếu đọc sách đã gửi</a></li>
+</p>
+
+</ul>

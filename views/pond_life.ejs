@@ -1,0 +1,341 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🗣️ Luyện phát âm từ vựng</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      padding: 20px;
+      background: #f0f2f5;
+      color: #333;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #0056b3;
+    }
+    .word-card {
+      background: white;
+      padding: 20px;
+      margin: 20px auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 600px;
+    }
+    .word-card h2 {
+      color: #007bff;
+      font-size: 2em;
+    }
+    .word-details {
+      text-align: center;
+      color: #555;
+    }
+    .ipa-compare {
+      font-family: 'Courier New', monospace;
+      margin-top: 10px;
+      font-size: 1.1em;
+    }
+    .match {
+      color: green;
+    }
+    .mismatch {
+      color: red;
+      text-decoration: underline;
+    }
+    .buttons-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    button {
+      padding: 8px 15px;
+      border-radius: 20px;
+      border: none;
+      background-color: #28a745;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    .result {
+      text-align: center;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .correct { color: #28a745; }
+    .incorrect { color: #dc3545; }
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      display: none;
+      margin-top: 10px;
+    }
+    table {
+      width: 100%;
+      margin-top: 30px;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 8px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    th {
+      background-color: #e0e0e0;
+    }
+    .result.correct {
+      color: green;
+    }
+
+    .result.incorrect {
+      color: red;
+    }
+
+    .expected-word {
+      font-weight: bold;
+      color: #007bff;
+    }
+
+    .user-word {
+      font-weight: bold;
+      color: #ff5722;
+    }
+    .image-container img {
+      max-width: 200px;
+      margin: 10px auto;
+      display: block;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  
+
+
+  
+
+<a href="/game_pronounce_sentences_pond_life_image"> game image Pond Life</a><br>
+
+<a href="/game_mean_pond_life"> game nối từ</a><br>
+
+<a href="/game_pronounce_sentences_pond_life"> game đọc câu </a><br>
+  <h1>🗣️ Luyện phát âm từ vựng</h1>
+  <input type="text" class="learner-name" placeholder="Tên của bạn">
+  <label for="voiceSelect">🔊 Chọn giọng đọc: </label>
+  <select id="voiceSelect"></select>
+  <% words.forEach(word => { %>
+    <div class="word-card" data-word="<%= word.word_text.toLowerCase() %>">
+      <h2><%= word.word_text %></h2>
+      <div class="word-details">
+        <span><%= word.meaning_vi %></span><br>
+        <span><i><%= word.ipa %></i> | <%= word.pos %></span>
+      </div>
+      <% if (word.image_url) { %>
+        <div class="image-container">
+          <img src="/<%= word.image_url %>" alt="<%= word.word_text %>">
+        </div>
+      <% } %>
+      <p><b>VD:</b> <i><%= word.example_en %></i><br><%= word.example_vi %></p>
+      <div class="buttons-container">
+        <input type="hidden" class="expected-word" value="<%= word.word_text %>">
+        <button class="speak-btn" data-word="<%= word.word_text.replace(/'/g, "’") %>">🔊 Nghe phát âm</button>
+        <button onclick="recordAndSend(this)">🎙️ Nói thử</button>
+        <button class="replay-button" onclick="replayRecording(this)" disabled>🔁 Nghe lại</button>
+      </div>
+      <progress class="progress-bar" value="0" max="100"></progress>
+      <div class="result"></div>
+      <div class="ipa-compare"></div>
+    </div>
+  <% }); %>
+
+  <h2>Lịch sử luyện tập</h2>
+  <table id="historyTable">
+    <thead>
+      <tr><th>Từ</th><th>Bạn nói</th><th>Điểm</th><th>Kết quả</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <audio id="soundCorrect" src="/sounds/correct.mp3"></audio>
+  <audio id="soundWrong" src="/sounds/wrong.mp3"></audio>
+  <script>
+    let voices = [];
+
+    function loadVoices() {
+  voices = speechSynthesis.getVoices();
+  const voiceSelect = document.getElementById("voiceSelect");
+  voiceSelect.innerHTML = '';
+
+ let defaultIndex = 130;
+
+voices.forEach((voice, i) => {
+  const option = document.createElement("option");
+  option.value = i;
+  option.textContent = `${voice.name} (${voice.lang})`;
+  voiceSelect.appendChild(option);
+
+  // Gán chỉ số nếu trùng với Microsoft Ana
+  if (
+    voice.name === "Microsoft Ana Online (Natural)" &&
+    voice.lang === "en-US"
+  ) {
+    defaultIndex = i;
+  }
+});
+
+voiceSelect.selectedIndex = defaultIndex;
+} 
+
+    // Đảm bảo chạy khi danh sách voice có sẵn
+    if (speechSynthesis.getVoices().length === 0) {
+      speechSynthesis.onvoiceschanged = loadVoices;
+    } else {
+      loadVoices();
+    }
+
+    // Có browsers cần đợi
+    speechSynthesis.onvoiceschanged = loadVoices;
+    // Ví dụ: URL hiện tại là "/practice/unit8"
+    const currentPath = window.location.pathname; 
+    const unitMatch = currentPath.match(/\/practice\/(unit\d+)/);
+    const unit = unitMatch ? unitMatch[1] : 'unit8'; // fallback nếu không tìm được
+
+    
+    function speak(text) {
+  // Thay thế dấu nháy ' bằng ký tự Unicode để TTS đọc tốt hơn
+  const cleanText = text.replace(/'/g, "’"); // thay ' bằng ’
+
+  const utterance = new SpeechSynthesisUtterance(cleanText);
+  utterance.lang = "en-US";
+
+  const selectedIndex = parseInt(document.getElementById("voiceSelect")?.value);
+  if (voices[selectedIndex]) {
+    utterance.voice = voices[selectedIndex];
+  }
+
+  speechSynthesis.speak(utterance);
+}
+
+
+    function replayRecording(button) {
+      const card = button.closest('.word-card');
+      const blobUrl = card.dataset.blobUrl;
+      if (blobUrl) new Audio(blobUrl).play();
+    }
+
+// ✅ Ghi âm và nhận dạng, không gửi lên server
+// ✅ Ghi âm và nhận dạng, không gửi lên server
+
+
+async function recordAndSend(button) {
+  const card = button.closest('.word-card');
+  const expectedElem = card.querySelector('.expected-word');
+  const expectedWord = expectedElem?.dataset.word?.toLowerCase() || expectedElem?.value?.toLowerCase() || '';
+  const learnerName = document.querySelector('.learner-name')?.value || 'Ẩn danh';
+  const resultElem = card.querySelector('.result');
+  const progressBar = card.querySelector('.progress-bar');
+  const replayButton = card.querySelector('.replay-button');
+  const ipaCompareElem = card.querySelector('.ipa-compare');
+
+  if (!expectedWord) {
+    alert('❗ Không tìm thấy từ cần luyện tập (expectedWord). Kiểm tra lại HTML.');
+    return;
+  }
+
+  if (!learnerName || learnerName.trim() === '') {
+    alert('Vui lòng nhập tên trước khi luyện tập.');
+    return;
+  }
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    alert("Trình duyệt của bạn không hỗ trợ Speech Recognition.");
+    return;
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const mediaRecorder = new MediaRecorder(stream);
+    const chunks = [];
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    resultElem.textContent = '🎤 Đang ghi âm và nhận dạng...';
+    resultElem.className = 'result';
+    progressBar.style.display = 'block';
+    progressBar.value = 10;
+
+    const statusElem = card.querySelector(".recording-status");
+    if (statusElem) {
+      statusElem.textContent = "🔴 Đang ghi âm...";
+      statusElem.classList.add("blinking");
+    }
+
+    mediaRecorder.ondataavailable = e => chunks.push(e.data);
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(chunks, { type: 'audio/webm' });
+      const url = URL.createObjectURL(blob);
+      card.dataset.blobUrl = url;
+      replayButton.disabled = false;
+
+      progressBar.value = 100;
+      setTimeout(() => progressBar.style.display = 'none', 1000);
+
+      if (statusElem) {
+        statusElem.textContent = "";
+        statusElem.classList.remove("blinking");
+      }
+    };
+
+    recognition.onresult = (event) => {
+      const spoken = event.results[0][0].transcript.trim();
+      const said = spoken.toLowerCase().replace(/[.?!]$/g, '').trim();
+      const isCorrect = said === expectedWord;
+
+      if (isCorrect) {
+        resultElem.innerHTML = `✅ Đúng rồi!<br>🗣️ Bạn nói: <strong>${spoken}</strong>`;
+        resultElem.className = 'result correct';
+        document.getElementById("soundCorrect").play(); // ✅ phát âm đúng
+      } else {
+        resultElem.innerHTML = `❌ Sai rồi. Bạn nói: <strong>${spoken}</strong><br>✅ Từ đúng là: <strong>${expectedWord}</strong>`;
+        resultElem.className = 'result incorrect';
+        document.getElementById("soundWrong").play();   // ❌ phát âm sai
+      }
+    };
+
+    recognition.onerror = () => {
+      resultElem.textContent = "❌ Lỗi nhận diện giọng nói.";
+      resultElem.className = 'result incorrect';
+    };
+
+    mediaRecorder.start();
+    recognition.start();
+
+    setTimeout(() => {
+      mediaRecorder.stop();
+      recognition.stop();
+    }, 4000);
+
+  } catch (err) {
+    alert('Lỗi ghi âm hoặc nhận diện: ' + err.message);
+  }
+}
+// Bắt sự kiện click cho tất cả nút speak-btn
+document.querySelectorAll(".speak-btn").forEach(btn => {
+  btn.addEventListener("click", e => {
+    const text = btn.dataset.word || "";
+    speak(text);
+  });
+});
+  </script>
+</body>
+</html>

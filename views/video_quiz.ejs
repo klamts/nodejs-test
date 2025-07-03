@@ -1,0 +1,293 @@
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title><%= video.title %></title>
+  <style>
+    #quiz-container {
+      display: none;
+      position: absolute;
+      top: 20%;
+      left: 20%;
+      width: 60%;
+      background: rgba(255,255,255,0.95);
+      border: 2px solid #444;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      z-index: 10;
+    }
+    #quiz-container button {
+      margin: 5px;
+    }
+    video {
+      width: 100%;
+      max-width: 800px;
+      margin-top: 10px;
+    }
+    input[type="text"], select {
+      width: 80%;
+      padding: 5px;
+    }
+    #answers img {
+      max-width: 100px;
+      height: auto;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      margin: 10px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    #answers img:hover {
+      transform: scale(1.05);
+      border-color: #007bff;
+    }
+
+    /* Thêm vùng hiển thị lịch sử bên phải */
+    #history {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 300px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: #f9f9f9;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 8px;
+      z-index: 5;
+    }
+    #history h3 {
+      margin-top: 0;
+    }
+    #history-list {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    #history-list li {
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+
+  <h2><%= video.title %> – Video tương tác</h2>
+  <!-- Không sử dụng input[type="file"] nữa, sử dụng video với đường dẫn cố định -->
+  <div style="position: relative;">
+    
+    <video id="myVideo" controls>
+      <source src="/video/<%= video.path %>" type="video/mp4">
+    </video>
+    <div id="quiz-container">
+      <p id="question-text"><strong>Câu hỏi:</strong></p>
+      <div id="answers"></div>
+      <p id="feedback"></p>
+      <p id="status"></p>
+      <p id="result"></p>
+    </div>
+  </div>
+
+  <div id="timeDisplay">Thời gian hiện tại: 0:00</div>
+
+  <!-- Vùng hiển thị lịch sử câu trả lời -->
+  <div id="history">
+    <h3>Lịch sử trả lời</h3>
+    <ul id="history-list"></ul>
+  </div>
+
+  <script>
+    const video = document.getElementById('myVideo');
+    const quizContainer = document.getElementById('quiz-container');
+    const questionText = document.getElementById('question-text');
+    const answersContainer = document.getElementById('answers');
+    const feedback = document.getElementById('feedback');
+    const timeDisplay = document.getElementById('timeDisplay');
+    const historyList = document.getElementById('history-list');
+    
+    function normalizeVN(str) {
+      return str
+        .normalize("NFD")                         // Tách dấu ra
+        .replace(/[\u0300-\u036f]/g, "")          // Xóa dấu
+        .replace(/đ/g, "d")                       // chuyển đ -> d
+        .replace(/Đ/g, "D")                       // chuyển Đ -> D
+        .toLowerCase()
+        .trim();
+    }
+    
+    function formatTime(seconds) {
+      const min = Math.floor(seconds / 60);
+      const sec = Math.floor(seconds % 60);
+      return `${min}:${sec < 10 ? '0' + sec : sec}`;
+    }
+
+    video.addEventListener('timeupdate', () => {
+      timeDisplay.textContent = 'Thời gian Video Đang Phát: ' + video.currentTime;
+    });
+
+    let currentQuestionIndex = -1;
+
+    const quizData = [
+      { time: 5, type: "multiple", question: "1 + 1 = ?", options: [1, 2, 3], correctAnswer: 2 },
+      { time: 10, type: "truefalse", question: "Trái Đất là hình vuông?", correctAnswer: false },
+      { time: 15, type: "text", question: "Nhập tên thủ đô của Việt Nam:", correctAnswer: "Hà Nội" },
+      { time: 20, type: "checkbox", question: "Chọn các số chẵn:", options: [1, 2, 3, 4], correctAnswer: [2, 4] },
+      { time: 25, type: "dropdown", question: "Chọn thủ đô Việt Nam:", options: ["TP.HCM", "Hà Nội", "Đà Nẵng"], correctAnswer: "Hà Nội" },
+      { time: 30, type: "phoniccheck", question: "Phát âm từ sau:", correctAnswer: "gym" },
+      { time: 35, type: "voice", question: "Hãy nói tên thủ đô của Việt Nam", correctAnswer: "Hà Nội" }
+    ];
+
+    const shownQuestions = new Set();
+
+    // Sử dụng đường dẫn cố định cho video
+    const videoPath = "video/dialogue_001.mp4";
+    video.src = videoPath;
+
+    function resetQuizUI() {
+      answersContainer.innerHTML = '';
+      feedback.textContent = '';
+      document.getElementById('status').innerText = '';
+      document.getElementById('result').innerText = '';
+      document.getElementById('history-list').innerText = '';
+      quizContainer.style.display = 'none';
+    }
+
+    video.addEventListener('seeked', () => {
+      const currentTime = video.currentTime;
+      for (let index of shownQuestions) {
+        if (quizData[index].time > currentTime) {
+          shownQuestions.delete(index);
+        }
+      }
+      resetQuizUI();
+    });
+
+    video.addEventListener('timeupdate', () => {
+      const currentTime = video.currentTime;
+      for (let i = 0; i < quizData.length; i++) {
+        const q = quizData[i];
+        if (currentTime >= q.time && !shownQuestions.has(i)) {
+          video.pause();
+          currentQuestionIndex = i;
+          showQuestion(q);
+          shownQuestions.add(i);
+          break;
+        }
+      }
+    });
+
+    function showQuestion(question) {
+      questionText.innerHTML = `<strong>Câu hỏi:</strong> ${question.question || ''}`;
+      answersContainer.innerHTML = '';
+      feedback.textContent = "";
+
+      if (question.type === "multiple") {
+        question.options.forEach(option => {
+          const btn = document.createElement('button');
+          btn.textContent = option;
+          btn.onclick = () => checkAnswer(option);
+          answersContainer.appendChild(btn);
+        });
+      } else if (question.type === "truefalse") {
+        ["Đúng", "Sai"].forEach(text => {
+          const btn = document.createElement('button');
+          btn.textContent = text;
+          btn.onclick = () => checkAnswer(text === "Đúng");
+          answersContainer.appendChild(btn);
+        });
+      } else if (question.type === "checkbox") {
+        question.options.forEach(option => {
+          const label = document.createElement('label');
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.value = option;
+          label.appendChild(checkbox);
+          label.append(`${option}`);
+          answersContainer.appendChild(label);
+          answersContainer.appendChild(document.createElement('br'));
+        });
+        const submitBtn = document.createElement('button');
+        submitBtn.textContent = "Trả lời";
+        submitBtn.onclick = () => {
+          const selected = Array.from(answersContainer.querySelectorAll('input[type="checkbox"]:checked')).map(cb => Number(cb.value));
+          checkAnswer(selected);
+        };
+        answersContainer.appendChild(submitBtn);
+      } else if (question.type === "text") {
+        const input = document.createElement('input');
+        input.type = 'text';
+        const submitBtn = document.createElement('button');
+        submitBtn.textContent = "Trả lời";
+        submitBtn.onclick = () => checkAnswer(input.value.trim());
+        answersContainer.appendChild(input);
+        answersContainer.appendChild(submitBtn);
+      } else if (question.type === "dropdown") {
+        const select = document.createElement('select');
+        question.options.forEach(opt => {
+          const option = document.createElement('option');
+          option.value = opt;
+          option.textContent = opt;
+          select.appendChild(option);
+        });
+        const submitBtn = document.createElement('button');
+        submitBtn.textContent = "Trả lời";
+        submitBtn.onclick = () => checkAnswer(select.value);
+        answersContainer.appendChild(select);
+        answersContainer.appendChild(submitBtn);
+      } else if (question.type === "voice") {
+        const startBtn = document.createElement('button');
+        startBtn.textContent = "🎤 Bấm để trả lời bằng giọng nói";
+        startBtn.onclick = () => startVoiceRecognition();
+        answersContainer.appendChild(startBtn);
+      } else if (question.type === "phoniccheck") {
+        const startBtn = document.createElement('button');
+        startBtn.textContent = "🎤 Bắt đầu ghi âm";
+        startBtn.onclick = () => startRecording();
+
+        const stopBtn = document.createElement('button');
+        stopBtn.textContent = "🛑 Dừng và gửi";
+        stopBtn.onclick = () => stopRecording();
+
+        answersContainer.appendChild(startBtn);
+        answersContainer.appendChild(stopBtn);
+      }
+
+      quizContainer.style.display = 'block';
+    }
+
+    function checkAnswer(answer) {
+      const question = quizData[currentQuestionIndex];
+      let correct = false;
+      if (question.type === "text" || question.type === "voice" || question.type === "phoniccheck") {
+        correct = normalizeVN(answer) === normalizeVN(question.correctAnswer);
+      } else if (question.type === "checkbox") {
+        const sortedA = [...answer].sort();
+        const sortedB = [...question.correctAnswer].sort();
+        correct = JSON.stringify(sortedA) === JSON.stringify(sortedB);
+      } else {
+        correct = answer === question.correctAnswer;
+      }
+
+      answersContainer.querySelectorAll('img').forEach(img => img.style.pointerEvents = 'none');
+      const correctText = Array.isArray(question.correctAnswer) ? question.correctAnswer.join(', ') : question.correctAnswer;
+      feedback.textContent = correct ? "✅ Chính xác!" : `❌ Sai. Đáp án là: ${correctText}`;
+
+      // 👉 Ghi vào lịch sử
+      const listItem = document.createElement('li');
+      const userAnswerText = Array.isArray(answer) ? answer.join(', ') : answer;
+      listItem.innerHTML = 
+        `<strong>Câu:</strong> ${question.question}<br>
+        <strong>Trả lời:</strong> ${userAnswerText}<br>
+        <strong>Kết quả:</strong> ${correct ? '✅ Đúng' : `❌ Sai (Đáp án: ${correctText})`}`;
+      historyList.appendChild(listItem);
+      historyList.scrollTop = historyList.scrollHeight;
+
+      setTimeout(() => {
+        quizContainer.style.display = 'none';
+        feedback.textContent = "";
+        video.play();
+      }, 2000);
+    }
+  </script>
+</body>
+</html>

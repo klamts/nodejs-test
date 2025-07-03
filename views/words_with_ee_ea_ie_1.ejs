@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Words with ee, ea, ie</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f0f2f5; padding:20px; }
+    h1 { text-align:center; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:16px; }
+    .card { background:white; border-radius:8px; padding:12px; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
+    .word { font-weight:bold; font-size:1.2em; margin:8px 0; }
+    .meaning { color:#555; }
+    .example { font-size:0.9em; color:#666; margin-top:8px; }
+    .controls button { margin:4px; }
+    audio { margin-top:8px; width:100%; display:none; }
+    .image-container img {max-width:200px;margin:10px auto;display:block;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+  </style>
+</head>
+<body>
+  <a href="/game_words_with_ee_ea_ie_1">🎮 Game words with ee ea ie 1</a><br>
+  <h1>Words with ee, ea, ie</h1>
+  <div class="grid">
+    <% words.forEach((word, idx) => { %>
+      <div class="card">
+        <div class="word"><%= word.word_text %></div>
+        <div class="meaning"><%= word.meaning_vi %></div>
+        <% if (word.image_url) { %>
+          <div class="image-container">
+            <img src="/<%= word.image_url %>" alt="<%= word.word_text %>">
+          </div>
+        <% } %>
+        <div class="example">
+          <em><%= word.example_en %></em><br/>
+          <%= word.example_vi %>
+        </div>
+        <div class="controls">
+          <button onclick="speak('<%= word.word_text %>')">🔊 Phát âm</button>
+          <button onclick="startRecording(<%= idx %>)">🎤 Ghi âm</button>
+          <button onclick="playRecording(<%= idx %>)">▶️ Nghe lại</button>
+        </div>
+        <audio id="player-<%= idx %>"></audio>
+      </div>
+    <% }) %>
+  </div>
+
+<script>
+  let allVoices = [];
+
+  function loadVoices() {
+    allVoices = speechSynthesis.getVoices();
+  }
+
+  if (speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = loadVoices;
+  }
+
+  loadVoices();
+
+  function speak(text) {
+    const utter = new SpeechSynthesisUtterance(text);
+    const preferred = allVoices.find(v => v.name.includes("Microsoft Ana") && v.lang === "en-US");
+    utter.voice = preferred || allVoices.find(v => v.lang === "en-US");
+    utter.lang = 'en-US';
+    speechSynthesis.speak(utter);
+  }
+
+  // Ghi âm từng audio riêng
+  let mediaRecorder = null;
+  let audioChunks = [];
+  const recordings = {}; // Lưu blob theo index
+
+  function startRecording(index) {
+    if (!navigator.mediaDevices) {
+      alert("Trình duyệt không hỗ trợ ghi âm.");
+      return;
+    }
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(stream => {
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+        mediaRecorder.start();
+        alert("🔴 Đang ghi âm. Nhấn 'Nghe lại' để dừng.");
+        mediaRecorder.addEventListener("dataavailable", e => {
+          audioChunks.push(e.data);
+        });
+        mediaRecorder.addEventListener("stop", () => {
+          const audioBlob = new Blob(audioChunks);
+          recordings[index] = URL.createObjectURL(audioBlob);
+          const audio = document.getElementById("player-" + index);
+          audio.src = recordings[index];
+          audio.style.display = "block";
+        });
+      })
+      .catch(err => console.error('❌ Lỗi ghi âm:', err));
+  }
+
+  function playRecording(index) {
+    if (mediaRecorder && mediaRecorder.state !== "inactive") {
+      mediaRecorder.stop();
+    } else if (recordings[index]) {
+      const audio = document.getElementById("player-" + index);
+      audio.play();
+    } else {
+      alert("⚠️ Bạn chưa ghi âm.");
+    }
+  }
+</script>
+</body>
+</html>

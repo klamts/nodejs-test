@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Families in Many Cultures - Phrasing Practice</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 30px; }
+    h1 { color: #333; }
+    p.phrase { font-size: 1.5em; margin: 20px 0; }
+    .controls button { margin-right: 10px; margin-top: 10px; }
+    .feedback { font-weight: bold; margin-top: 10px; }
+    audio { margin-top: 10px; display: block; }
+  </style>
+</head>
+<body>
+  <h1>📘 Families in Many Cultures</h1>
+  <p><em>Use this passage to practice reading with proper phrasing.</em></p>
+
+  <div class="phrase-block" id="phrase1">
+    <p class="phrase">Families celebrate holidays.</p>
+    <div class="controls">
+      <button onclick="playModel(1)">🔊 Nghe mẫu</button>
+      <button onclick="recordSpeech(1)">🎙️ Ghi âm</button>
+      <button onclick="playRecording(1)">▶️ Nghe lại</button>
+    </div>
+    <audio id="audio1" controls style="display:none;"></audio>
+    <p id="status1" class="feedback"></p>
+  </div>
+
+  <div class="phrase-block" id="phrase2">
+    <p class="phrase">Families celebrate birthdays.</p>
+    <div class="controls">
+      <button onclick="playModel(2)">🔊 Nghe mẫu</button>
+      <button onclick="recordSpeech(2)">🎙️ Ghi âm</button>
+      <button onclick="playRecording(2)">▶️ Nghe lại</button>
+    </div>
+    <audio id="audio2" controls style="display:none;"></audio>
+    <p id="status2" class="feedback"></p>
+  </div>
+
+  <script>
+    const phrases = {
+      1: "Families celebrate holidays.",
+      2: "Families celebrate birthdays."
+    };
+
+    const recordings = {};
+
+    function playModel(index) {
+      const utterance = new SpeechSynthesisUtterance(phrases[index]);
+      utterance.lang = "en-US";
+      const voices = speechSynthesis.getVoices();
+      const anaVoice = voices.find(v => v.name.includes("Ana Online"));
+      if (anaVoice) utterance.voice = anaVoice;
+      speechSynthesis.cancel();
+      speechSynthesis.speak(utterance);
+    }
+
+    window.speechSynthesis.onvoiceschanged = () => {};
+
+    function recordSpeech(index) {
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+        const status = document.getElementById(`status${index}`);
+        const audio = document.getElementById(`audio${index}`);
+        const mediaRecorder = new MediaRecorder(stream);
+        const chunks = [];
+
+        mediaRecorder.ondataavailable = e => chunks.push(e.data);
+        mediaRecorder.onstop = () => {
+          recordings[index] = new Blob(chunks, { type: 'audio/webm' });
+          audio.src = URL.createObjectURL(recordings[index]);
+          audio.style.display = 'block';
+          status.textContent = "✅ Đã ghi âm xong. Bạn có thể nghe lại.";
+        };
+
+        mediaRecorder.start();
+        status.textContent = "🔴 Đang ghi âm... Hãy nói câu!";
+        setTimeout(() => {
+          mediaRecorder.stop();
+          stream.getTracks().forEach(track => track.stop());
+        }, 4000); // 4 giây
+      }).catch(() => {
+        alert("Không thể truy cập micro.");
+      });
+    }
+
+    function playRecording(index) {
+      const audio = document.getElementById(`audio${index}`);
+      if (recordings[index]) {
+        audio.play();
+      } else {
+        alert("Chưa có bản ghi âm nào.");
+      }
+    }
+  </script>
+</body>
+</html>

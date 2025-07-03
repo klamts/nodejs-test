@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lesson <%= lesson.lesson %>: <%= lesson.title %></title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <h1>Lesson <%= lesson.lesson %>: <%= lesson.title %></h1>
+  
+  <h2>Objectives</h2>
+  <ul>
+    <% lesson.objectives.forEach(objective => { %>
+      <li><%= objective %></li>
+    <% }); %>
+  </ul>
+
+  <h2>Warm Up</h2>
+  <p><%= lesson.warmUp %></p>
+  <button onclick="readText('<%= lesson.warmUp %>')">Read Aloud</button>
+
+  <h2>Activities</h2>
+  <ul>
+    <% lesson.activities.forEach(activity => { %>
+      <li><a href="/lesson/<%= lesson.lesson %>/activity/<%= activity.step %>">Step <%= activity.step %></a></li>
+    <% }); %>
+  </ul>
+
+  <h2>Extend</h2>
+  <p><%= lesson.extend.description %></p>
+  <% if (lesson.extend.examples) { %>
+    <h4>Examples</h4>
+    <ul>
+      <% lesson.extend.examples.forEach(example => { %>
+        <li><%= example %></li>
+      <% }); %>
+    </ul>
+    <button onclick="readText('<%= lesson.extend.examples.join('. ') %>')">Read Examples</button>
+  <% } %>
+
+  <h2>Wrap Up</h2>
+  <p><%= lesson.wrapUp %></p>
+  <button onclick="readText('<%= lesson.wrapUp %>')">Read Aloud</button>
+
+  <a href="/">Back to Lessons</a>
+
+  <script>
+    function readText(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.speak(utterance);
+    }
+  </script>
+</body>
+</html>

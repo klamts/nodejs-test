@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Game Luyện Phát Âm</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    .pulse-animation {
+      animation: pulse 2s infinite;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4 md:p-8">
+  <div class="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-6 md:p-8">
+    <h1 class="text-3xl md:text-4xl font-bold text-center text-indigo-600 mb-6">🎤 Game Luyện Phát Âm</h1>
+
+    <div id="game-container" class="text-center">
+      <img id="image" src="" alt="Word Image" class="mx-auto max-w-xs rounded-lg shadow-md mb-6" style="display:none;" />
+      <div class="word-target text-2xl md:text-3xl font-semibold text-gray-800 mb-4" id="target-word"></div>
+      <div class="flex justify-center gap-2 flex-wrap">
+        <button onclick="startRecognition()" class="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition-all duration-300 flex items-center gap-2 pulse-animation">
+          🎙 Bắt đầu nói
+        </button>
+        <button onclick="prevWord()" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition-all duration-300">
+          ⏮️ Quay lại
+        </button>
+        <button onclick="nextWord()" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition-all duration-300">
+          ⏭️ Tiếp
+        </button>
+      </div>
+      <div id="status" class="mt-4 text-lg text-gray-600"></div>
+      <div id="progress" class="mt-4 text-sm text-gray-500"></div>
+    </div>
+  </div>
+
+  <script>
+    const words = <%- JSON.stringify(words) %>;
+    let currentIndex = 0;
+    let recognition;
+    let score = 0;
+
+    const numberVariants = {
+      "one": ["1"],
+      "two": ["2"],
+      "three": ["3"],
+      "four": ["4"],
+      "five": ["5"],
+      "six": ["6"],
+      "seven": ["7"],
+      "eight": ["8"],
+      "nine": ["9"],
+      "ten": ["10"]
+    };
+
+    const homophones = {
+      "deer": ["dear"],
+      "piece": ["peace"],
+      "sea": ["see"],
+      "four": ["for"],
+      "eight": ["ate"],
+      "leech":["leach"],
+      "flea":["flee"],
+      "speck":["spec"],
+      "an animal's skin":["an animal skin"],
+      "eat":["it"]
+    };
+
+    function loadWord(autoSpeak = true) {
+      if (currentIndex < 0) currentIndex = 0;
+      if (currentIndex >= words.length) {
+        document.getElementById('game-container').innerHTML =
+          `<h2 class="text-2xl font-bold text-green-600">🎉 Hoàn thành game!</h2>
+           <p class="text-lg">Điểm số của bạn: <b>${score}/${words.length}</b></p>`;
+        return;
+      }
+      const word = words[currentIndex];
+      const imageElem = document.getElementById('image');
+      if (word.image_url && word.image_url.trim() !== "") {
+        imageElem.src = word.image_url;
+        imageElem.style.display = "block";
+      } else {
+        imageElem.style.display = "none";
+      }
+
+      document.getElementById('target-word').textContent = word.word_text;
+      document.getElementById('status').textContent = "Nhấn nút để bắt đầu nói...";
+      document.getElementById('progress').textContent = `Từ ${currentIndex + 1}/${words.length} - Đúng: ${score}`;
+
+      if (autoSpeak) speak(word.word_text);
+    }
+
+    function speak(text) {
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'en-US';
+      window.speechSynthesis.speak(utter);
+    }
+
+    function startRecognition() {
+      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        alert('⚠️ Trình duyệt không hỗ trợ Speech Recognition API.');
+        return;
+      }
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.start();
+      document.getElementById('status').textContent = "🎤 Đang nghe...";
+
+      recognition.onresult = (event) => {
+        const transcriptRaw = event.results[0][0].transcript.trim().toLowerCase();
+        const transcript = transcriptRaw
+          .replace(/[.,!?]/g, "")
+          .replace(/\s+/g, "")
+          .toLowerCase();
+
+        const targetRaw = words[currentIndex].word_text.toLowerCase();
+        const target = targetRaw.replace(/\s+/g, "");
+
+        let acceptableVariants = [target]
+          .concat(numberVariants[target] || [])
+          .concat(homophones[target] || []);
+
+        if (acceptableVariants.includes(transcript)) {
+          document.getElementById('status').textContent = `✅ Đúng rồi: "${transcriptRaw}"`;
+          score++;
+          currentIndex++;
+          setTimeout(() => loadWord(), 1500);
+        } else {
+          document.getElementById('status').textContent = `❌ Bạn nói "${transcriptRaw}". Thử lại!`;
+        }
+      };
+
+      recognition.onerror = (event) => {
+        console.error('Lỗi nhận dạng:', event);
+        document.getElementById('status').textContent = "❌ Lỗi nhận dạng. Vui lòng thử lại.";
+      };
+    }
+
+    function nextWord() {
+      currentIndex++;
+      loadWord();
+    }
+
+    function prevWord() {
+      currentIndex--;
+      loadWord();
+    }
+
+    window.onload = () => loadWord();
+  </script>
+</body>
+</html>

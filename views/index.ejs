@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Phonics Unit 8</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <h1>Phonics Unit 8: Lessons</h1>
+  <ul>
+    <% lessons.forEach(lesson => { %>
+      <li><a href="/lesson/<%= lesson.lesson %>">Lesson <%= lesson.lesson %>: <%= lesson.title %></a></li>
+    <% }); %>
+  </ul>
+</body>
+</html>

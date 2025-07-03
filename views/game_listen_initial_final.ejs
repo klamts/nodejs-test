@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>🔊 Luyện nghe âm IPA đầu/cuối</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; }
+    .choices button { margin: 10px; padding: 10px 20px; font-size: 16px; }
+    .correct { color: green; font-weight: bold; }
+    .incorrect { color: red; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>🔊 Nghe và chọn <span id="mode-label">âm đầu IPA</span> - Unit <%= unit %></h2>
+  <button onclick="toggleMode()">🔁 Đổi: Âm đầu / Âm cuối</button><br><br>
+  <button onclick="playWord()">🎧 Nghe từ</button>
+
+  <div class="choices" id="choices"></div>
+  <div id="feedback" class="result"></div>
+  <button onclick="nextQuestion()">⏭ Từ tiếp theo</button>
+
+  <script>
+    const words = <%- JSON.stringify(words) %>;
+    let current = null;
+    let mode = 'start'; // hoặc 'end'
+
+    const ipaConsonants = [
+      'tʃ','dʒ','ʃ','ʒ','θ','ð','ŋ','t','d','k','g','p','b','s','z','m','n','l','r','f','v','h','j','w','ʔ'
+    ];
+    const ipaVowels = [
+      'iː','ɪ','e','æ','ʌ','ɑː','ɒ','ɔː','ʊ','uː','ə','ɜː','eɪ','aɪ','ɔɪ','aʊ','əʊ','ɪə','eə','ʊə'
+    ];
+    const ipaUnits = [...ipaConsonants, ...ipaVowels].sort((a, b) => b.length - a.length);
+
+    function splitIPA(ipaText) {
+      if (!ipaText) return [];
+      let ipa = ipaText.replace(/^\/|\/$/g, '');
+      const result = [];
+      while (ipa.length > 0) {
+        let matched = false;
+        for (const unit of ipaUnits) {
+          if (ipa.startsWith(unit)) {
+            result.push(unit);
+            ipa = ipa.slice(unit.length);
+            matched = true;
+            break;
+          }
+        }
+        if (!matched) {
+          result.push(ipa[0]);
+          ipa = ipa.slice(1);
+        }
+      }
+      return result;
+    }
+
+    function toggleMode() {
+      mode = (mode === 'start') ? 'end' : 'start';
+      document.getElementById("mode-label").innerText = mode === 'start' ? 'âm đầu IPA' : 'âm cuối IPA';
+      nextQuestion();
+    }
+
+    function playWord() {
+      const utterance = new SpeechSynthesisUtterance(current.word_text);
+      utterance.lang = 'en-US';
+      speechSynthesis.speak(utterance);
+    }
+
+    function getIpaSound(ipaText) {
+      const ipaArr = splitIPA(ipaText);
+      if (ipaArr.length === 0) return '';
+      return mode === 'start' ? ipaArr[0] : ipaArr[ipaArr.length - 1];
+    }
+
+    function nextQuestion() {
+      const word = words[Math.floor(Math.random() * words.length)];
+      current = word;
+
+      const correct = getIpaSound(word.ipa);
+      if (!correct) return nextQuestion(); // bỏ từ nếu IPA rỗng
+
+      const distractors = ipaUnits.filter(s => s !== correct).sort(() => 0.5 - Math.random()).slice(0, 3);
+      const options = [correct, ...distractors].sort(() => 0.5 - Math.random());
+
+      const html = options.map(s => `<button onclick="check('${s}')">${s}</button>`).join('');
+      document.getElementById("choices").innerHTML = html;
+      document.getElementById("feedback").innerHTML = "";
+    }
+
+    function check(selected) {
+      const correct = getIpaSound(current.ipa);
+      const fb = document.getElementById("feedback");
+      if (selected === correct) {
+        fb.innerHTML = `✅ Chính xác! Từ là <strong>${current.word_text}</strong><br>IPA: <code>${current.ipa}</code>`;
+        fb.className = 'correct';
+      } else {
+        fb.innerHTML = `❌ Sai. Từ là <strong>${current.word_text}</strong><br>${mode === 'start' ? 'Âm đầu' : 'Âm cuối'} đúng là: <strong>${correct}</strong><br>IPA: <code>${current.ipa}</code>`;
+        fb.className = 'incorrect';
+      }
+    }
+
+    nextQuestion();
+  </script>
+</body>
+</html>

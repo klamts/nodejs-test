@@ -1,0 +1,67 @@
+<h2>Revise the Paragraph</h2>
+<p>Look at the pictures. Read and revise each sentence. Click 🔊 to hear the sentence.</p>
+
+<% const sentences = [
+  {
+    img: "/images/city.png",
+    original: "my family loves colorado",
+    correct: "My family loves Colorado."
+  },
+  {
+    img: "/images/office.png",
+    original: "aunt maggie lives in denver. she works in an office.",
+    correct: "Aunt Maggie lives in Denver. She works in an office."
+  },
+  {
+    img: "/images/ski1.png",
+    original: "i have to wear lots of clothes to stay warm.",
+    correct: "I have to wear lots of clothes to stay warm."
+  },
+  {
+    img: "/images/ski2.png",
+    original: "we go skiing",
+    correct: "We go skiing."
+  }
+]; %>
+
+<form id="reviseForm">
+  <% sentences.forEach((s, index) => { %>
+    <div class="block" style="margin-bottom: 25px;">
+      <img src="<%= s.img %>" alt="Image <%= index + 1 %>" width="300" /><br/>
+      <p><strong>Mistake:</strong> "<%= s.original %>"</p>
+      <button type="button" onclick="speak(<%= JSON.stringify(s.correct) %>)">🔊 Listen</button><br/><br/>
+      <input type="text" name="answer<%= index %>" placeholder="Type your revision..." style="width: 100%; padding: 8px;" /><br/>
+      <p id="feedback<%= index %>" style="font-weight: bold;"></p>
+    </div>
+  <% }); %>
+  <button type="submit">Check Answers</button>
+</form>
+
+<script>
+// Text-to-Speech function
+function speak(text) {
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'en-US';
+  speechSynthesis.speak(utterance);
+}
+
+document.getElementById('reviseForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  <% sentences.forEach((s, index) => { %>
+    (function() {
+      const input = document.querySelector('[name="answer<%= index %>"]');
+      const userAns = input.value.trim();
+      const correctAns = "<%= s.correct %>";
+      const feedback = document.getElementById("feedback<%= index %>");
+      if (userAns === correctAns) {
+        feedback.textContent = "✅ Correct!";
+        feedback.style.color = "green";
+      } else {
+        feedback.textContent = "❌ Try again!";
+        feedback.style.color = "red";
+      }
+    })();
+  <% }); %>
+});
+</script>

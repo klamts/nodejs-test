@@ -1,0 +1,542 @@
+[
+  {
+    "sentence": "You have glass in the windows.",
+    "start_time": 0.080,
+    "end_time": 2.640,
+    "translation_vi": "Bạn có kính ở các cửa sổ."
+  },
+  {
+    "sentence": "You have walls.",
+    "start_time": 2.720,
+    "end_time": 5.600,
+    "translation_vi": "Bạn có các bức tường."
+  },
+  {
+    "sentence": "I do.",
+    "start_time": 2.720,
+    "end_time": 5.600,
+    "translation_vi": "Tôi có."
+  },
+  {
+    "sentence": "You have a roof and a floor.",
+    "start_time": 5.600,
+    "end_time": 8.480,
+    "translation_vi": "Bạn có mái nhà và sàn nhà."
+  },
+  {
+    "sentence": "OK, that's true.",
+    "start_time": 5.600,
+    "end_time": 8.480,
+    "translation_vi": "Được, đúng vậy."
+  },
+  {
+    "sentence": "And then your cell phone rings.",
+    "start_time": 18.400,
+    "end_time": 20.160,
+    "translation_vi": "Và rồi điện thoại của bạn reo."
+  },
+  {
+    "sentence": "Is your cell phone using visible light?",
+    "start_time": 20.160,
+    "end_time": 22.880,
+    "translation_vi": "Điện thoại của bạn có sử dụng ánh sáng khả kiến không?"
+  },
+  {
+    "sentence": "No.",
+    "start_time": 20.160,
+    "end_time": 22.880,
+    "translation_vi": "Không."
+  },
+  {
+    "sentence": "No, it isn't.",
+    "start_time": 20.160,
+    "end_time": 22.880,
+    "translation_vi": "Không, không phải."
+  },
+  {
+    "sentence": "It's using microwaves, right?",
+    "start_time": 22.960,
+    "end_time": 24.960,
+    "translation_vi": "Nó sử dụng sóng vi ba, đúng không?"
+  },
+  {
+    "sentence": "The microwaves have no hesitation penetrating your walls.",
+    "start_time": 25.040,
+    "end_time": 30.720,
+    "translation_vi": "Sóng vi ba xuyên qua các bức tường của bạn mà không chút do dự."
+  },
+  {
+    "sentence": "Microwaves, which are part of the electromagnetic spectrum.",
+    "start_time": 31.040,
+    "end_time": 35.520,
+    "translation_vi": "Sóng vi ba, thuộc phổ điện từ."
+  },
+  {
+    "sentence": "Your home is transparent.",
+    "start_time": 35.760,
+    "end_time": 38.600,
+    "translation_vi": "Ngôi nhà của bạn trong suốt."
+  },
+  {
+    "sentence": "Nice.",
+    "start_time": 35.760,
+    "end_time": 38.600,
+    "translation_vi": "Hay đấy."
+  },
+  {
+    "sentence": "So if you had microwave vision, your home basically disappears in the same way when you look out a window, you're not looking at glass.",
+    "start_time": 38.600,
+    "end_time": 45.120,
+    "translation_vi": "Vậy nếu bạn có tầm nhìn vi ba, ngôi nhà của bạn cơ bản sẽ biến mất, giống như khi bạn nhìn ra cửa sổ, bạn không thấy kính."
+  },
+  {
+    "sentence": "The glass disappears to you.",
+    "start_time": 45.120,
+    "end_time": 47.760,
+    "translation_vi": "Tấm kính trở nên vô hình đối với bạn."
+  },
+  {
+    "sentence": "And you know it does when people walk into that stuff in stores.",
+    "start_time": 47.920,
+    "end_time": 52.760,
+    "translation_vi": "Và bạn biết điều đó khi mọi người va vào những thứ đó trong cửa hàng."
+  },
+  {
+    "sentence": "Your home is also transparent largely to radio waves.",
+    "start_time": 52.760,
+    "end_time": 57.720,
+    "translation_vi": "Ngôi nhà của bạn cũng phần lớn trong suốt với sóng radio."
+  },
+  {
+    "sentence": "Now if you're old school and know what radio is, you'd go into a tunnel.",
+    "start_time": 57.720,
+    "end_time": 61.080,
+    "translation_vi": "Bây giờ nếu bạn theo trường phái cũ và biết radio là gì, bạn sẽ đi vào một đường hầm."
+  },
+  {
+    "sentence": "If you were listening to FM, the FM signal would drop out.",
+    "start_time": 61.120,
+    "end_time": 65.440,
+    "translation_vi": "Nếu bạn đang nghe FM, tín hiệu FM sẽ bị ngắt."
+  },
+  {
+    "sentence": "If you're listening to AM, it would stay.",
+    "start_time": 65.440,
+    "end_time": 68.160,
+    "translation_vi": "Nếu bạn nghe AM, tín hiệu sẽ vẫn giữ."
+  },
+  {
+    "sentence": "AM has greater penetration through the surroundings of tunnels than FM does.",
+    "start_time": 68.520,
+    "end_time": 73.120,
+    "translation_vi": "AM có khả năng xuyên qua môi trường xung quanh đường hầm tốt hơn FM."
+  },
+  {
+    "sentence": "So it's all a matter of who is transparent to whom.",
+    "start_time": 73.120,
+    "end_time": 75.680,
+    "translation_vi": "Vậy tất cả chỉ là vấn đề ai trong suốt với ai."
+  },
+  {
+    "sentence": "Now let's tune our eyes.",
+    "start_time": 75.680,
+    "end_time": 78.280,
+    "translation_vi": "Bây giờ hãy điều chỉnh mắt của chúng ta."
+  },
+  {
+    "sentence": "So you have those red, orange, yellow, green, blue, violet.",
+    "start_time": 78.280,
+    "end_time": 80.800,
+    "translation_vi": "Vậy bạn có màu đỏ, cam, vàng, xanh lá, xanh dương, tím."
+  },
+  {
+    "sentence": "Below red we have infrared, and below infrared we had microwaves.",
+    "start_time": 80.880,
+    "end_time": 84.640,
+    "translation_vi": "Dưới đỏ là hồng ngoại, và dưới hồng ngoại là sóng vi ba."
+  },
+  {
+    "sentence": "So microwaves get through stuff.",
+    "start_time": 84.640,
+    "end_time": 86.560,
+    "translation_vi": "Vậy sóng vi ba có thể xuyên qua các vật thể."
+  },
+  {
+    "sentence": "But microwaves have a hard time getting through metal.",
+    "start_time": 86.640,
+    "end_time": 89.840,
+    "translation_vi": "Nhưng sóng vi ba khó xuyên qua kim loại."
+  },
+  {
+    "sentence": "The metal interacts with them.",
+    "start_time": 89.840,
+    "end_time": 91.360,
+    "translation_vi": "Kim loại tương tác với chúng."
+  },
+  {
+    "sentence": "It prevents that in your microwave oven.",
+    "start_time": 91.360,
+    "end_time": 93.640,
+    "translation_vi": "Nó ngăn điều đó trong lò vi sóng của bạn."
+  },
+  {
+    "sentence": "The door is made of glass.",
+    "start_time": 93.640,
+    "end_time": 95.440,
+    "translation_vi": "Cửa được làm bằng kính."
+  },
+  {
+    "sentence": "Microwave goes right through glass.",
+    "start_time": 95.440,
+    "end_time": 97.840,
+    "translation_vi": "Sóng vi ba đi thẳng qua kính."
+  },
+  {
+    "sentence": "It's not only glass.",
+    "start_time": 97.840,
+    "end_time": 100.320,
+    "translation_vi": "Không chỉ là kính."
+  },
+  {
+    "sentence": "Your door has this mesh on the inside, and the wavelength of microwaves is like a few millimeters up to maybe a couple of centimeters in that zone.",
+    "start_time": 100.320,
+    "end_time": 106.800,
+    "translation_vi": "Cửa của bạn có lưới bên trong, và bước sóng của sóng vi ba khoảng vài milimet đến có thể vài centimet trong vùng đó."
+  },
+  {
+    "sentence": "So that mesh has holes that are smaller than the size of the microwave, so they can't come through.",
+    "start_time": 106.800,
+    "end_time": 111.680,
+    "translation_vi": "Vậy lưới đó có các lỗ nhỏ hơn kích thước của sóng vi ba, nên chúng không thể xuyên qua."
+  },
+  {
+    "sentence": "So I can see in, but the waves bounce back.",
+    "start_time": 111.680,
+    "end_time": 113.680,
+    "translation_vi": "Vậy tôi có thể nhìn vào, nhưng sóng bị bật ngược lại."
+  },
+  {
+    "sentence": "You're not using microwaves to see.",
+    "start_time": 113.680,
+    "end_time": 115.960,
+    "translation_vi": "Bạn không dùng sóng vi ba để nhìn."
+  },
+  {
+    "sentence": "You're using visible light, which goes through the holes, right?",
+    "start_time": 115.960,
+    "end_time": 119.040,
+    "translation_vi": "Bạn đang dùng ánh sáng khả kiến, đi qua các lỗ, đúng không?"
+  },
+  {
+    "sentence": "But then the wave is way smaller than those holes.",
+    "start_time": 119.040,
+    "end_time": 121.040,
+    "translation_vi": "Nhưng sóng thì nhỏ hơn nhiều so với các lỗ đó."
+  },
+  {
+    "sentence": "So I'm not getting irradiated because the waves can't get through the holes, so they bounce back into the microwave.",
+    "start_time": 121.040,
+    "end_time": 125.600,
+    "translation_vi": "Vậy tôi không bị chiếu xạ vì sóng không thể qua các lỗ, nên chúng bật ngược vào lò vi sóng."
+  },
+  {
+    "sentence": "Correct.",
+    "start_time": 125.600,
+    "end_time": 127.000,
+    "translation_vi": "Đúng vậy."
+  },
+  {
+    "sentence": "Now let's go to infrared.",
+    "start_time": 128.160,
+    "end_time": 130.720,
+    "translation_vi": "Bây giờ hãy chuyển sang hồng ngoại."
+  },
+  {
+    "sentence": "I look around and I see things glowing.",
+    "start_time": 130.720,
+    "end_time": 132.880,
+    "translation_vi": "Tôi nhìn quanh và thấy mọi thứ phát sáng."
+  },
+  {
+    "sentence": "Then I try to look out the window and I can't.",
+    "start_time": 133.200,
+    "end_time": 135.280,
+    "translation_vi": "Rồi tôi cố nhìn ra cửa sổ nhưng không thể."
+  },
+  {
+    "sentence": "It's opaque and you can test this yourself.",
+    "start_time": 135.280,
+    "end_time": 138.160,
+    "translation_vi": "Nó mờ đục và bạn có thể tự kiểm tra."
+  },
+  {
+    "sentence": "You ready?",
+    "start_time": 138.160,
+    "end_time": 139.560,
+    "translation_vi": "Bạn sẵn sàng chưa?"
+  },
+  {
+    "sentence": "So put someone on one side of the window and have them turn on a flashlight.",
+    "start_time": 139.560,
+    "end_time": 143.560,
+    "translation_vi": "Vậy hãy đặt ai đó ở một bên cửa sổ và bảo họ bật đèn pin."
+  },
+  {
+    "sentence": "The other side they can see the flashlight.",
+    "start_time": 143.560,
+    "end_time": 146.720,
+    "translation_vi": "Bên kia họ có thể thấy ánh sáng đèn pin."
+  },
+  {
+    "sentence": "Now have someone turn on a red hot iron and have them go on the other side of the window and ask if you feel the heat of the iron.",
+    "start_time": 146.720,
+    "end_time": 153.600,
+    "translation_vi": "Bây giờ bảo ai đó bật một bàn là nóng đỏ và đứng ở bên kia cửa sổ, rồi hỏi xem bạn có cảm nhận được nhiệt từ bàn là không."
+  },
+  {
+    "sentence": "You do not feel it at all.",
+    "start_time": 153.600,
+    "end_time": 155.320,
+    "translation_vi": "Bạn hoàn toàn không cảm nhận được."
+  },
+  {
+    "sentence": "That's so cool because glass is like an insulator.",
+    "start_time": 155.440,
+    "end_time": 158.400,
+    "translation_vi": "Thật tuyệt vì kính giống như một chất cách nhiệt."
+  },
+  {
+    "sentence": "Glass prevents the transmission of heat.",
+    "start_time": 158.400,
+    "end_time": 161.920,
+    "translation_vi": "Kính ngăn cản sự truyền nhiệt."
+  },
+  {
+    "sentence": "Transparent glass is opaque to infrared light.",
+    "start_time": 161.920,
+    "end_time": 165.640,
+    "translation_vi": "Kính trong suốt thì mờ đục với ánh sáng hồng ngoại."
+  },
+  {
+    "sentence": "Nice.",
+    "start_time": 165.640,
+    "end_time": 167.360,
+    "translation_vi": "Hay đấy."
+  },
+  {
+    "sentence": "When you say something is transparent, technically you should be specifying transparent for what wavelength of light?",
+    "start_time": 167.360,
+    "end_time": 171.440,
+    "translation_vi": "Khi bạn nói thứ gì đó trong suốt, về mặt kỹ thuật bạn nên chỉ rõ nó trong suốt với bước sóng ánh sáng nào?"
+  },
+  {
+    "sentence": "If we're in the same room and I see you, there's nothing there, so that's why I can see you.",
+    "start_time": 171.440,
+    "end_time": 175.640,
+    "translation_vi": "Nếu chúng ta ở cùng phòng và tôi thấy bạn, không có gì cản trở, nên đó là lý do tôi thấy bạn."
+  },
+  {
+    "sentence": "Except of course there's air.",
+    "start_time": 175.640,
+    "end_time": 177.360,
+    "translation_vi": "Trừ việc tất nhiên là có không khí."
+  },
+  {
+    "sentence": "Air is blocking the view, except that air happens to be transparent to the light that we are detecting.",
+    "start_time": 177.360,
+    "end_time": 181.680,
+    "translation_vi": "Không khí cản tầm nhìn, trừ việc không khí lại trong suốt với ánh sáng mà chúng ta phát hiện."
+  },
+  {
+    "sentence": "When we build domiciles, homes and whatever, you want to be able to look outside.",
+    "start_time": 181.680,
+    "end_time": 185.560,
+    "translation_vi": "Khi chúng ta xây nhà cửa, bạn muốn có thể nhìn ra ngoài."
+  },
+  {
+    "sentence": "You could just cut a hole in the wall, but we don't.",
+    "start_time": 185.560,
+    "end_time": 188.320,
+    "translation_vi": "Bạn có thể chỉ cần đục một lỗ trên tường, nhưng chúng ta không làm vậy."
+  },
+  {
+    "sentence": "We want to protect ourselves from the elements.",
+    "start_time": 188.320,
+    "end_time": 190.840,
+    "translation_vi": "Chúng ta muốn bảo vệ mình khỏi các yếu tố thời tiết."
+  },
+  {
+    "sentence": "So instead of having air, the opening on the side of the wall that is itself transparent to visible light.",
+    "start_time": 190.840,
+    "end_time": 195.960,
+    "translation_vi": "Vậy thay vì để không khí, chúng ta có một lỗ trên tường, bản thân nó trong suốt với ánh sáng khả kiến."
+  },
+  {
+    "sentence": "And that's what we call windows.",
+    "start_time": 195.960,
+    "end_time": 197.640,
+    "translation_vi": "Và đó là thứ chúng ta gọi là cửa sổ."
+  },
+  {
+    "sentence": "The Sun in the energy that it sends to Earth, it peaks in the red, orange, yellow, green, blue, violet part of the spectrum, the visible light part of the spectrum.",
+    "start_time": 197.640,
+    "end_time": 203.240,
+    "translation_vi": "Mặt Trời trong năng lượng mà nó gửi đến Trái Đất, đạt đỉnh ở phần đỏ, cam, vàng, xanh lá, xanh dương, tím của phổ, tức là phần ánh sáng khả kiến."
+  },
+  {
+    "sentence": "And within that it peaks right at the green yellow boundary.",
+    "start_time": 203.240,
+    "end_time": 205.720,
+    "translation_vi": "Và trong đó, nó đạt đỉnh ngay tại ranh giới xanh lá và vàng."
+  },
+  {
+    "sentence": "So the Sun gives more green yellow light than any other kind of light.",
+    "start_time": 205.720,
+    "end_time": 208.480,
+    "translation_vi": "Vậy Mặt Trời phát ra nhiều ánh sáng xanh vàng hơn bất kỳ loại ánh sáng nào khác."
+  },
+  {
+    "sentence": "How does sunlight reach us here on Earth?",
+    "start_time": 208.480,
+    "end_time": 211.000,
+    "translation_vi": "Ánh sáng Mặt Trời đến với chúng ta trên Trái Đất như thế nào?"
+  },
+  {
+    "sentence": "Because the sunlight is transparent.",
+    "start_time": 211.360,
+    "end_time": 214.080,
+    "translation_vi": "Bởi vì bầu khí quyển là trong suốt."
+  },
+  {
+    "sentence": "But occasionally a cloud moves.",
+    "start_time": 214.080,
+    "end_time": 216.720,
+    "translation_vi": "Nhưng thỉnh thoảng một đám mây di chuyển đến."
+  },
+  {
+    "sentence": "Clouds are not transparent to visible light.",
+    "start_time": 216.720,
+    "end_time": 219.480,
+    "translation_vi": "Mây không trong suốt với ánh sáng khả kiến."
+  },
+  {
+    "sentence": "So they block the sun.",
+    "start_time": 219.480,
+    "end_time": 222.160,
+    "translation_vi": "Vì vậy, chúng chặn ánh sáng Mặt Trời."
+  },
+  {
+    "sentence": "You know what else is opaque?",
+    "start_time": 222.160,
+    "end_time": 224.880,
+    "translation_vi": "Bạn biết còn gì mờ đục nữa không?"
+  },
+  {
+    "sentence": "Glass blocks UV.",
+    "start_time": 224.880,
+    "end_time": 227.680,
+    "translation_vi": "Kính chặn tia UV."
+  },
+  {
+    "sentence": "Glass out-of-the-box will absorb 77% of UV that hits it.",
+    "start_time": 227.680,
+    "end_time": 231.720,
+    "translation_vi": "Kính thông thường sẽ hấp thụ 88% tia UV chiếu vào nó."
+  },
+  {
+    "sentence": "And I've done this experiment using in a laboratory.",
+    "start_time": 231.720,
+    "end_time": 234.640,
+    "translation_vi": "Và tôi đã thực hiện thí nghiệm này trong phòng thí nghiệm."
+  },
+  {
+    "sentence": "When you buy special sunglasses that say UV protection, they block UV from 88% up to 100%.",
+    "start_time": 234.640,
+    "end_time": 240.360,
+    "translation_vi": "Khi bạn mua kính râm đặc biệt ghi là chống UV, chúng chặn tia UV từ 88% đến 99%."
+  },
+  {
+    "sentence": "Now, there were physicists, when they were testing atomic bombs, what they would do is they would dip behind the windshield of the Jeep that drove them out there to safety.",
+    "start_time": 241.600,
+    "end_time": 247.440,
+    "translation_vi": "Bây giờ, có những nhà vật lý, khi họ thử nghiệm bom nguyên tử, họ sẽ trốn sau kính chắn gió của chiếc Jeep để được an toàn."
+  },
+  {
+    "sentence": "It would still be visible bright, but the high-energy radiation would be blocked by the transparent glass.",
+    "start_time": 247.440,
+    "end_time": 252.320,
+    "translation_vi": "Nó vẫn sáng rõ rệt, nhưng bức xạ năng lượng cao sẽ bị chặn bởi kính trong suốt."
+  },
+  {
+    "sentence": "Glass blocks infrared on one side of the visible spectrum and ultraviolet on the other side, which is beyond violet, and it transmits, by definition, what we call visible light.",
+    "start_time": 252.480,
+    "end_time": 258.800,
+    "translation_vi": "Kính chặn hồng ngoại ở một bên của phổ khả kiến và tia cực tím ở bên kia, vượt ngoài màu tím, và theo định nghĩa, nó truyền qua cái mà chúng ta gọi là ánh sáng khả kiến."
+  },
+  {
+    "sentence": "And that's what makes glass quite a fascinating thing.",
+    "start_time": 258.800,
+    "end_time": 261.320,
+    "translation_vi": "Và đó là điều khiến kính trở nên rất thú vị."
+  },
+  {
+    "sentence": "So in Harry Potter, they had an invisibility cloak.",
+    "start_time": 261.464,
+    "end_time": 265.080,
+    "translation_vi": "Vậy trong Harry Potter, họ có một chiếc áo choàng tàng hình."
+  },
+  {
+    "sentence": "That thing is so cool.",
+    "start_time": 265.080,
+    "end_time": 267.200,
+    "translation_vi": "Thứ đó thật tuyệt vời."
+  },
+  {
+    "sentence": "So here's what you do: since you’re standing in the way between me and what's behind you, I can't suddenly make you transparent.",
+    "start_time": 267.640,
+    "end_time": 273.698,
+    "translation_vi": "Vậy đây là cách làm: vì bạn đang đứng giữa tôi và cảnh phía sau, tôi không thể đột nhiên khiến bạn trong suốt."
+  },
+  {
+    "sentence": "But we have research such as what they had in Harry Potter, where you put on an invisibility cloak, and the light from behind you hits the back of your cloak channels it around to the front and comes straight out from the front of you.",
+    "start_time": 273.760,
+    "end_time": 279.920,
+    "translation_vi": "Nhưng chúng ta có nghiên cứu như trong Harry Potter, khi bạn mặc áo choàng tàng hình, ánh sáng từ phía sau bạn chạm vào phía sau áo choàng, áo choàng dẫn ánh sáng vòng ra phía trước và đi thẳng ra ngoài."
+  },
+  {
+    "sentence": "This is a very complicated optical path that the light has to follow.",
+    "start_time": 279.920,
+    "end_time": 282.720,
+    "translation_vi": "Đây là một đường dẫn quang học rất phức tạp mà ánh sáng phải đi theo."
+  },
+  {
+    "sentence": "If it follows that path, then my view goes to your chest, around you, and to the wall behind you.",
+    "start_time": 282.720,
+    "end_time": 287.000,
+    "translation_vi": "Nếu nó đi theo đường dẫn đó, tầm nhìn của tôi sẽ đến ngực bạn, vòng quanh bạn, và đến bức tường phía sau."
+  },
+  {
+    "sentence": "And I don’t even know you're standing there because I don’t know the light took that circuitous route because it comes straight to my eyes.",
+    "start_time": 287.280,
+    "end_time": 291.640,
+    "translation_vi": "Và tôi không hề biết bạn đang đứng đó vì tôi không biết ánh sáng đã đi đường vòng đó vì nó đến thẳng vào mắt tôi."
+  },
+  {
+    "sentence": "So I can make you appear invisible if the light behind you is brought around to the front of you.",
+    "start_time": 291.720,
+    "end_time": 294.800,
+    "translation_vi": "Vậy tôi có thể làm bạn trở nên vô hình nếu ánh sáng phía sau bạn được dẫn ra phía trước bạn."
+  },
+  {
+    "sentence": "This was also shown in a James Bond film.",
+    "start_time": 294.800,
+    "end_time": 296.600,
+    "translation_vi": "Điều này cũng được thể hiện trong một bộ phim James Bond."
+  },
+  {
+    "sentence": "You can make his Aston Martin disappear.",
+    "start_time": 296.600,
+    "end_time": 297.600,
+    "translation_vi": "Bạn có thể khiến chiếc Aston Martin của anh ấy biến mất."
+  }
+]

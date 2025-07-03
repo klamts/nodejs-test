@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Practice -gh Pronunciation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+      background: #f0f0f0;
+      line-height: 1.6;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .word-card {
+      background: #fff;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .buttons {
+      margin-top: 10px;
+    }
+    button {
+      margin-right: 10px;
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+    audio {
+      display: block;
+      margin-top: 10px;
+    }
+    .explanation {
+      background: #ffffff;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 6px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .explanation h2 {
+      color: #444;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+    .gh-f {
+      color: rgb(240, 182, 11);
+      font-weight: bold;
+    }
+    .gh-g {
+      color: blue;
+      font-weight: bold;
+    }
+    .gh-silent {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Practice -gh Pronunciation</h1>
+
+  <div id="words-container"></div>
+
+  <div class="explanation">
+    <h2>How <code>gh</code> is pronounced</h2>
+    <ul>
+      <li><span class="gh-silent">Silent "gh"</span>: No sound at all. (e.g., <code>high</code>, <code>night</code>)</li>
+      <li><span class="gh-f">"gh" = /f/</span>: Pronounced like "f". (e.g., <code>laugh</code>, <code>cough</code>, <code>rough</code>)</li>
+      <li><span class="gh-g">"gh" = /g/</span>: Pronounced like "g". (less common, e.g., <code>ghost</code>, <code>ghastly</code>)</li>
+    </ul>
+  </div>
+
+  <div class="explanation">
+    <h2>About <code>-igh</code></h2>
+    <p><strong>-igh</strong> is usually pronounced as <strong>/aɪ/</strong>, like a long "i" sound.</p>
+    <ul>
+      <li><code>h<span class="gh-silent">igh</span></code> → /haɪ/</li>
+      <li><code>s<span class="gh-silent">igh</span></code> → /saɪ/</li>
+      <li><code>n<span class="gh-silent">igh</span>t</code> → /naɪt/</li>
+      <li><code>l<span class="gh-silent">igh</span>t</code> → /laɪt/</li>
+    </ul>
+    <p><strong>Note:</strong> Here, "gh" is <span class="gh-silent">silent</span>.</p>
+  </div>
+
+  <div class="explanation">
+    <h2>About <code>-ough</code></h2>
+    <p><strong>-ough</strong> has many pronunciations:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Word</th>
+          <th>Pronunciation</th>
+          <th>IPA</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>th<span class="gh-silent">ough</span></td><td>like "oʊ"</td><td>/ðoʊ/</td></tr>
+        <tr><td>thr<span class="gh-silent">ough</span></td><td>like "ruː"</td><td>/θruː/</td></tr>
+        <tr><td>cou<span class="gh-f">gh</span></td><td>like "ɒ<span class="gh-f">f</span>"</td><td>/kɒf/</td></tr>
+        <tr><td>rou<span class="gh-f">gh</span></td><td>like "ʌ<span class="gh-f">f</span>"</td><td>/rʌf/</td></tr>
+        <tr><td>b<span class="gh-silent">ough</span></td><td>like "aʊ"</td><td>/baʊ/</td></tr>
+        <tr><td>th<span class="gh-silent">ough</span>t</td><td>like "ɔː"</td><td>/θɔːt/</td></tr>
+        <tr><td>enou<span class="gh-f">gh</span></td><td>like "ʌ<span class="gh-f">f</span>"</td><td>/ɪˈnʌf/</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Tip:</strong> <code>-ough</code> must be memorized word by word.</p>
+  </div>
+
+  <script>
+    const words = [
+      { text: "laugh", phonetic: "/læf/", ghType: "f" },
+      { text: "cough", phonetic: "/kɒf/", ghType: "f" },
+      { text: "rough", phonetic: "/rʌf/", ghType: "f" },
+      { text: "tough", phonetic: "/tʌf/", ghType: "f" },
+      { text: "enough", phonetic: "/ɪˈnʌf/", ghType: "f" },
+      { text: "draught", phonetic: "/drɑːft/", ghType: "f" },
+      { text: "high", phonetic: "/haɪ/", ghType: "silent" },
+      { text: "sigh", phonetic: "/saɪ/", ghType: "silent" },
+      { text: "night", phonetic: "/naɪt/", ghType: "silent" },
+      { text: "light", phonetic: "/laɪt/", ghType: "silent" },
+      { text: "weight", phonetic: "/weɪt/", ghType: "silent" },
+      { text: "though", phonetic: "/ðoʊ/", ghType: "silent" },
+      { text: "through", phonetic: "/θruː/", ghType: "silent" },
+      { text: "bough", phonetic: "/baʊ/", ghType: "silent" },
+      { text: "plough", phonetic: "/plaʊ/", ghType: "silent" },
+      { text: "ghost", phonetic: "/ɡoʊst/", ghType: "g" },
+      { text: "ghastly", phonetic: "/ˈɡæstli/", ghType: "g" }
+    ];
+
+    const container = document.getElementById("words-container");
+
+    words.forEach((word, idx) => {
+      const card = document.createElement("div");
+      card.className = "word-card";
+
+      // Highlight gh with color
+      let ghClass = "";
+      if (word.ghType === "f") ghClass = "gh-f";
+      else if (word.ghType === "g") ghClass = "gh-g";
+      else if (word.ghType === "silent") ghClass = "gh-silent";
+
+      const highlighted = word.text.replace(/gh/g, `<span class="${ghClass}">gh</span>`);
+
+      card.innerHTML = `
+        <h3>${highlighted} <small>${word.phonetic}</small></h3>
+        <div class="buttons">
+          <button onclick="playSample('${word.text}')">🔊 Play Sample</button>
+          <button onclick="startRecording(${idx})">🎤 Start Recording</button>
+          <button onclick="stopRecording()">⏹️ Stop</button>
+          <button onclick="checkPronunciation('${word.text}')">✅ Check</button>
+        </div>
+        <audio id="audio-${idx}" controls></audio>
+      `;
+      container.appendChild(card);
+    });
+
+    function playSample(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "en-US";
+      speechSynthesis.speak(utterance);
+    }
+
+    let mediaRecorder;
+    let audioChunks = [];
+    let currentIdx = null;
+
+    function startRecording(idx) {
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+        currentIdx = idx;
+
+        mediaRecorder.start();
+        mediaRecorder.ondataavailable = e => {
+          audioChunks.push(e.data);
+        };
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(audioChunks);
+          const audioURL = URL.createObjectURL(blob);
+          document.getElementById(`audio-${currentIdx}`).src = audioURL;
+        };
+      });
+    }
+
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        mediaRecorder.stop();
+      }
+    }
+
+    function checkPronunciation(target) {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = "en-US";
+      recognition.interimResults = false;
+
+      recognition.start();
+
+      recognition.onresult = e => {
+        const result = e.results[0][0].transcript.trim().toLowerCase();
+        if (result === target.toLowerCase()) {
+          alert(`✅ Correct! You said "${result}".`);
+        } else {
+          alert(`❌ You said "${result}". Try again.`);
+        }
+      };
+
+      recognition.onerror = e => {
+        alert("Error: " + e.error);
+      };
+    }
+  </script>
+</body>
+</html>

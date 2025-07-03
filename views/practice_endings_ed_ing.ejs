@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Words with ee, ea, ie</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #e0f2fe, #dbeafe);
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+    }
+    .word {
+      font-weight: bold;
+      font-size: 1.2em;
+      color: #1e40af;
+      margin: 8px 0;
+    }
+    .root-word {
+      font-size: 1.2em;
+      color: #385681;
+      margin-top: 4px;
+    }
+    .meaning {
+      color: #555;
+      font-size: 1em;
+    }
+    .example {
+      font-size: 0.9em;
+      color: #6b7280;
+      margin-top: 8px;
+    }
+    .controls button {
+      margin: 4px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .controls button:first-child {
+      background-color: #3b82f6;
+      color: white;
+    }
+    .controls button:first-child:hover {
+      background-color: #2563eb;
+    }
+    .controls button:nth-child(2) {
+      background-color: #10b981;
+      color: white;
+    }
+    .controls button:nth-child(2):hover {
+      background-color: #059669;
+    }
+    .controls button:nth-child(3) {
+      background-color: #6b7280;
+      color: white;
+    }
+    .controls button:nth-child(3):hover {
+      background-color: #4b5563;
+    }
+    audio {
+      margin-top: 8px;
+      width: 100%;
+      display: none;
+    }
+    .image-container img {
+      max-width: 200px;
+      margin: 10px auto;
+      display: block;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <a href="/game_practice_endings_ed_ing" class="text-blue-600 hover:underline mb-4 inline-block">🎮 Game words with ed ing</a>
+  <h1 class="text-3xl font-bold text-center text-indigo-600 mb-6">Ending -ed, -ing</h1>
+  <div class="grid">
+    <% words.forEach((word, idx) => { %>
+      <div class="card">
+        <div class="word"><%= word.word_text %></div>
+        <% if (word.root_word) { %>
+          <div class="root-word"> <%= word.root_word %></div>
+        <% } %>
+        <div class="meaning"><%= word.meaning_vi %></div>
+        <% if (word.image_url) { %>
+          <div class="image-container">
+            <img src="/<%= word.image_url %>" alt="<%= word.word_text %>">
+          </div>
+        <% } %>
+        <div class="ipa">
+          <em><%= word.ipa %></em><br/>
+          
+        </div>
+        <div class="example">
+          <em><%= word.example_en %></em><br/>
+          <%= word.example_vi %>
+        </div>
+        <div class="controls">
+          <button onclick="speak('<%= word.word_text %>')">🔊 Phát âm</button>
+          <button onclick="startRecording(<%= idx %>)">🎤 Ghi âm</button>
+          <button onclick="playRecording(<%= idx %>)">▶️ Nghe lại</button>
+        </div>
+        <audio id="player-<%= idx %>"></audio>
+      </div>
+    <% }) %>
+  </div>
+
+<script>
+  let allVoices = [];
+
+  function loadVoices() {
+    allVoices = speechSynthesis.getVoices();
+  }
+
+  if (speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = loadVoices;
+  }
+
+  loadVoices();
+
+  function speak(text) {
+    const utter = new SpeechSynthesisUtterance(text);
+    const preferred = allVoices.find(v => v.name.includes("Microsoft Ana") && v.lang === "en-US");
+    utter.voice = preferred || allVoices.find(v => v.lang === "en-US");
+    utter.lang = 'en-US';
+    speechSynthesis.speak(utter);
+  }
+
+  // Ghi âm từng audio riêng
+  let mediaRecorder = null;
+  let audioChunks = [];
+  const recordings = {}; // Lưu blob theo index
+
+  function startRecording(index) {
+    if (!navigator.mediaDevices) {
+      alert("Trình duyệt không hỗ trợ ghi âm.");
+      return;
+    }
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(stream => {
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+        mediaRecorder.start();
+        alert("🔴 Đang ghi âm. Nhấn 'Nghe lại' để dừng.");
+        mediaRecorder.addEventListener("dataavailable", e => {
+          audioChunks.push(e.data);
+        });
+        mediaRecorder.addEventListener("stop", () => {
+          const audioBlob = new Blob(audioChunks);
+          recordings[index] = URL.createObjectURL(audioBlob);
+          const audio = document.getElementById("player-" + index);
+          audio.src = recordings[index];
+          audio.style.display = "block";
+        });
+      })
+      .catch(err => console.error('❌ Lỗi ghi âm:', err));
+  }
+
+  function playRecording(index) {
+    if (mediaRecorder && mediaRecorder.state !== "inactive") {
+      mediaRecorder.stop();
+    } else if (recordings[index]) {
+      const audio = document.getElementById("player-" + index);
+      audio.play();
+    } else {
+      alert("⚠️ Bạn chưa ghi âm.");
+    }
+  }
+</script>
+</body>
+</html>

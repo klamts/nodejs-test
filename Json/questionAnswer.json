@@ -1,0 +1,42 @@
+[
+  {
+    "question": "Is your home transparent to microwaves? Explain why or why not. ",
+    "answer": "Yes, the source states that to microwaves, a home is transparent because microwaves can penetrate walls."
+  },
+  {
+    "question": "Why is glass opaque to infrared light? ",
+    "answer": "Glass is opaque to infrared light because it prevents the transmission of heat, which is related to infrared radiation."
+  },
+  {
+    "question": "How does AM radio signal penetration compare to FM radio signal penetration in tunnels? ",
+    "answer": "AM radio signals have greater penetration through surroundings like tunnels compared to FM radio signals, which tend to drop out."
+  },
+  {
+    "question": "What part of the electromagnetic spectrum does a cell phone use? ",
+    "answer": "A cell phone uses microwaves, which are part of the electromagnetic spectrum."
+  },
+  {
+    "question": "Why does glass block ultraviolet (UV) light? ",
+    "answer": "Glass blocks UV light by absorbing a high percentage of it, typically around 97% for standard glass."
+  },
+  {
+    "question": "According to the source, what part of the visible spectrum does the sun's energy peak in? ",
+    "answer": "The sun's energy peaks in the green-yellow boundary within the visible light spectrum."
+  },
+  {
+    "question": "Why can you see through air even though it is a substance? ",
+    "answer": "You can see through air because air is transparent to the visible light that our eyes detect."
+  },
+  {
+    "question": "In a microwave oven, why can you see through the door but the microwaves don't escape? ",
+    "answer": "You see through the microwave door's mesh using visible light which passes through the small holes, while the microwaves are larger and bounce back into the oven."
+  },
+  {
+    "question": "What is the technical consideration mentioned when stating that something is transparent? ",
+    "answer": "Technically, you should specify what wavelength of light the material is transparent to."
+  },
+  {
+    "question": "How does an invisibility cloak, as described, achieve the effect of transparency? ",
+    "answer": "As described, an invisibility cloak works by channeling the light from behind an object around to the front, making the object appear transparent."
+  }
+]

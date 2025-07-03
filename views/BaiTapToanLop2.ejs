@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Học cộng 8 + 5</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ccf0ff;
+      text-align: center;
+      padding-top: 50px;
+    }
+
+    .equation {
+      font-size: 40px;
+      font-weight: bold;
+      color: red;
+    }
+
+    .clickable {
+      cursor: pointer;
+      background-color: yellow;
+      padding: 5px 10px;
+      border-radius: 10px;
+    }
+
+    .inputs {
+      margin-top: 20px;
+      display: none;
+    }
+
+    input[type="number"] {
+      width: 60px;
+      font-size: 24px;
+      margin: 0 10px;
+      text-align: center;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    svg {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="equation">
+    <span id="baseNumber">8</span> + <span id="originalNumber" class="clickable" onclick=" onlickspan()">5</span> <span id="equal" onclick="showInputs()">=</span> <input type="number" id="resultOfEuation" oninput="checkcheckresultFinal()" placeholder="?" />
+  </div>
+  <svg id="connector" width="300" height="100">
+    <line id="line1" x1="150" y1="0" x2="100" y2="70" stroke="gray" stroke-width="2" visibility="hidden"/>
+    <line id="line2" x1="150" y1="0" x2="200" y2="70" stroke="gray" stroke-width="2" visibility="hidden"/>
+    
+  </svg>
+  <div class="inputs" id="inputArea">
+    <p>Tách số 5 thành 2 số:</p>
+    <input type="number" id="num1" oninput="checkStep1Answer()" placeholder="?" />
+    <input type="number" id="num2" oninput="checkStep1Answer()" placeholder="?" />
+    <div class="result" id="resultStep1"></div>
+    <div class="result" id="resultFinal"></div>
+  </div>
+
+  <script>
+    let originalNumber = parseInt(document.getElementById("originalNumber").textContent);
+    let baseNumber = parseInt(document.getElementById("baseNumber").textContent);
+    function onlickspan(){
+        
+        showInputs()
+        showLines()
+        
+    }
+    function showInputs() {
+      document.getElementById("inputArea").style.display = "block";
+      document.getElementById("num1").value = '';
+      document.getElementById("num2").value = '';
+      document.getElementById("resultStep1").innerText = '';
+      
+    }
+     
+     function showLines() {
+      document.getElementById("line1").setAttribute("visibility", "visible");
+      document.getElementById("line2").setAttribute("visibility", "visible");
+    }
+
+    function hideLines() {
+      document.getElementById("line1").setAttribute("visibility", "hidden");
+      document.getElementById("line2").setAttribute("visibility", "hidden");
+    }
+    function checkStep1Answer(){
+      const baseNumber = parseInt(document.getElementById("baseNumber").textContent);
+      const originalNumber = parseInt(document.getElementById("originalNumber").textContent);
+      const n1 = parseInt(document.getElementById("num1").value);
+      const n2 = parseInt(document.getElementById("num2").value);
+      const resultOfEuation = parseInt(document.getElementById("resultOfEuation").value);
+      const resultStep1 = document.getElementById("resultStep1");
+       
+      console.log(n1,n2)
+      if (!isNaN(n1) && !isNaN(n2)) {
+        
+        if (n1 + n2 === originalNumber) {
+          const firstStep = baseNumber + n1;
+          const finalAnswer = firstStep + n2;
+          
+          
+          resultStep1.style.color = "green";
+          resultStep1.innerText = `Bạn đã tách đúng "${n1} + ${n2} = ${originalNumber}"`;
+          
+          
+        } else {
+          resultStep1.style.color = "red";
+          resultStep1.innerText = `Sai rồi, tổng hai số phải bằng "${n1} + ${n2} = ${originalNumber}" sai!`;
+          resultFinal.innerText = "";
+        }
+      } else {
+        resultStep1.innerText = "";
+      }
+    }
+    function checkcheckresultFinal(){
+        const resultOfEuation = parseInt(document.getElementById("resultOfEuation").value);
+        const resultFinal = document.getElementById("resultFinal"); 
+        const baseNumber = parseInt(document.getElementById("baseNumber").textContent);
+        const originalNumber = parseInt(document.getElementById("originalNumber").textContent);
+        if(baseNumber + originalNumber === resultOfEuation){
+            showResultFinalRightRight()
+        }else{
+            showResultFinalWrong()
+        }
+    }
+
+    function showResultFinalWrong(){
+        resultFinal.style.color = "red";
+        resultFinal.innerText = "Sai rồi";
+    }
+    function showResultFinalRightRight(){
+        resultFinal.style.color = "green";
+        resultFinal.innerHTML="Bạn Làm Chính Xác"
+    }
+  </script>
+
+</body>
+</html>

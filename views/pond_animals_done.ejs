@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>A Fun Flea Place</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      padding: 2rem;
+      background: #f0f2f5;
+      color: #333;
+      max-width: 800px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      margin-top: 1rem;
+      color: #444;
+    }
+    .image-container {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .image-container img {
+      max-width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    }
+    .sentence {
+      margin: 1rem 0;
+      font-size: 1.2rem;
+      line-height: 1.6;
+      background: #fff;
+      padding: 0.8rem 1rem;
+      border-radius: 6px;
+      box-shadow: 0 0 3px rgba(0,0,0,0.1);
+    }
+    .word {
+      cursor: pointer;
+      color: #007acc;
+      text-decoration: underline;
+      transition: all 0.3s ease;
+    }
+    .word:hover {
+      background-color: #e0f0ff;
+      border-radius: 4px;
+    }
+    .word.active {
+      background-color: #ffe082;
+      border-radius: 4px;
+      color: #000;
+      animation: highlightPulse 0.8s;
+    }
+    @keyframes highlightPulse {
+      0% { background-color: #fff59d; }
+      100% { background-color: #ffe082; }
+    }
+    .popup {
+      display: none;
+      position: fixed;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%) scale(0.9);
+      background: white;
+      padding: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+      max-width: 320px;
+      z-index: 100;
+      font-size: 0.95rem;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+    .popup.show {
+      display: block;
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+    }
+    .popup button {
+      margin-top: 0.5rem;
+      padding: 0.3rem 0.6rem;
+      cursor: pointer;
+    }
+    .vocab-table {
+      display: flex;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .vocab-column {
+      background: #fff;
+      padding: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      flex: 1;
+      min-w: 180px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .vocab-column h3 {
+      margin-top: 0;
+      font-size: 1.1rem;
+      color: #444;
+    }
+    .vocab-column ul {
+      list-style: disc;
+      padding-left: 1.2rem;
+      margin: 0;
+    }
+    .vocab-column li {
+      margin: 0.4rem 0;
+    }
+  </style>
+</head>
+<body>
+  <a href="/game_pronounce_sentences_pond_animals" class="text-blue-600 hover:underline mb-4 inline-block">🎮 Game đọc câu</a>
+  <h1>A Fun Flea Place</h1>
+
+  <div class="image-container">
+    <img src="/images/pond_animals.jpeg" alt="Pond Animals">
+  </div>
+
+  <div class="sentence">
+    <strong>1.</strong>
+    You might see just <span class="word" data-word="a few">a few</span> animals at the <span class="word" data-word="pond">pond</span>.
+  </div>
+  <div class="sentence">
+    <strong>2.</strong>
+    <span class="word" data-word="once">Once</span> you <span class="word" data-word="look for a while">look for a while</span>, you will <span class="word" data-word="see a lot">see a lot!</span>
+  </div>
+  <div class="sentence">
+    <strong>3.</strong>
+    Look for an animal <span class="word" data-word="diving into">diving into</span> the pond for <span class="word" data-word="for food">for food</span>.
+  </div>
+  <div class="sentence">
+    <strong>4.</strong>
+    You can see just the <span class="word" data-word="head">head</span> of one animal.
+  </div>
+  <div class="sentence">
+    <strong>5.</strong>
+    Find the tiny bugs that <span class="word" data-word="hold on">hold on</span> to plants and animals.
+  </div>
+
+  <h2 style="margin-top:2rem;">Vocabulary Table</h2>
+  <div class="vocab-table">
+    <div class="vocab-column">
+      <h3>High-Frequency Words</h3>
+      <ul>
+        <% words.filter(w => w.type === 'noun' || w.type === 'determiner' || w.type === 'conjunction').forEach(word => { %>
+          <li><%= word.word_text %></li>
+        <% }) %>
+      </ul>
+    </div>
+    <div class="vocab-column">
+      <h3>Key Phrases</h3>
+      <ul>
+        <% words.filter(w => w.type.includes('phrase')).forEach(word => { %>
+          <li><%= word.word_text %></li>
+        <% }) %>
+      </ul>
+    </div>
+  </div>
+
+  <div id="popup" class="popup"></div>
+  <audio id="audioPlayer"></audio>
+
+<script>
+  const words = <%- JSON.stringify(words) %>;
+
+  const popup = document.getElementById('popup');
+
+  document.querySelectorAll('.word').forEach(el => {
+    el.addEventListener('click', e => {
+      document.querySelectorAll('.word').forEach(w => w.classList.remove('active'));
+      e.target.classList.add('active');
+
+      const wordText = e.target.dataset.word;
+      const data = words.find(w => w.word_text.toLowerCase() === wordText.toLowerCase());
+
+      if (!data) {
+        popup.innerHTML = `<strong>Không có dữ liệu từ này.</strong><br><button id="close“不 có dữ liệu từ nàyóng</button>`;
+        popup.classList.add('show');
+        document.getElementById('closePopup').onclick = () => {
+          popup.classList.remove('show');
+          document.querySelectorAll('.word').forEach(w => w.classList.remove('active'));
+        };
+        return;
+      }
+
+      popup.innerHTML = `
+        <strong>${data.word_text}</strong><br>
+        <em>${data.meaning_en} (${data.meaning_vi})</em><br>
+        <div>IPA: ${data.ipa || 'N/A'}</div>
+        <button id="playTTS">🔊 Phát âm</button>
+        <button id="closePopup">Đóng</button>
+      `;
+      popup.classList.add('show');
+
+      document.getElementById('playTTS').onclick = () => {
+        const utterance = new SpeechSynthesisUtterance(data.word_text);
+        const voices = speechSynthesis.getVoices();
+        utterance.voice = voices.find(v => v.lang.startsWith('en')) || voices[0];
+        utterance.lang = 'en-US';
+        speechSynthesis.speak(utterance);
+      };
+
+      document.getElementById('closePopup').onclick = () => {
+        popup.classList.remove('show');
+        document.querySelectorAll('.word').forEach(w => w.classList.remove('active'));
+      };
+    });
+  });
+</script>
+</body>
+</html>

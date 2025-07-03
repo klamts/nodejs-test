@@ -1,0 +1,1773 @@
+[
+  {
+    "word": "transparent",
+    "part_of_speech": "adj.",
+    "part_of_speech_vn": "Tính từ",
+    "definitions": [
+      {
+        "english": "(of a material or object) allowing light to pass through so that objects behind can be distinctly seen.",
+        "vietnamese": "Trong suốt: (vật liệu hoặc vật thể) cho phép ánh sáng đi qua để các vật thể phía sau có thể được nhìn thấy rõ ràng."
+      },
+      {
+        "english": "(of an organization or procedure) open to public scrutiny; not secret.",
+        "vietnamese": "Minh bạch: (tổ chức hoặc quy trình) công khai để công chúng giám sát; không bí mật."
+      }
+    ],
+    "examples": [
+      {
+        "english": "The glass was perfectly transparent, allowing a clear view of the garden.",
+        "vietnamese": "Tấm kính hoàn toàn trong suốt, cho phép nhìn rõ khu vườn."
+      },
+      {
+        "english": "The company aims for transparent financial reporting.",
+        "vietnamese": "Công ty hướng tới báo cáo tài chính minh bạch."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "answer_source_field": "definitions[0].vietnamese",
+        "correct_answer_text": "Trong suốt: (vật liệu hoặc vật thể) cho phép ánh sáng đi qua để các vật thể phía sau có thể được nhìn thấy rõ ràng.",
+        "options": [
+          "Trong suốt: (vật liệu hoặc vật thể) cho phép ánh sáng đi qua để các vật thể phía sau có thể được nhìn thấy rõ ràng.",
+          "Mờ đục: Không thể nhìn xuyên qua; không trong suốt.",
+          "Sóng vi ba: Một sóng điện từ có bước sóng trong khoảng 0,001–0,3 m...",
+          "Hồng ngoại: Bức xạ điện từ có bước sóng dài hơn ánh sáng nhìn thấy...",
+          "Sự do dự: Hành động tạm dừng trước khi nói hoặc làm điều gì đó."
+        ],
+        "timestamps": [
+          "00:00:35,760",
+          "00:00:52,760"
+        ]
+      },
+      {
+        "type": "copy_word",
+        "question_template": "Please copy the word '{word}' 3 times (no accents, no spaces):",
+        "answer_source_field": "word",
+        "timestamps": [
+          "00:01:13,120"
+        ]
+      },
+      {
+        "type": "part_of_speech_vn",
+        "question_template": "What is the Vietnamese part of speech for '{word}'?",
+        "answer_source_field": "part_of_speech_vn",
+        "timestamps": [
+          "00:02:46,800"
+        ]
+      },
+      {
+        "type": "example_vn_fill_blank",
+        "question_template": "Complete the English example sentence for '{word}': 'The glass was perfectly _____, allowing a clear view of the garden.'",
+        "answer_source_field": "word",
+        "timestamps": [
+          "00:04:04,720"
+        ]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "Your home is transparent.",
+        "correct_answer_text": "Ngôi nhà của bạn trong suốt.",
+        "options": [
+          "Ngôi nhà của bạn trong suốt.",
+          "Ngôi nhà của bạn có màu trong suốt.",
+          "Căn hộ của bạn trong suốt.",
+          "Nhà của bạn là trong suốt."
+        ],
+        "timestamps": ["00:00:35,760"]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "So if you had microwave vision, your home basically disappears.",
+        "correct_answer_text": "Vậy nếu bạn có tầm nhìn vi ba, ngôi nhà của bạn về cơ bản sẽ biến mất.",
+        "options": [
+          "Vậy nếu bạn có tầm nhìn vi ba, ngôi nhà của bạn về cơ bản sẽ biến mất.",
+          "Nếu bạn nhìn bằng sóng vi ba, nhà bạn sẽ biến mất.",
+          "Vì vậy nếu bạn nhìn bằng lò vi sóng, nhà bạn cơ bản biến mất.",
+          "Ngôi nhà của bạn trở nên trong suốt với tầm nhìn sóng vi ba."
+        ],
+        "timestamps": ["00:00:38,600"]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "The high-energy radiation would be blocked by the transparent glass.",
+        "correct_answer_text": "Bức xạ năng lượng cao sẽ bị chặn bởi kính trong suốt.",
+        "options": [
+          "Bức xạ năng lượng cao sẽ bị chặn bởi kính trong suốt.",
+          "Kính trong suốt sẽ chặn bức xạ năng lượng cao.",
+          "Năng lượng cao sẽ không đi qua kính trong suốt.",
+          "Kính trong suốt ngăn cản bức xạ."
+        ],
+        "timestamps": ["00:04:43,200"]
+      }
+    ]
+  },
+  {
+    "word": "opaque",
+    "part_of_speech": "adj.",
+    "part_of_speech_vn": "Tính từ",
+    "definitions": [
+      {
+        "english": "Not able to be seen through; not transparent.",
+        "vietnamese": "Mờ đục: Không thể nhìn xuyên qua; không trong suốt."
+      },
+      {
+        "english": "(especially of writing or speech) hard or impossible to understand; obscure.",
+        "vietnamese": "Khó hiểu: (đặc biệt là văn bản hoặc lời nói) khó hoặc không thể hiểu được; tối nghĩa."
+      }
+    ],
+    "examples": [
+      {
+        "english": "The window was covered with an opaque film for privacy.",
+        "vietnamese": "Cửa sổ được dán một lớp màng mờ đục để đảm bảo sự riêng tư."
+      },
+      {
+        "english": "His explanation was so opaque that no one understood it.",
+        "vietnamese": "Lời giải thích của anh ấy quá khó hiểu đến nỗi không ai hiểu được."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "answer_source_field": "definitions[0].vietnamese",
+        "correct_answer_text": "Mờ đục: Không thể nhìn xuyên qua; không trong suốt.",
+        "options": [
+          "Mờ đục: Không thể nhìn xuyên qua; không trong suốt.",
+          "Trong suốt: (vật liệu hoặc vật thể) cho phép ánh sáng đi qua...",
+          "Khí quyển: Lớp khí bao quanh Trái đất hoặc một hành tinh khác.",
+          "Hấp thụ: Hút vào hoặc ngấm (năng lượng, chất lỏng hoặc chất khác)...",
+          "Sự xuyên qua: Hành động hoặc quá trình tạo ra một con đường xuyên qua..."
+        ],
+        "timestamps": [
+          "00:02:15,280"
+        ]
+      },
+      {
+        "type": "copy_word",
+        "question_template": "Please copy the word '{word}' 3 times (no accents, no spaces):",
+        "answer_source_field": "word",
+        "timestamps": [
+          "00:02:49,640"
+        ]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "It's opaque and you can test this yourself.",
+        "correct_answer_text": "Nó mờ đục và bạn có thể tự kiểm tra điều này.",
+        "options": [
+          "Nó mờ đục và bạn có thể tự kiểm tra điều này.",
+          "Nó không trong suốt và bạn tự kiểm tra.",
+          "Bạn có thể tự kiểm tra xem nó có trong suốt không.",
+          "Thứ đó đục và bạn có thể thử."
+        ],
+        "timestamps": ["00:02:15,280"]
+      }
+    ]
+  },
+  {
+    "word": "microwaves",
+    "part_of_speech": "n.",
+    "part_of_speech_vn": "Danh từ",
+    "definitions": [
+      {
+        "english": "An electromagnetic wave with a wavelength in the range 0.001–0.3 m, shorter than that of a normal radio wave but longer than that of infrared radiation.",
+        "vietnamese": "Sóng vi ba: Một sóng điện từ có bước sóng trong khoảng 0,001–0,3 m, ngắn hơn sóng vô tuyến thông thường nhưng dài hơn bức xạ hồng ngoại."
+      }
+    ],
+    "examples": [
+      {
+        "english": "Microwaves are used in ovens to heat food quickly.",
+        "vietnamese": "Sóng vi ba được sử dụng trong lò vi sóng để làm nóng thức ăn nhanh chóng."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Sóng vi ba: Một sóng điện từ có bước sóng trong khoảng 0,001–0,3 m...",
+        "options": [
+          "Sóng vi ba: Một sóng điện từ có bước sóng trong khoảng 0,001–0,3 m...",
+          "Hồng ngoại: Bức xạ điện từ có bước sóng dài hơn ánh sáng nhìn thấy...",
+          "Tia cực tím (UV): Bức xạ điện từ có bước sóng ngắn hơn ánh sáng nhìn thấy...",
+          "Bước sóng: Khoảng cách giữa các đỉnh liên tiếp của một sóng...",
+          "Sự truyền tải: Hành động hoặc quá trình truyền tải một cái gì đó..."
+        ],
+        "timestamps": [
+          "00:00:22,960",
+          "00:00:25,040"
+        ]
+      },
+      {
+        "type": "part_of_speech_vn",
+        "question_template": "What is the Vietnamese part of speech for '{word}'?",
+        "answer_source_field": "part_of_speech_vn",
+        "timestamps": [
+          "00:00:31,040"
+        ]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "It's using microwaves, right?",
+        "correct_answer_text": "Nó đang dùng sóng vi ba, đúng không?",
+        "options": [
+          "Nó đang dùng sóng vi ba, đúng không?",
+          "Nó sử dụng lò vi sóng phải không?",
+          "Có phải nó dùng sóng micro không?",
+          "Điều này dùng sóng vi ba, đúng chứ?"
+        ],
+        "timestamps": ["00:00:22,960"]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "So microwaves get through stuff.",
+        "correct_answer_text": "Vậy sóng vi ba xuyên qua được mọi thứ.",
+        "options": [
+          "Vậy sóng vi ba xuyên qua được mọi thứ.",
+          "Sóng vi ba có thể đi qua vật thể.",
+          "Do đó sóng vi ba xuyên qua đồ vật.",
+          "Sóng vi ba không bị cản bởi đồ vật."
+        ],
+        "timestamps": ["00:01:24,640"]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "But microwaves have a hard time getting through metal.",
+        "correct_answer_text": "Nhưng sóng vi ba khó xuyên qua kim loại.",
+        "options": [
+          "Nhưng sóng vi ba khó xuyên qua kim loại.",
+          "Sóng vi ba khó khăn khi xuyên qua kim loại.",
+          "Kim loại chặn sóng vi ba.",
+          "Lò vi sóng không thể đi qua kim loại."
+        ],
+        "timestamps": ["00:01:26,640"]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "Microwave goes right through glass.",
+        "correct_answer_text": "Sóng vi ba xuyên thẳng qua kính.",
+        "options": [
+          "Sóng vi ba xuyên thẳng qua kính.",
+          "Microwave đi xuyên qua kính.",
+          "Kính không chặn sóng vi ba.",
+          "Sóng vi ba dễ dàng xuyên qua kính."
+        ],
+        "timestamps": ["00:01:35,440"]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "The waves can't get through the holes, so they bounce back into the microwave.",
+        "correct_answer_text": "Sóng không thể xuyên qua các lỗ, nên chúng bật trở lại vào lò vi sóng.",
+        "options": [
+          "Sóng không thể xuyên qua các lỗ, nên chúng bật trở lại vào lò vi sóng.",
+          "Các sóng không đi qua lỗ được, vậy chúng dội lại lò vi sóng.",
+          "Do các lỗ chặn sóng, chúng bị bật ngược lại lò vi sóng.",
+          "Sóng bị mắc kẹt trong lò vi sóng vì các lỗ."
+        ],
+        "timestamps": ["00:02:04,480"]
+      }
+    ]
+  },
+  {
+    "word": "infrared",
+    "part_of_speech": "n.",
+    "part_of_speech_vn": "Danh từ",
+    "definitions": [
+      {
+        "english": "Electromagnetic radiation with wavelengths longer than those of visible light but shorter than those of radio waves.",
+        "vietnamese": "Hồng ngoại: Bức xạ điện từ có bước sóng dài hơn ánh sáng nhìn thấy nhưng ngắn hơn sóng vô tuyến."
+      }
+    ],
+    "examples": [
+      {
+        "english": "Infrared cameras can detect heat signatures.",
+        "vietnamese": "Camera hồng ngoại có thể phát hiện dấu hiệu nhiệt."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Hồng ngoại: Bức xạ điện từ có bước sóng dài hơn ánh sáng nhìn thấy nhưng ngắn hơn sóng vô tuyến.",
+        "options": [
+          "Hồng ngoại: Bức xạ điện từ có bước sóng dài hơn ánh sáng nhìn thấy nhưng ngắn hơn sóng vô tuyến.",
+          "Sóng vi ba: Một sóng điện từ có bước sóng trong khoảng 0,001–0,3 m...",
+          "Tia cực tím (UV): Bức xạ điện từ có bước sóng ngắn hơn ánh sáng nhìn thấy...",
+          "Phổ điện từ: Phạm vi tất cả các loại bức xạ điện từ.",
+          "Bức xạ: Sự phát ra năng lượng dưới dạng sóng điện từ..."
+        ],
+        "timestamps": [
+          "00:01:22,800"
+        ]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "Below red we have infrared, and below infrared we had microwaves.",
+        "correct_answer_text": "Dưới màu đỏ chúng ta có hồng ngoại, và dưới hồng ngoại chúng ta có sóng vi ba.",
+        "options": [
+          "Dưới màu đỏ chúng ta có hồng ngoại, và dưới hồng ngoại chúng ta có sóng vi ba.",
+          "Dưới đỏ là hồng ngoại, và dưới hồng ngoại là sóng vi ba.",
+          "Hồng ngoại ở dưới đỏ, sóng vi ba ở dưới hồng ngoại.",
+          "Hồng ngoại và sóng vi ba nằm dưới ánh sáng đỏ."
+        ],
+        "timestamps": ["00:01:22,800"]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "Now let's go to infrared.",
+        "correct_answer_text": "Bây giờ hãy đến hồng ngoại.",
+        "options": [
+          "Bây giờ hãy đến hồng ngoại.",
+          "Giờ chúng ta hãy nói về hồng ngoại.",
+          "Tiếp theo là tia hồng ngoại.",
+          "Đến lúc nói về hồng ngoại."
+        ],
+        "timestamps": ["00:02:10,720"]
+      }
+    ]
+  },
+  {
+    "word": "UV",
+    "part_of_speech": "n.",
+    "part_of_speech_vn": "Danh từ",
+    "definitions": [
+      {
+        "english": "Electromagnetic radiation with a wavelength shorter than that of visible light but longer than that of X-rays.",
+        "vietnamese": "Tia cực tím (UV): Bức xạ điện từ có bước sóng ngắn hơn ánh sáng nhìn thấy nhưng dài hơn tia X."
+      }
+    ],
+    "examples": [
+      {
+        "english": "Excessive exposure to UV radiation can cause sunburn.",
+        "vietnamese": "Tiếp xúc quá nhiều với tia UV có thể gây cháy nắng."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Tia cực tím (UV): Bức xạ điện từ có bước sóng ngắn hơn ánh sáng nhìn thấy nhưng dài hơn tia X.",
+        "options": [
+          "Tia cực tím (UV): Bức xạ điện từ có bước sóng ngắn hơn ánh sáng nhìn thấy nhưng dài hơn tia X.",
+          "Hồng ngoại: Bức xạ điện từ có bước sóng dài hơn ánh sáng nhìn thấy...",
+          "Sóng vi ba: Một sóng điện từ có bước sóng trong khoảng 0,001–0,3 m...",
+          "Phổ điện từ: Phạm vi tất cả các loại bức xạ điện từ.",
+          "Bức xạ: Sự phát ra năng lượng dưới dạng sóng điện từ..."
+        ],
+        "timestamps": [
+          "00:04:10,160"
+        ]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "You know what else is opaque? UV.",
+        "correct_answer_text": "Bạn biết gì khác là mờ đục không? Tia UV.",
+        "options": [
+          "Bạn biết gì khác là mờ đục không? Tia UV.",
+          "Cái gì nữa thì không trong suốt? UV.",
+          "Tia UV cũng mờ đục đấy.",
+          "Tia UV không thể nhìn xuyên qua."
+        ],
+        "timestamps": ["00:04:10,160"]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "Glass blocks UV.",
+        "correct_answer_text": "Kính chặn tia UV.",
+        "options": [
+          "Kính chặn tia UV.",
+          "Kính không cho tia UV đi qua.",
+          "UV bị kính chặn lại.",
+          "Kính chống tia cực tím."
+        ],
+        "timestamps": ["00:04:12,880"]
+      }
+    ]
+  },
+  {
+    "word": "electromagnetic spectrum",
+    "part_of_speech": "n.",
+    "part_of_speech_vn": "Danh từ",
+    "definitions": [
+      {
+        "english": "The range of all types of electromagnetic radiation.",
+        "vietnamese": "Phổ điện từ: Phạm vi tất cả các loại bức xạ điện từ."
+      }
+    ],
+    "examples": [
+      {
+        "english": "Radio waves and X-rays are both part of the electromagnetic spectrum.",
+        "vietnamese": "Sóng vô tuyến và tia X đều là một phần của phổ điện từ."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the phrase '{word}'?",
+        "correct_answer_text": "Phổ điện từ: Phạm vi tất cả các loại bức xạ điện từ.",
+        "options": [
+          "Phổ điện từ: Phạm vi tất cả các loại bức xạ điện từ.",
+          "Bức xạ: Sự phát ra năng lượng dưới dạng sóng điện từ...",
+          "Bước sóng: Khoảng cách giữa các đỉnh liên tiếp của một sóng...",
+          "Hồng ngoại: Bức xạ điện từ có bước sóng dài hơn ánh sáng nhìn thấy...",
+          "Tia cực tím (UV): Bức xạ điện từ có bước sóng ngắn hơn ánh sáng nhìn thấy..."
+        ],
+        "timestamps": [
+          "00:03:32,840"
+        ]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "The Sun gives more green yellow light than any other kind of light.",
+        "correct_answer_text": "Mặt trời phát ra nhiều ánh sáng xanh vàng hơn bất kỳ loại ánh sáng nào khác.",
+        "options": [
+          "Mặt trời phát ra nhiều ánh sáng xanh vàng hơn bất kỳ loại ánh sáng nào khác.",
+          "Mặt trời cho nhiều ánh sáng xanh vàng hơn tất cả các loại ánh sáng khác.",
+          "Ánh sáng xanh vàng là loại ánh sáng mặt trời phát ra nhiều nhất.",
+          "Mặt trời có ánh sáng vàng xanh nhiều hơn bất kỳ loại ánh sáng nào khác."
+        ],
+        "timestamps": [
+          "00:03:50,720"
+        ]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "Microwaves are part of the electromagnetic spectrum.",
+        "correct_answer_text": "Sóng vi ba là một phần của phổ điện từ.",
+        "options": [
+          "Sóng vi ba là một phần của phổ điện từ.",
+          "Vi sóng thuộc về phổ điện từ.",
+          "Phổ điện từ bao gồm sóng vi ba.",
+          "Sóng vi ba là một loại bức xạ điện từ."
+        ],
+        "timestamps": ["00:00:32,840"]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "The Sun in the energy that it sends to Earth, it peaks in the red, orange, yellow, green, blue, violet part of the spectrum.",
+        "correct_answer_text": "Mặt trời, trong năng lượng mà nó gửi đến Trái đất, đạt đỉnh điểm ở phần đỏ, cam, vàng, xanh lá, xanh dương, tím của quang phổ.",
+        "options": [
+          "Mặt trời, trong năng lượng mà nó gửi đến Trái đất, đạt đỉnh điểm ở phần đỏ, cam, vàng, xanh lá, xanh dương, tím của quang phổ.",
+          "Năng lượng mặt trời gửi đến Trái đất đạt đỉnh ở phần quang phổ nhìn thấy được.",
+          "Mặt trời phát ra nhiều năng lượng nhất ở các màu đỏ, cam, vàng, xanh lá, xanh dương, tím của quang phổ.",
+          "Phần quang phổ nhìn thấy được là nơi mặt trời phát ra năng lượng cao nhất."
+        ],
+        "timestamps": ["00:03:38,640"]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "Glass blocks infrared on one side of the visible spectrum and ultraviolet on the other side of the spectrum, which is beyond violet.",
+        "correct_answer_text": "Kính chặn hồng ngoại ở một phía của phổ nhìn thấy và tia cực tím ở phía bên kia của phổ, nằm ngoài màu tím.",
+        "options": [
+          "Kính chặn hồng ngoại ở một phía của phổ nhìn thấy và tia cực tím ở phía bên kia của phổ, nằm ngoài màu tím.",
+          "Kính chặn tia hồng ngoại và tia cực tím của phổ.",
+          "Hồng ngoại và UV bị kính chặn ở hai đầu của phổ.",
+          "Kính trong suốt đối với ánh sáng nhìn thấy nhưng chặn hồng ngoại và tia cực tím."
+        ],
+        "timestamps": ["00:04:48,880"]
+      }
+    ]
+  },
+  {
+    "word": "wavelength",
+    "part_of_speech": "n.",
+    "part_of_speech_vn": "Danh từ",
+    "definitions": [
+      {
+        "english": "The distance between successive crests of a wave, especially points in a sound wave or electromagnetic wave.",
+        "vietnamese": "Bước sóng: Khoảng cách giữa các đỉnh liên tiếp của một sóng, đặc biệt là các điểm trong sóng âm hoặc sóng điện từ."
+      }
+    ],
+    "examples": [
+      {
+        "english": "Different colors of light have different wavelengths.",
+        "vietnamese": "Các màu sắc ánh sáng khác nhau có bước sóng khác nhau."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Bước sóng: Khoảng cách giữa các đỉnh liên tiếp của một sóng, đặc biệt là các điểm trong sóng âm hoặc sóng điện từ.",
+        "options": [
+          "Bước sóng: Khoảng cách giữa các đỉnh liên tiếp của một sóng, đặc biệt là các điểm trong sóng âm hoặc sóng điện từ.",
+          "Phổ điện từ: Phạm vi tất cả các loại bức xạ điện từ.",
+          "Sóng vi ba: Một sóng điện từ có bước sóng trong khoảng 0,001–0,3 m...",
+          "Hồng ngoại: Bức xạ điện từ có bước sóng dài hơn ánh sáng nhìn thấy...",
+          "Tia cực tím (UV): Bức xạ điện từ có bước sóng ngắn hơn ánh sáng nhìn thấy..."
+        ],
+        "timestamps": [
+          "00:01:40,320"
+        ]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "What wavelength of light?",
+        "correct_answer_text": "Bước sóng ánh sáng nào?",
+        "options": [
+          "Bước sóng ánh sáng nào?",
+          "Ánh sáng có bước sóng gì?",
+          "Wavelength của ánh sáng là gì?",
+          "Loại bước sóng ánh sáng nào?"
+        ],
+        "timestamps": ["00:02:58,560"]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "The wavelength of microwaves is like a few millimeters up to maybe a couple of centimeters in that zone.",
+        "correct_answer_text": "Bước sóng của sóng vi ba giống như vài milimet đến khoảng vài centimet trong vùng đó.",
+        "options": [
+          "Bước sóng của sóng vi ba giống như vài milimet đến khoảng vài centimet trong vùng đó.",
+          "Sóng vi ba có bước sóng từ vài milimet đến vài centimet trong khu vực đó.",
+          "Bước sóng của lò vi sóng là vài milimet đến vài centimet.",
+          "Trong vùng đó, bước sóng của sóng vi ba là vài mm đến vài cm."
+        ],
+        "timestamps": ["00:01:40,320"]
+      }
+    ]
+  },
+  {
+    "word": "penetration",
+    "part_of_speech": "n.",
+    "part_of_speech_vn": "Danh từ",
+    "definitions": [
+      {
+        "english": "The action or process of making a way through or into something.",
+        "vietnamese": "Sự xuyên qua: Hành động hoặc quá trình tạo ra một con đường xuyên qua hoặc đi vào một cái gì đó."
+      },
+      {
+        "english": "The extent to which a product or service is used by a market.",
+        "vietnamese": "Sự thâm nhập: Mức độ mà một sản phẩm hoặc dịch vụ được sử dụng bởi một thị trường."
+      }
+    ],
+    "examples": [
+      {
+        "english": "The penetration of the laser beam through the material was precise.",
+        "vietnamese": "Sự xuyên qua của tia laser qua vật liệu rất chính xác."
+      },
+      {
+        "english": "Market penetration for smartphones is very high.",
+        "vietnamese": "Sự thâm nhập thị trường của điện thoại thông minh rất cao."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Sự xuyên qua: Hành động hoặc quá trình tạo ra một con đường xuyên qua hoặc đi vào một cái gì đó.",
+        "options": [
+          "Sự xuyên qua: Hành động hoặc quá trình tạo ra một con đường xuyên qua hoặc đi vào một cái gì đó.",
+          "Sự thâm nhập: Mức độ mà một sản phẩm hoặc dịch vụ được sử dụng bởi một thị trường.",
+          "Sự truyền tải: Hành động hoặc quá trình truyền tải một cái gì đó...",
+          "Hộp số: Một cơ chế mà năng lượng được truyền từ động cơ...",
+          "Ngăn chặn: Ngăn (một cái gì đó) xảy ra hoặc phát sinh."
+        ],
+        "timestamps": [
+          "00:01:08,520"
+        ]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "AM has greater penetration through the surroundings of tunnels than FM does.",
+        "correct_answer_text": "AM có khả năng xuyên qua môi trường xung quanh đường hầm tốt hơn FM.",
+        "options": [
+          "AM có khả năng xuyên qua môi trường xung quanh đường hầm tốt hơn FM.",
+          "AM xuyên qua các đường hầm tốt hơn FM.",
+          "Sóng AM thâm nhập sâu hơn vào đường hầm so với FM.",
+          "AM có độ xuyên thấu cao hơn FM trong đường hầm."
+        ],
+        "timestamps": ["00:01:08,520"]
+      }
+    ]
+  },
+  {
+    "word": "transmission",
+    "part_of_speech": "n.",
+    "part_of_speech_vn": "Danh từ",
+    "definitions": [
+      {
+        "english": "The action or process of transmitting something, or the state of being transmitted.",
+        "vietnamese": "Sự truyền tải: Hành động hoặc quá trình truyền tải một cái gì đó, hoặc trạng thái được truyền tải."
+      },
+      {
+        "english": "A mechanism by which power is transmitted from an engine to the driving wheels of a motor vehicle.",
+        "vietnamese": "Hộp số: Một cơ chế mà năng lượng được truyền từ động cơ đến các bánh xe dẫn động của một phương tiện cơ giới."
+      }
+    ],
+    "examples": [
+      {
+        "english": "The transmission of data over the internet is very fast.",
+        "vietnamese": "Sự truyền tải dữ liệu qua internet rất nhanh."
+      },
+      {
+        "english": "My car needs a new transmission.",
+        "vietnamese": "Xe của tôi cần một hộp số mới."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Sự truyền tải: Hành động hoặc quá trình truyền tải một cái gì đó, hoặc trạng thái được truyền tải.",
+        "options": [
+          "Sự truyền tải: Hành động hoặc quá trình truyền tải một cái gì đó, hoặc trạng thái được truyền tải.",
+          "Hộp số: Một cơ chế mà năng lượng được truyền từ động cơ đến các bánh xe dẫn động của một phương tiện cơ giới.",
+          "Sự xuyên qua: Hành động hoặc quá trình tạo ra một con đường xuyên qua...",
+          "Ngăn chặn: Ngăn (một cái gì đó) xảy ra hoặc phát sinh.",
+          "Hấp thụ: Hút vào hoặc ngấm (năng lượng, chất lỏng hoặc chất khác)..."
+        ],
+        "timestamps": [
+          "00:02:40,960"
+        ]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "Glass prevents the transmission of heat.",
+        "correct_answer_text": "Kính ngăn chặn sự truyền nhiệt.",
+        "options": [
+          "Kính ngăn chặn sự truyền nhiệt.",
+          "Kính không cho nhiệt truyền qua.",
+          "Sự truyền nhiệt bị kính ngăn lại.",
+          "Kính là chất cách nhiệt."
+        ],
+        "timestamps": ["00:02:40,960"]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "It transmits, by definition, what we call visible light.",
+        "correct_answer_text": "Nó truyền, theo định nghĩa, thứ mà chúng ta gọi là ánh sáng nhìn thấy.",
+        "options": [
+          "Nó truyền, theo định nghĩa, thứ mà chúng ta gọi là ánh sáng nhìn thấy.",
+          "Theo định nghĩa, nó truyền ánh sáng nhìn thấy.",
+          "Cái đó truyền ánh sáng mà chúng ta thấy được.",
+          "Nó cho phép ánh sáng nhìn thấy truyền qua."
+        ],
+        "timestamps": ["00:04:58,800"]
+      }
+    ]
+  },
+  {
+    "word": "absorb",
+    "part_of_speech": "v.",
+    "part_of_speech_vn": "Động từ",
+    "definitions": [
+      {
+        "english": "Take in or soak up (energy, a liquid, or other substance) by chemical or physical action.",
+        "vietnamese": "Hấp thụ: Hút vào hoặc ngấm (năng lượng, chất lỏng hoặc chất khác) bằng hành động hóa học hoặc vật lý."
+      },
+      {
+        "english": "Understand and incorporate (information or experience).",
+        "vietnamese": "Tiếp thu: Hiểu và tiếp nhận (thông tin hoặc kinh nghiệm)."
+      }
+    ],
+    "examples": [
+      {
+        "english": "Plants absorb sunlight for photosynthesis.",
+        "vietnamese": "Thực vật hấp thụ ánh sáng mặt trời để quang hợp."
+      },
+      {
+        "english": "It's difficult to absorb so much new information at once.",
+        "vietnamese": "Thật khó để tiếp thu quá nhiều thông tin mới cùng một lúc."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Hấp thụ: Hút vào hoặc ngấm (năng lượng, chất lỏng hoặc chất khác) bằng hành động hóa học hoặc vật lý.",
+        "options": [
+          "Hấp thụ: Hút vào hoặc ngấm (năng lượng, chất lỏng hoặc chất khác) bằng hành động hóa học hoặc vật lý.",
+          "Tiếp thu: Hiểu và tiếp nhận (thông tin hoặc kinh nghiệm).",
+          "Tương tác: Hành động theo cách có ảnh hưởng đến cái khác...",
+          "Ngăn chặn: Ngăn (một cái gì đó) xảy ra hoặc phát sinh.",
+          "Bức xạ: Sự phát ra năng lượng dưới dạng sóng điện từ..."
+        ],
+        "timestamps": [
+          "00:04:15,840"
+        ]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "Glass out-of-the-box will absorb 97% of UV that hits it.",
+        "correct_answer_text": "Kính thông thường sẽ hấp thụ 97% tia UV chiếu vào nó.",
+        "options": [
+          "Kính thông thường sẽ hấp thụ 97% tia UV chiếu vào nó.",
+          "Kính bình thường sẽ hút 97% tia UV.",
+          "97% tia UV chiếu vào kính sẽ bị kính hấp thụ.",
+          "Kính chắn được 97% tia UV."
+        ],
+        "timestamps": ["00:04:15,840"]
+      }
+    ]
+  },
+  {
+    "word": "interacts",
+    "part_of_speech": "v.",
+    "part_of_speech_vn": "Động từ",
+    "definitions": [
+      {
+        "english": "Act in such a way as to have an effect on another; act reciprocally.",
+        "vietnamese": "Tương tác: Hành động theo cách có ảnh hưởng đến cái khác; hành động qua lại."
+      }
+    ],
+    "examples": [
+      {
+        "english": "The new software interacts seamlessly with existing systems.",
+        "vietnamese": "Phần mềm mới tương tác liền mạch với các hệ thống hiện có."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Tương tác: Hành động theo cách có ảnh hưởng đến cái khác; hành động qua lại.",
+        "options": [
+          "Tương tác: Hành động theo cách có ảnh hưởng đến cái khác; hành động qua lại.",
+          "Ngăn chặn: Ngăn (một cái gì đó) xảy ra hoặc phát sinh.",
+          "Hấp thụ: Hút vào hoặc ngấm (năng lượng, chất lỏng hoặc chất khác)...",
+          "Bức xạ: Sự phát ra năng lượng dưới dạng sóng điện từ...",
+          "Chỉ rõ: Xác định rõ ràng và chính xác."
+        ],
+        "timestamps": [
+          "00:01:27,1000"
+        ]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "The metal interacts with them.",
+        "correct_answer_text": "Kim loại tương tác với chúng.",
+        "options": [
+          "Kim loại tương tác với chúng.",
+          "Kim loại phản ứng với chúng.",
+          "Chúng tương tác với kim loại.",
+          "Kim loại có tác động với chúng."
+        ],
+        "timestamps": ["00:01:29,840"]
+      }
+    ]
+  },
+  {
+    "word": "prevents",
+    "part_of_speech": "v.",
+    "part_of_speech_vn": "Động từ",
+    "definitions": [
+      {
+        "english": "Stop (something) from happening or arising.",
+        "vietnamese": "Ngăn chặn: Ngăn (một cái gì đó) xảy ra hoặc phát sinh."
+      }
+    ],
+    "examples": [
+      {
+        "english": "Wearing a mask prevents the spread of germs.",
+        "vietnamese": "Đeo khẩu trang ngăn chặn sự lây lan của vi trùng."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Ngăn chặn: Ngăn (một cái gì đó) xảy ra hoặc phát sinh.",
+        "options": [
+          "Ngăn chặn: Ngăn (một cái gì đó) xảy ra hoặc phát sinh.",
+          "Tương tác: Hành động theo cách có ảnh hưởng đến cái khác...",
+          "Hấp thụ: Hút vào hoặc ngấm (năng lượng, chất lỏng hoặc chất khác)...",
+          "Sự truyền tải: Hành động hoặc quá trình truyền tải một cái gì đó...",
+          "Chỉ rõ: Xác định rõ ràng và chính xác."
+        ],
+        "timestamps": [
+          "00:01:29,840"
+        ]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "It prevents that in your microwave oven.",
+        "correct_answer_text": "Nó ngăn chặn điều đó trong lò vi sóng của bạn.",
+        "options": [
+          "Nó ngăn chặn điều đó trong lò vi sóng của bạn.",
+          "Điều đó bị ngăn chặn trong lò vi sóng của bạn.",
+          "Trong lò vi sóng, nó ngăn chặn điều này.",
+          "Nó không cho phép điều đó xảy ra trong lò vi sóng."
+        ],
+        "timestamps": ["00:01:31,360"]
+      }
+    ]
+  },
+  {
+    "word": "domiciles",
+    "part_of_speech": "n.",
+    "part_of_speech_vn": "Danh từ",
+    "definitions": [
+      {
+        "english": "The country that a person treats as their permanent home, or where they have their legal home.",
+        "vietnamese": "Nơi cư trú: Quốc gia mà một người coi là nhà vĩnh viễn của họ, hoặc nơi họ có nhà hợp pháp."
+      }
+    ],
+    "examples": [
+      {
+        "english": "The company has its principal domicile in London.",
+        "vietnamese": "Công ty có trụ sở chính tại London."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Nơi cư trú: Quốc gia mà một người coi là nhà vĩnh viễn của họ, hoặc nơi họ có nhà hợp pháp.",
+        "options": [
+          "Nơi cư trú: Quốc gia mà một người coi là nhà vĩnh viễn của họ, hoặc nơi họ có nhà hợp pháp.",
+          "Yếu tố: Một phần hoặc khía cạnh của một cái gì đó trừu tượng...",
+          "Nguyên tố: Mỗi trong số hơn một trăm chất không thể chuyển hóa hóa học...",
+          "Chất cách điện: Một chất hoặc thiết bị không dễ dàng dẫn điện.",
+          "Vật liệu cách nhiệt/cách âm: Một chất hoặc thiết bị không dễ dàng truyền nhiệt hoặc âm thanh."
+        ],
+        "timestamps": [
+          "00:03:17,040"
+        ]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "When we build domiciles, homes and whatever, you want to be able to look outside.",
+        "correct_answer_text": "Khi chúng ta xây nhà ở, nhà cửa và bất cứ thứ gì, bạn muốn có thể nhìn ra bên ngoài.",
+        "options": [
+          "Khi chúng ta xây nhà ở, nhà cửa và bất cứ thứ gì, bạn muốn có thể nhìn ra bên ngoài.",
+          "Khi xây dựng nơi cư trú, nhà và mọi thứ, bạn muốn nhìn ra ngoài.",
+          "Chúng ta xây nhà và muốn nhìn ra bên ngoài.",
+          "Khi xây dựng nhà cửa, bạn muốn có thể nhìn ra ngoài."
+        ],
+        "timestamps": ["00:03:17,040"]
+      }
+    ]
+  },
+  {
+    "word": "elements",
+    "part_of_speech": "n.",
+    "part_of_speech_vn": "Danh từ",
+    "definitions": [
+      {
+        "english": "A part or aspect of something abstract, especially one that is essential or characteristic.",
+        "vietnamese": "Yếu tố: Một phần hoặc khía cạnh của một cái gì đó trừu tượng, đặc biệt là một cái gì đó thiết yếu hoặc đặc trưng."
+      },
+      {
+        "english": "Each of more than one hundred substances that cannot be chemically interconverted or broken down into simpler substances and are primary constituents of matter.",
+        "vietnamese": "Nguyên tố: Mỗi trong số hơn một trăm chất không thể chuyển hóa hóa học hoặc phân hủy thành các chất đơn giản hơn và là thành phần chính của vật chất."
+      }
+    ],
+    "examples": [
+      {
+        "english": "Trust is a key element of any good relationship.",
+        "vietnamese": "Niềm tin là một yếu tố then chốt trong bất kỳ mối quan hệ tốt đẹp nào."
+      },
+      {
+        "english": "Oxygen is one of the most common elements on Earth.",
+        "vietnamese": "Oxy là một trong những nguyên tố phổ biến nhất trên Trái đất."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Yếu tố: Một phần hoặc khía cạnh của một cái gì đó trừu tượng, đặc biệt là một cái gì đó thiết yếu hoặc đặc trưng.",
+        "options": [
+          "Yếu tố: Một phần hoặc khía cạnh của một cái gì đó trừu tượng, đặc biệt là một cái gì đó thiết yếu hoặc đặc trưng.",
+          "Nguyên tố: Mỗi trong số hơn một trăm chất không thể chuyển hóa hóa học...",
+          "Nơi cư trú: Quốc gia mà một người coi là nhà vĩnh viễn của họ...",
+          "Chất cách điện: Một chất hoặc thiết bị không dễ dàng dẫn điện.",
+          "Vật liệu cách nhiệt/cách âm: Một chất hoặc thiết bị không dễ dàng truyền nhiệt hoặc âm thanh."
+        ],
+        "timestamps": [
+          "00:02:26,240"
+        ]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "We want to protect ourselves from the elements.",
+        "correct_answer_text": "Chúng ta muốn bảo vệ bản thân khỏi các yếu tố.",
+        "options": [
+          "Chúng ta muốn bảo vệ bản thân khỏi các yếu tố.",
+          "Chúng ta cần tự bảo vệ khỏi các yếu tố.",
+          "Bảo vệ chúng ta khỏi thời tiết.",
+          "Chúng ta muốn tránh các yếu tố bên ngoài."
+        ],
+        "timestamps": ["00:03:26,240"]
+      }
+    ]
+  },
+  {
+    "word": "insulator",
+    "part_of_speech": "n.",
+    "part_of_speech_vn": "Danh từ",
+    "definitions": [
+      {
+        "english": "A substance or device which does not readily conduct electricity.",
+        "vietnamese": "Chất cách điện: Một chất hoặc thiết bị không dễ dàng dẫn điện."
+      },
+      {
+        "english": "A substance or device which does not readily transmit heat or sound.",
+        "vietnamese": "Vật liệu cách nhiệt/cách âm: Một chất hoặc thiết bị không dễ dàng truyền nhiệt hoặc âm thanh."
+      }
+    ],
+    "examples": [
+      {
+        "english": "Rubber is a good electrical insulator.",
+        "vietnamese": "Cao su là một chất cách điện tốt."
+      },
+      {
+        "english": "Fiberglass is often used as an insulator in walls.",
+        "vietnamese": "Sợi thủy tinh thường được sử dụng làm vật liệu cách nhiệt trong tường."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Chất cách điện: Một chất hoặc thiết bị không dễ dàng dẫn điện.",
+        "options": [
+          "Chất cách điện: Một chất hoặc thiết bị không dễ dàng dẫn điện.",
+          "Vật liệu cách nhiệt/cách âm: Một chất hoặc thiết bị không dễ dàng truyền nhiệt hoặc âm thanh.",
+          "Yếu tố: Một phần hoặc khía cạnh của một cái gì đó trừu tượng...",
+          "Nguyên tố: Mỗi trong số hơn một trăm chất không thể chuyển hóa hóa học...",
+          "Bức xạ: Sự phát ra năng lượng dưới dạng sóng điện từ..."
+        ],
+        "timestamps": [
+          "00:02:38,400"
+        ]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "That's so cool because glass is like an insulator.",
+        "correct_answer_text": "Điều đó thật tuyệt vì kính giống như một chất cách điện.",
+        "options": [
+          "Điều đó thật tuyệt vì kính giống như một chất cách điện.",
+          "Kính là một loại chất cách điện, thật hay.",
+          "Thật thú vị vì kính là vật liệu cách nhiệt.",
+          "Kính giống như một chất cách nhiệt, điều đó thật tuyệt."
+        ],
+        "timestamps": ["00:02:38,400"]
+      }
+    ]
+  },
+  {
+    "word": "radiation",
+    "part_of_speech": "n.",
+    "part_of_speech_vn": "Danh từ",
+    "definitions": [
+      {
+        "english": "The emission of energy as electromagnetic waves or as moving subatomic particles, especially high-energy particles which cause ionization.",
+        "vietnamese": "Bức xạ: Sự phát ra năng lượng dưới dạng sóng điện từ hoặc các hạt hạ nguyên tử chuyển động, đặc biệt là các hạt năng lượng cao gây ion hóa."
+      }
+    ],
+    "examples": [
+      {
+        "english": "Solar radiation provides warmth to the Earth.",
+        "vietnamese": "Bức xạ mặt trời cung cấp hơi ấm cho Trái đất."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Bức xạ: Sự phát ra năng lượng dưới dạng sóng điện từ hoặc các hạt hạ nguyên tử chuyển động, đặc biệt là các hạt năng lượng cao gây ion hóa.",
+        "options": [
+          "Bức xạ: Sự phát ra năng lượng dưới dạng sóng điện từ hoặc các hạt hạ nguyên tử chuyển động, đặc biệt là các hạt năng lượng cao gây ion hóa.",
+          "Áo choàng tàng hình: Một thiết bị hoặc trang phục giả định...",
+          "Định hướng: Định hướng hoặc dẫn dắt theo một lộ trình cụ thể.",
+          "Làm trung gian: (trong tâm linh) đóng vai trò trung gian cho (một linh hồn hoặc thế lực).",
+          "Đường dẫn quang học: Con đường mà ánh sáng đi qua một hệ thống..."
+        ],
+        "timestamps": [
+          "00:02:02,800"
+        ]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "So I'm not getting irradiated.",
+        "correct_answer_text": "Vậy tôi không bị chiếu xạ.",
+        "options": [
+          "Vậy tôi không bị chiếu xạ.",
+          "Vì vậy tôi không bị bức xạ.",
+          "Tôi không bị nhiễm phóng xạ.",
+          "Tôi không phải chịu bức xạ."
+        ],
+        "timestamps": ["00:02:02,800"]
+      }
+    ]
+  },
+  {
+    "word": "invisibility cloak",
+    "part_of_speech": "n.",
+    "part_of_speech_vn": "Danh từ",
+    "definitions": [
+      {
+        "english": "A hypothetical device or garment that could make its wearer or contents invisible.",
+        "vietnamese": "Áo choàng tàng hình: Một thiết bị hoặc trang phục giả định có thể làm cho người mặc hoặc vật chứa bên trong trở nên vô hình."
+      }
+    ],
+    "examples": [
+      {
+        "english": "Scientists are researching materials for an invisibility cloak.",
+        "vietnamese": "Các nhà khoa học đang nghiên cứu vật liệu cho áo choàng tàng hình."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the phrase '{word}'?",
+        "correct_answer_text": "Áo choàng tàng hình: Một thiết bị hoặc trang phục giả định có thể làm cho người mặc hoặc vật chứa bên trong trở nên vô hình.",
+        "options": [
+          "Áo choàng tàng hình: Một thiết bị hoặc trang phục giả định có thể làm cho người mặc hoặc vật chứa bên trong trở nên vô hình.",
+          "Bức xạ: Sự phát ra năng lượng dưới dạng sóng điện từ...",
+          "Định hướng: Định hướng hoặc dẫn dắt theo một lộ trình cụ thể.",
+          "Làm trung gian: (trong tâm linh) đóng vai trò trung gian cho (một linh hồn hoặc thế lực).",
+          "Đường dẫn quang học: Con đường mà ánh sáng đi qua một hệ thống..."
+        ],
+        "timestamps": [
+          "00:05:04,040"
+        ]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "So in Harry Potter, they had the invisibility cloak.",
+        "correct_answer_text": "Vậy trong Harry Potter, họ có áo choàng tàng hình.",
+        "options": [
+          "Vậy trong Harry Potter, họ có áo choàng tàng hình.",
+          "Trong Harry Potter, họ dùng áo tàng hình.",
+          "Harry Potter có áo choàng vô hình.",
+          "Áo choàng tàng hình xuất hiện trong Harry Potter."
+        ],
+        "timestamps": ["00:05:04,040"]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "You put on this invisibility cloak and what happens is the light from behind you hits the back of your cloak and is channeled around the front and comes straight back out from the front of you.",
+        "correct_answer_text": "Bạn mặc chiếc áo choàng tàng hình này vào và điều xảy ra là ánh sáng từ phía sau bạn chiếu vào mặt sau áo choàng của bạn và được định hướng vòng ra phía trước và đi thẳng ra từ phía trước bạn.",
+        "options": [
+          "Bạn mặc chiếc áo choàng tàng hình này vào và điều xảy ra là ánh sáng từ phía sau bạn chiếu vào mặt sau áo choàng của bạn và được định hướng vòng ra phía trước và đi thẳng ra từ phía trước bạn.",
+          "Khi bạn mặc áo choàng tàng hình, ánh sáng từ sau lưng bạn sẽ đi vòng ra phía trước.",
+          "Áo choàng tàng hình này cho phép ánh sáng đi qua nó và bạn sẽ trở nên vô hình.",
+          "Ánh sáng chiếu vào áo choàng sẽ được chuyển hướng để bạn tàng hình."
+        ],
+        "timestamps": ["00:05:22,720"]
+      }
+    ]
+  },
+  {
+    "word": "channeled",
+    "part_of_speech": "v.",
+    "part_of_speech_vn": "Động từ",
+    "definitions": [
+      {
+        "english": "Direct or guide along a particular course.",
+        "vietnamese": "Định hướng: Định hướng hoặc dẫn dắt theo một lộ trình cụ thể."
+      },
+      {
+        "english": "(in spiritualism) act as a medium for (a spirit or agency).",
+        "vietnamese": "Làm trung gian: (trong tâm linh) đóng vai trò trung gian cho (một linh hồn hoặc thế lực)."
+      }
+    ],
+    "examples": [
+      {
+        "english": "The river was channeled to prevent flooding.",
+        "vietnamese": "Dòng sông đã được định hướng để ngăn chặn lũ lụt."
+      },
+      {
+        "english": "She claimed to channel messages from ancient spirits.",
+        "vietnamese": "Cô ấy tuyên bố có thể làm trung gian truyền tải thông điệp từ các linh hồn cổ xưa."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Định hướng: Định hướng hoặc dẫn dắt theo một lộ trình cụ thể.",
+        "options": [
+          "Định hướng: Định hướng hoặc dẫn dắt theo một lộ trình cụ thể.",
+          "Làm trung gian: (trong tâm linh) đóng vai trò trung gian cho (một linh hồn hoặc thế lực).",
+          "Áo choàng tàng hình: Một thiết bị hoặc trang phục giả định...",
+          "Đường dẫn quang học: Con đường mà ánh sáng đi qua một hệ thống...",
+          "Phức tạp: Bao gồm nhiều bộ phận hoặc yếu tố liên kết với nhau..."
+        ],
+        "timestamps": [
+          "00:05:27,120"
+        ]
+      }
+    ]
+  },
+  {
+    "word": "optical pathways",
+    "part_of_speech": "n.",
+    "part_of_speech_vn": "Danh từ",
+    "definitions": [
+      {
+        "english": "The path that light takes through an optical system or medium.",
+        "vietnamese": "Đường dẫn quang học: Con đường mà ánh sáng đi qua một hệ thống hoặc môi trường quang học."
+      }
+    ],
+    "examples": [
+      {
+        "english": "Fiber optics use complex optical pathways to transmit data.",
+        "vietnamese": "Cáp quang sử dụng các đường dẫn quang học phức tạp để truyền dữ liệu."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the phrase '{word}'?",
+        "correct_answer_text": "Đường dẫn quang học: Con đường mà ánh sáng đi qua một hệ thống hoặc môi trường quang học.",
+        "options": [
+          "Đường dẫn quang học: Con đường mà ánh sáng đi qua một hệ thống hoặc môi trường quang học.",
+          "Phức tạp: Bao gồm nhiều bộ phận hoặc yếu tố liên kết với nhau...",
+          "Khó hiểu: Khó phân tích, hiểu hoặc giải thích.",
+          "Hấp dẫn: Cực kỳ thú vị.",
+          "Về mặt thị giác: Theo cách trực quan; về những gì có thể nhìn thấy."
+        ],
+        "timestamps": [
+          "00:05:34,640"
+        ]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "This is a very complicated optical pathways that the light has to take.",
+        "correct_answer_text": "Đây là một đường dẫn quang học rất phức tạp mà ánh sáng phải đi qua.",
+        "options": [
+          "Đây là một đường dẫn quang học rất phức tạp mà ánh sáng phải đi qua.",
+          "Con đường quang học này mà ánh sáng đi qua thì rất phức tạp.",
+          "Ánh sáng cần đi theo một con đường quang học phức tạp.",
+          "Hệ thống này có các đường dẫn quang học phức tạp cho ánh sáng."
+        ],
+        "timestamps": ["00:05:34,640"]
+      }
+    ]
+  },
+  {
+    "word": "complicated",
+    "part_of_speech": "adj.",
+    "part_of_speech_vn": "Tính từ",
+    "definitions": [
+      {
+        "english": "Consisting of many interconnecting parts or elements; intricate.",
+        "vietnamese": "Phức tạp: Bao gồm nhiều bộ phận hoặc yếu tố liên kết với nhau; rắc rối."
+      },
+      {
+        "english": "Difficult to analyze, understand, or explain.",
+        "vietnamese": "Khó hiểu: Khó phân tích, hiểu hoặc giải thích."
+      }
+    ],
+    "examples": [
+      {
+        "english": "The instructions for assembling the furniture were very complicated.",
+        "vietnamese": "Hướng dẫn lắp ráp đồ nội thất rất phức tạp."
+      },
+      {
+        "english": "Their relationship is a bit complicated.",
+        "vietnamese": "Mối quan hệ của họ hơi phức tạp."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Phức tạp: Bao gồm nhiều bộ phận hoặc yếu tố liên kết với nhau; rắc rối.",
+        "options": [
+          "Phức tạp: Bao gồm nhiều bộ phận hoặc yếu tố liên kết với nhau; rắc rối.",
+          "Khó hiểu: Khó phân tích, hiểu hoặc giải thích.",
+          "Đường dẫn quang học: Con đường mà ánh sáng đi qua một hệ thống...",
+          "Hấp dẫn: Cực kỳ thú vị.",
+          "Về mặt thị giác: Theo cách trực quan; về những gì có thể nhìn thấy."
+        ],
+        "timestamps": [
+          "00:05:34,640"
+        ]
+      }
+    ]
+  },
+  {
+    "word": "fascinating",
+    "part_of_speech": "adj.",
+    "part_of_speech_vn": "Tính từ",
+    "definitions": [
+      {
+        "english": "Extremely interesting.",
+        "vietnamese": "Hấp dẫn: Cực kỳ thú vị."
+      }
+    ],
+    "examples": [
+      {
+        "english": "The history of ancient civilizations is truly fascinating.",
+        "vietnamese": "Lịch sử các nền văn minh cổ đại thực sự hấp dẫn."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Hấp dẫn: Cực kỳ thú vị.",
+        "options": [
+          "Hấp dẫn: Cực kỳ thú vị.",
+          "Về mặt thị giác: Theo cách trực quan; về những gì có thể nhìn thấy.",
+          "Sự do dự: Hành động tạm dừng trước khi nói hoặc làm điều gì đó.",
+          "Môi trường xung quanh: Những thứ và điều kiện xung quanh một người hoặc vật.",
+          "Về mặt kỹ thuật: Theo sự thật hoặc nghĩa chính xác của một cái gì đó..."
+        ],
+        "timestamps": [
+          "00:05:01,320"
+        ]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "And that's what makes glass quite a fascinating thing.",
+        "correct_answer_text": "Và đó là điều làm cho kính trở thành một thứ khá hấp dẫn.",
+        "options": [
+          "Và đó là điều làm cho kính trở thành một thứ khá hấp dẫn.",
+          "Điều đó khiến thủy tinh trở nên khá thú vị.",
+          "Kính là một vật liệu rất hấp dẫn vì điều đó.",
+          "Đó là lý do tại sao kính lại rất thú vị."
+        ],
+        "timestamps": ["00:05:01,320"]
+      }
+    ]
+  },
+  {
+    "word": "visually",
+    "part_of_speech": "adv.",
+    "part_of_speech_vn": "Trạng từ",
+    "definitions": [
+      {
+        "english": "In a visual way; in terms of what can be seen.",
+        "vietnamese": "Về mặt thị giác: Theo cách trực quan; về những gì có thể nhìn thấy."
+      }
+    ],
+    "examples": [
+      {
+        "english": "The presentation was visually stunning.",
+        "vietnamese": "Bài thuyết trình rất ấn tượng về mặt thị giác."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Về mặt thị giác: Theo cách trực quan; về những gì có thể nhìn thấy.",
+        "options": [
+          "Về mặt thị giác: Theo cách trực quan; về những gì có thể nhìn thấy.",
+          "Hấp dẫn: Cực kỳ thú vị.",
+          "Sự do dự: Hành động tạm dừng trước khi nói hoặc làm điều gì đó.",
+          "Môi trường xung quanh: Những thứ và điều kiện xung quanh một người hoặc vật.",
+          "Về mặt kỹ thuật: Theo sự thật hoặc nghĩa chính xác của một cái gì đó..."
+        ],
+        "timestamps": [
+          "00:04:41,440"
+        ]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "It would still be bright, visually bright.",
+        "correct_answer_text": "Nó vẫn sẽ sáng, sáng rõ ràng về mặt thị giác.",
+        "options": [
+          "Nó vẫn sẽ sáng, sáng rõ ràng về mặt thị giác.",
+          "Nó vẫn sáng rõ, sáng rõ ràng về mắt.",
+          "Về mặt thị giác, nó vẫn sẽ sáng.",
+          "Trực quan mà nói, nó vẫn sẽ rất sáng."
+        ],
+        "timestamps": ["00:04:41,440"]
+      }
+    ]
+  },
+  {
+    "word": "hesitation",
+    "part_of_speech": "n.",
+    "part_of_speech_vn": "Danh từ",
+    "definitions": [
+      {
+        "english": "The action of pausing before saying or doing something.",
+        "vietnamese": "Sự do dự: Hành động tạm dừng trước khi nói hoặc làm điều gì đó."
+      }
+    ],
+    "examples": [
+      {
+        "english": "After a brief hesitation, she accepted the offer.",
+        "vietnamese": "Sau một chút do dự, cô ấy đã chấp nhận lời đề nghị."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Sự do dự: Hành động tạm dừng trước khi nói hoặc làm điều gì đó.",
+        "options": [
+          "Sự do dự: Hành động tạm dừng trước khi nói hoặc làm điều gì đó.",
+          "Môi trường xung quanh: Những thứ và điều kiện xung quanh một người hoặc vật.",
+          "Về mặt kỹ thuật: Theo sự thật hoặc nghĩa chính xác của một cái gì đó...",
+          "Chỉ rõ: Xác định rõ ràng và chính xác.",
+          "Phát hiện: Khám phá hoặc xác định sự hiện diện hoặc tồn tại của."
+        ],
+        "timestamps": [
+          "00:00:25,040"
+        ]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "The microwaves have no hesitation.",
+        "correct_answer_text": "Sóng vi ba không có sự do dự.",
+        "options": [
+          "Sóng vi ba không có sự do dự.",
+          "Microwave không ngần ngại.",
+          "Sóng vi ba đi thẳng qua không chút chậm trễ.",
+          "Không có sự chậm trễ nào với sóng vi ba."
+        ],
+        "timestamps": ["00:00:25,040"]
+      }
+    ]
+  },
+  {
+    "word": "surroundings",
+    "part_of_speech": "n.",
+    "part_of_speech_vn": "Danh từ",
+    "definitions": [
+      {
+        "english": "The things and conditions around a person or thing.",
+        "vietnamese": "Môi trường xung quanh: Những thứ và điều kiện xung quanh một người hoặc vật."
+      }
+    ],
+    "examples": [
+      {
+        "english": "He felt comfortable in his new surroundings.",
+        "vietnamese": "Anh ấy cảm thấy thoải mái trong môi trường xung quanh mới của mình."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Môi trường xung quanh: Những thứ và điều kiện xung quanh một người hoặc vật.",
+        "options": [
+          "Môi trường xung quanh: Những thứ và điều kiện xung quanh một người hoặc vật.",
+          "Sự do dự: Hành động tạm dừng trước khi nói hoặc làm điều gì đó.",
+          "Về mặt kỹ thuật: Theo sự thật hoặc nghĩa chính xác của một cái gì đó...",
+          "Chỉ rõ: Xác định rõ ràng và chính xác.",
+          "Phát hiện: Khám phá hoặc xác định sự hiện diện hoặc tồn tại của."
+        ],
+        "timestamps": [
+          "00:01:10,880"
+        ]
+      }
+    ]
+  },
+  {
+    "word": "technically",
+    "part_of_speech": "adv.",
+    "part_of_speech_vn": "Trạng từ",
+    "definitions": [
+      {
+        "english": "According to the facts or exact meaning of something; strictly.",
+        "vietnamese": "Về mặt kỹ thuật: Theo sự thật hoặc nghĩa chính xác của một cái gì đó; nghiêm ngặt."
+      },
+      {
+        "english": "In a way that relates to a particular subject, art, or craft, or its techniques.",
+        "vietnamese": "Về mặt chuyên môn: Theo cách liên quan đến một chủ đề, nghệ thuật hoặc nghề thủ công cụ thể, hoặc các kỹ thuật của nó."
+      }
+    ],
+    "examples": [
+      {
+        "english": "Technically, the project is due next week, but we might finish early.",
+        "vietnamese": "Về mặt kỹ thuật, dự án sẽ đến hạn vào tuần tới, nhưng chúng tôi có thể hoàn thành sớm."
+      },
+      {
+        "english": "He is technically brilliant but lacks leadership skills.",
+        "vietnamese": "Anh ấy rất xuất sắc về mặt chuyên môn nhưng thiếu kỹ năng lãnh đạo."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Về mặt kỹ thuật: Theo sự thật hoặc nghĩa chính xác của một cái gì đó; nghiêm ngặt.",
+        "options": [
+          "Về mặt kỹ thuật: Theo sự thật hoặc nghĩa chính xác của một cái gì đó; nghiêm ngặt.",
+          "Về mặt chuyên môn: Theo cách liên quan đến một chủ đề, nghệ thuật hoặc nghề thủ công cụ thể...",
+          "Chỉ rõ: Xác định rõ ràng và chính xác.",
+          "Phát hiện: Khám phá hoặc xác định sự hiện diện hoặc tồn tại của.",
+          "Đỉnh: Phần nhọn nhất của một ngọn núi."
+        ],
+        "timestamps": [
+          "00:02:53,920"
+        ]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "When you say something is transparent, technically you should be specifying transparent for what.",
+        "correct_answer_text": "Khi bạn nói thứ gì đó trong suốt, về mặt kỹ thuật bạn nên chỉ rõ trong suốt đối với cái gì.",
+        "options": [
+          "Khi bạn nói thứ gì đó trong suốt, về mặt kỹ thuật bạn nên chỉ rõ trong suốt đối với cái gì.",
+          "Nếu bạn nói cái gì đó trong suốt, thì về mặt kỹ thuật bạn phải chỉ rõ trong suốt cho cái gì.",
+          "Trong suốt nghĩa là trong suốt với cái gì.",
+          "Bạn nên nói rõ trong suốt với cái gì khi nói nó trong suốt."
+        ],
+        "timestamps": ["00:02:53,920"]
+      }
+    ]
+  },
+  {
+    "word": "specifying",
+    "part_of_speech": "v.",
+    "part_of_speech_vn": "Động từ",
+    "definitions": [
+      {
+        "english": "Identify clearly and precisely.",
+        "vietnamese": "Chỉ rõ: Xác định rõ ràng và chính xác."
+      }
+    ],
+    "examples": [
+      {
+        "english": "The contract is specifying the exact terms of the agreement.",
+        "vietnamese": "Hợp đồng đang chỉ rõ các điều khoản chính xác của thỏa thuận."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Chỉ rõ: Xác định rõ ràng và chính xác.",
+        "options": [
+          "Chỉ rõ: Xác định rõ ràng và chính xác.",
+          "Phát hiện: Khám phá hoặc xác định sự hiện diện hoặc tồn tại của.",
+          "Đỉnh: Phần nhọn nhất của một ngọn núi.",
+          "Đỉnh điểm: Điểm hoạt động, cường độ hoặc thành tích cao nhất.",
+          "Ranh giới: Một đường đánh dấu giới hạn của một khu vực..."
+        ],
+        "timestamps": [
+          "00:02:56,160"
+        ]
+      }
+    ]
+  },
+  {
+    "word": "detecting",
+    "part_of_speech": "v.",
+    "part_of_speech_vn": "Động từ",
+    "definitions": [
+      {
+        "english": "Discover or identify the presence or existence of.",
+        "vietnamese": "Phát hiện: Khám phá hoặc xác định sự hiện diện hoặc tồn tại của."
+      }
+    ],
+    "examples": [
+      {
+        "english": "The new sensor is capable of detecting very small changes in temperature.",
+        "vietnamese": "Cảm biến mới có khả năng phát hiện những thay đổi rất nhỏ về nhiệt độ."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Phát hiện: Khám phá hoặc xác định sự hiện diện hoặc tồn tại của.",
+        "options": [
+          "Phát hiện: Khám phá hoặc xác định sự hiện diện hoặc tồn tại của.",
+          "Đỉnh: Phần nhọn nhất của một ngọn núi.",
+          "Đỉnh điểm: Điểm hoạt động, cường độ hoặc thành tích cao nhất.",
+          "Ranh giới: Một đường đánh dấu giới hạn của một khu vực...",
+          "Khí quyển: Lớp khí bao quanh Trái đất hoặc một hành tinh khác."
+        ],
+        "timestamps": [
+          "00:03:14,240"
+        ]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "Air happens to be transparent to the light that we are detecting.",
+        "correct_answer_text": "Không khí tình cờ trong suốt đối với ánh sáng mà chúng ta đang phát hiện.",
+        "options": [
+          "Không khí tình cờ trong suốt đối với ánh sáng mà chúng ta đang phát hiện.",
+          "Không khí trong suốt với ánh sáng mà chúng ta dò tìm.",
+          "Ánh sáng chúng ta phát hiện có thể xuyên qua không khí.",
+          "Không khí không cản ánh sáng chúng ta đang thấy."
+        ],
+        "timestamps": ["00:03:14,240"]
+      }
+    ]
+  },
+  {
+    "word": "peaks",
+    "part_of_speech": "n.",
+    "part_of_speech_vn": "Danh từ",
+    "definitions": [
+      {
+        "english": "The pointed top of a mountain.",
+        "vietnamese": "Đỉnh: Phần nhọn nhất của một ngọn núi."
+      },
+      {
+        "english": "The point of highest activity, intensity, or achievement.",
+        "vietnamese": "Đỉnh điểm: Điểm hoạt động, cường độ hoặc thành tích cao nhất."
+      }
+    ],
+    "examples": [
+      {
+        "english": "They climbed to the peaks of the highest mountains.",
+        "vietnamese": "Họ đã leo lên đỉnh những ngọn núi cao nhất."
+      },
+      {
+        "english": "Traffic reaches its peaks during rush hour.",
+        "vietnamese": "Lưu lượng giao thông đạt đỉnh điểm vào giờ cao điểm."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Đỉnh: Phần nhọn nhất của một ngọn núi.",
+        "options": [
+          "Đỉnh: Phần nhọn nhất của một ngọn núi.",
+          "Đỉnh điểm: Điểm hoạt động, cường độ hoặc thành tích cao nhất.",
+          "Ranh giới: Một đường đánh dấu giới hạn của một khu vực...",
+          "Khí quyển: Lớp khí bao quanh Trái đất hoặc một hành tinh khác.",
+          "Phòng thí nghiệm: Một phòng hoặc tòa nhà được trang bị cho các thí nghiệm khoa học..."
+        ],
+        "timestamps": [
+          "00:03:47,920"
+        ]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "And within that it peaks right at the green yellow boundary.",
+        "correct_answer_text": "Và trong đó nó đạt đỉnh ngay tại ranh giới xanh vàng.",
+        "options": [
+          "Và trong đó nó đạt đỉnh ngay tại ranh giới xanh vàng.",
+          "Nó đạt đỉnh ở ranh giới giữa xanh và vàng.",
+          "Ở đó, nó lên đến đỉnh điểm ở vùng chuyển tiếp xanh vàng.",
+          "Điểm cao nhất của nó là ở ranh giới xanh vàng."
+        ],
+        "timestamps": ["00:03:47,920"]
+      }
+    ]
+  },
+  {
+    "word": "boundary",
+    "part_of_speech": "n.",
+    "part_of_speech_vn": "Danh từ",
+    "definitions": [
+      {
+        "english": "A line which marks the limits of an area; a dividing line.",
+        "vietnamese": "Ranh giới: Một đường đánh dấu giới hạn của một khu vực; một đường phân chia."
+      }
+    ],
+    "examples": [
+      {
+        "english": "The river forms the natural boundary between the two countries.",
+        "vietnamese": "Con sông tạo thành ranh giới tự nhiên giữa hai quốc gia."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Ranh giới: Một đường đánh dấu giới hạn của một khu vực; một đường phân chia.",
+        "options": [
+          "Ranh giới: Một đường đánh dấu giới hạn của một khu vực; một đường phân chia.",
+          "Đỉnh: Phần nhọn nhất của một ngọn núi.",
+          "Đỉnh điểm: Điểm hoạt động, cường độ hoặc thành tích cao nhất.",
+          "Khí quyển: Lớp khí bao quanh Trái đất hoặc một hành tinh khác.",
+          "Phòng thí nghiệm: Một phòng hoặc tòa nhà được trang bị cho các thí nghiệm khoa học..."
+        ],
+        "timestamps": [
+          "00:03:47,920"
+        ]
+      }
+    ]
+  },
+  {
+    "word": "atmosphere",
+    "part_of_speech": "n.",
+    "part_of_speech_vn": "Danh từ",
+    "definitions": [
+      {
+        "english": "The envelope of gases surrounding the earth or another planet.",
+        "vietnamese": "Khí quyển: Lớp khí bao quanh Trái đất hoặc một hành tinh khác."
+      },
+      {
+        "english": "The pervading tone or mood of a place, situation, or work of art.",
+        "vietnamese": "Bầu không khí: Tông hoặc tâm trạng bao trùm của một địa điểm, tình huống hoặc tác phẩm nghệ thuật."
+      }
+    ],
+    "examples": [
+      {
+        "english": "The Earth's atmosphere protects us from harmful solar radiation.",
+        "vietnamese": "Khí quyển Trái đất bảo vệ chúng ta khỏi bức xạ mặt trời có hại."
+      },
+      {
+        "english": "The restaurant had a very relaxed atmosphere.",
+        "vietnamese": "Nhà hàng có một bầu không khí rất thư giãn."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Khí quyển: Lớp khí bao quanh Trái đất hoặc một hành tinh khác.",
+        "options": [
+          "Khí quyển: Lớp khí bao quanh Trái đất hoặc một hành tinh khác.",
+          "Bầu không khí: Tông hoặc tâm trạng bao trùm của một địa điểm, tình huống hoặc tác phẩm nghệ thuật.",
+          "Ranh giới: Một đường đánh dấu giới hạn của một khu vực...",
+          "Phòng thí nghiệm: Một phòng hoặc tòa nhà được trang bị cho các thí nghiệm khoa học...",
+          "Các nhà vật lý: Các nhà khoa học chuyên về vật lý."
+        ],
+        "timestamps": [
+          "00:03:56,720"
+        ]
+      },
+      {
+        "type": "translate_sentence_en_to_vn",
+        "question_template": "Dịch câu sau sang tiếng Việt: \"{english_sentence}\"",
+        "english_sentence": "Because the atmosphere is transparent.",
+        "correct_answer_text": "Bởi vì khí quyển trong suốt.",
+        "options": [
+          "Bởi vì khí quyển trong suốt.",
+          "Do không khí trong suốt.",
+          "Khí quyển là trong suốt.",
+          "Vì bầu khí quyển trong suốt."
+        ],
+        "timestamps": ["00:03:56,720"]
+      }
+    ]
+  },
+  {
+    "word": "laboratory",
+    "part_of_speech": "n.",
+    "part_of_speech_vn": "Danh từ",
+    "definitions": [
+      {
+        "english": "A room or building equipped for scientific experiments, research, or teaching, or for the manufacture of drugs or chemicals.",
+        "vietnamese": "Phòng thí nghiệm: Một phòng hoặc tòa nhà được trang bị cho các thí nghiệm khoa học, nghiên cứu, hoặc giảng dạy, hoặc để sản xuất thuốc hoặc hóa chất."
+      }
+    ],
+    "examples": [
+      {
+        "english": "Scientists conduct experiments in the laboratory.",
+        "vietnamese": "Các nhà khoa học tiến hành thí nghiệm trong phòng thí nghiệm."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Phòng thí nghiệm: Một phòng hoặc tòa nhà được trang bị cho các thí nghiệm khoa học, nghiên cứu, hoặc giảng dạy, hoặc để sản xuất thuốc hoặc hóa chất.",
+        "options": [
+          "Phòng thí nghiệm: Một phòng hoặc tòa nhà được trang bị cho các thí nghiệm khoa học, nghiên cứu, hoặc giảng dạy, hoặc để sản xuất thuốc hoặc hóa chất.",
+          "Các nhà vật lý: Các nhà khoa học chuyên về vật lý.",
+          "Thiết bị: Một công cụ hoặc thiết bị được thiết kế cho một mục đích cụ thể.",
+          "Thí nghiệm: Một quy trình khoa học được thực hiện để làm sáng tỏ, xác nhận hoặc bác bỏ một giả thuyết.",
+          "Mô hình: Một vật thể ba chiều, thường có tỷ lệ nhỏ, của một vật thể hoặc cấu trúc."
+        ],
+        "timestamps": [
+          "00:03:09,880"
+        ]
+      }
+    ]
+  },
+  {
+    "word": "physicists",
+    "part_of_speech": "n.",
+    "part_of_speech_vn": "Danh từ",
+    "definitions": [
+      {
+        "english": "Scientists who specialize in physics.",
+        "vietnamese": "Các nhà vật lý: Các nhà khoa học chuyên về vật lý."
+      }
+    ],
+    "examples": [
+      {
+        "english": "Physicists study the fundamental principles of the universe.",
+        "vietnamese": "Các nhà vật lý nghiên cứu các nguyên tắc cơ bản của vũ trụ."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Các nhà vật lý: Các nhà khoa học chuyên về vật lý.",
+        "options": [
+          "Các nhà vật lý: Các nhà khoa học chuyên về vật lý.",
+          "Phòng thí nghiệm: Một phòng hoặc tòa nhà được trang bị cho các thí nghiệm khoa học...",
+          "Thiết bị: Một công cụ hoặc thiết bị được thiết kế cho một mục đích cụ thể.",
+          "Thí nghiệm: Một quy trình khoa học được thực hiện để làm sáng tỏ, xác nhận hoặc bác bỏ một giả thuyết.",
+          "Mô hình: Một vật thể ba chiều, thường có tỷ lệ nhỏ, của một vật thể hoặc cấu trúc."
+        ],
+        "timestamps": [
+          "00:03:09,880"
+        ]
+      }
+    ]
+  },
+  {
+    "word": "materials",
+    "part_of_speech": "n.",
+    "part_of_speech_vn": "Danh từ",
+    "definitions": [
+      {
+        "english": "The matter from which a thing is or can be made.",
+        "vietnamese": "Vật liệu: Chất liệu mà một vật được tạo ra hoặc có thể được tạo ra."
+      }
+    ],
+    "examples": [
+      {
+        "english": "Construction materials include wood, concrete, and steel.",
+        "vietnamese": "Vật liệu xây dựng bao gồm gỗ, bê tông và thép."
+      }
+    ],
+    "quiz_questions": [
+      {
+        "type": "multiple_choice_meaning_vn",
+        "question_template": "What is the Vietnamese meaning of the word '{word}'?",
+        "correct_answer_text": "Vật liệu: Chất liệu mà một vật được tạo ra hoặc có thể được tạo ra.",
+        "options": [
+          "Vật liệu: Chất liệu mà một vật được tạo ra hoặc có thể được tạo ra.",
+          "Thiết bị: Một công cụ hoặc thiết bị được thiết kế cho một mục đích cụ thể.",
+          "Thí nghiệm: Một quy trình khoa học được thực hiện để làm sáng tỏ, xác nhận hoặc bác bỏ một giả thuyết.",
+          "Mô hình: Một vật thể ba chiều, thường có tỷ lệ nhỏ, của một vật thể hoặc cấu trúc.",
+          "Nguyên tố: Mỗi trong số hơn một trăm chất không thể chuyển hóa hóa học..."
+        ],
+        "timestamps": [
+          "00:05:44,520"
+        ]
+      }
+    ]
+  }
+]

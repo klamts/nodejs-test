@@ -1,0 +1,103 @@
+<h2 style="text-align: center; font-size: 28px; margin-bottom: 20px;">📚 Our World 1 – Unit 1: Phonics</h2>
+
+<div style="text-align: center; margin-bottom: 30px;">
+  <a href="/practice/1/unit1/game" class="link-btn">🎮 Game ôn tập tổng quát</a>
+  <a href="/practice/1/unit1/imageflash" class="link-btn">🖼️ Game hình ảnh</a>
+  <a href="/practice/1/unit1/listen_sound_match" class="link-btn">🔊 Game âm đầu/âm cuối</a>
+  <a href="/practice/1/unit1" class="link-btn">📘 Luyện tập Unit 1</a>
+  
+  <a href="/hoithoai/hoithoaiourworld1unit1_0" class="link-btn">📘 Hội thoại Unit 1</a>
+  <a href="/hoithoai/hoithoaiourworld1unit1_1" class="link-btn">📘 Tập đọc Unit 1</a>
+</div>
+
+<style>
+  .link-btn {
+    display: inline-block;
+    margin: 6px 12px;
+    padding: 10px 18px;
+    background: #f0f8ff;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    border: 1px solid #d0e0ff;
+    transition: background 0.3s ease;
+  }
+
+  .link-btn:hover {
+    background: #d6e9ff;
+  }
+
+  .lesson-card {
+    display: flex;
+    flex-wrap: wrap;
+    background: #fefefe;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    padding: 24px;
+    gap: 30px;
+    max-width: 1000px;
+    width: 95%;
+    margin: 0 auto 40px auto;
+  }
+
+  .lesson-image {
+    flex: 1 1 300px;
+    text-align: center;
+  }
+
+  .lesson-image img {
+    max-width: 100%;
+    border-radius: 12px;
+  }
+
+  .lesson-audio {
+    flex: 1 1 300px;
+  }
+
+  .lesson-title {
+    font-size: 20px;
+    margin-top: 10px;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .audio-box {
+    margin-bottom: 20px;
+  }
+
+  .audio-box p {
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+</style>
+
+<h2 style="text-align: center; margin: 40px 0 20px;">📘 Danh sách bài học</h2>
+
+<% lessons.forEach(lesson => { %>
+  <div class="lesson-card">
+    <div class="lesson-image">
+      <img src="/PhonicOurworld1/<%= lesson.image %>">
+      <div class="lesson-title"><%= lesson.image.replace('.png', '') %></div>
+    </div>
+    <div class="lesson-audio">
+      <% lesson.audios.forEach(audio => { %>
+        <div class="audio-box">
+          <p>🎵 <%= audio.replace('.mp3', '') %></p>
+          <audio controls src="/audio/<%= audio %>"></audio>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+<% }) %>
+
+
+<script>
+  function playAudio(filename) {
+    const audioPlayer = document.getElementById('introAudio');
+    const title = document.getElementById('audioTitle');
+    audioPlayer.src = `/audio/${filename}`;
+    audioPlayer.play();
+    title.innerHTML = '🎵 Đang phát: ' + filename.replace('.mp3', '');
+  }
+</script>

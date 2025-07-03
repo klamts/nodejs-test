@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Assemble the Word</title>
+  <style>
+    body { margin: 0; font-family: sans-serif; overflow: hidden; background: #f0f0f0; }
+    .letter {
+      position: absolute;
+      font-size: 30px;
+      padding: 10px;
+      border: 2px solid #333;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+      background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+    }
+    .letter.selected {
+      background: #cce5ff;
+      border-color: #007bff;
+    }
+    #target-word {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      font-size: 24px;
+    }
+    .hint-box {
+      display: none;
+      position: fixed;
+      right: 20px;
+      background: #fff;
+      border: 2px solid #333;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      width: 250px;
+      font-size: 16px;
+    }
+    #hint-us { top: 100px; }
+    #hint-en { top: 180px; }
+    #hint-vn { top: 260px; }
+    #letter-area {
+  position: absolute;
+  top: 100px;  /* tránh top-left */
+  left: 20px;
+  right: 300px; /* tránh hint bên phải */
+  bottom: 20px;
+  overflow: hidden;
+}
+  </style>
+</head>
+<body>
+
+<!-- Vùng hiển thị từ đang ghép -->
+<div id="target-word">
+  Your word: <span id="current-word"></span>
+  <div id="word-hint" style="color: gray; font-size: 14px;"></div>
+</div>
+<!-- Vùng chứa các chữ cái -->
+<div id="letter-area"></div>
+<!-- Các nút hiển thị hint -->
+<div style="position: fixed; top: 20px; right: 20px;">
+  <button onclick="toggleHint('us')" style="margin-bottom: 5px;">💬 Phát âm (US)</button><br>
+  <button onclick="toggleHint('en')">🇬🇧 Nghĩa tiếng Anh</button><br>
+  <button onclick="toggleHint('vn')">🇻🇳 Nghĩa tiếng Việt</button>
+</div>
+
+<!-- Các hộp hint -->
+<div id="hint-us" class="hint-box">
+  <strong>🔊 Phát âm (US):</strong> <%= phonetic_us %><br>
+  <button onclick="playTTS('<%= word %>')">▶️ Nghe phát âm</button>
+</div>
+
+<div id="hint-en" class="hint-box">
+  <strong>🇬🇧 Nghĩa tiếng Anh:</strong> <%= definition %>
+</div>
+
+<div id="hint-vn" class="hint-box">
+  <strong>🇻🇳 Nghĩa tiếng Việt:</strong> <%= translation %>
+</div>
+
+<script>
+//   const level = '<%= level %>'; // 'easy', 'medium', or 'hard'
+//   const word = "<%= word %>".toLowerCase();
+//   const letters = word.split('');
+//   const shuffled = [...letters].sort(() => Math.random() - 0.5);
+//   const selected = [];
+
+//   if (level === 'easy') {
+//     document.getElementById('word-hint').textContent = "Hint: " + word;
+//     document.getElementById('hint-us').style.display = 'block';
+//     document.getElementById('hint-en').style.display = 'block';
+//     document.getElementById('hint-vn').style.display = 'block';
+//   } else if (level === 'medium') {
+//     document.getElementById('hint-us').style.display = 'block';
+//     document.getElementById('hint-vn').style.display = 'block';
+//   } else if (level === 'hard') {
+//     document.getElementById('hint-us').style.display = 'block';
+//     document.getElementById('hint-en').style.display = 'block';
+//   }
+
+//   shuffled.forEach((letter, index) => {
+//     const el = document.createElement('letter-area');
+//     el.className = 'letter';
+//     el.textContent = letter;
+
+//     const x = Math.random() * (window.innerWidth - 100);
+//     const y = Math.random() * (window.innerHeight - 100);
+//     el.style.left = x + 'px';
+//     el.style.top = y + 'px';
+
+//     el.onclick = () => {
+//       if (el.classList.contains('selected')) {
+//         el.classList.remove('selected');
+//         const i = selected.lastIndexOf(letter);
+//         if (i !== -1) selected.splice(i, 1);
+//       } else {
+//         el.classList.add('selected');
+//         selected.push(letter);
+//       }
+
+//       document.getElementById('current-word').textContent = selected.join('');
+
+//       if (selected.join('') === word) {
+//         playTTS(word);
+//         alert("🎉 Bạn đã ghép đúng từ: " + word + "\n🇻🇳 " + "<%= translation %>" + "\n🇬🇧 " + "<%= definition %>");
+//         setTimeout(() => location.reload(), 2500);
+//       } else if (selected.length === word.length) {
+//         const tryAgain = confirm("❌ Sai rồi! Bạn muốn thử lại hay chuyển sang từ mới?");
+//         if (tryAgain) {
+//           location.reload();
+//         } else {
+//           window.location.href = "/next-word";
+//         }
+//       }
+//     };
+
+//     document.getElementById('letter-area').appendChild(el);
+//   });
+
+//   function playTTS(word) {
+//     fetch("/tts/generate", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({ word })
+//     })
+//     .then(res => res.json())
+//     .then(data => {
+//       const audio = new Audio(data.url);
+//       audio.play();
+//     })
+//     .catch(err => alert("Lỗi phát âm: " + err));
+//   }
+
+//   function toggleHint(type) {
+//     const el = document.getElementById(`hint-${type}`);
+//     el.style.display = (el.style.display === "none" || el.style.display === "") ? "block" : "none";
+//   }
+
+
+  
+  const level = '<%= level %>'; // 'easy', 'medium', or 'hard'
+  const word = "<%= word %>".toLowerCase();
+  const letters = word.split('');
+  const shuffled = [...letters].sort(() => Math.random() - 0.5);
+  const selected = [];
+
+  if (level === 'easy') {
+    document.getElementById('word-hint').textContent = "Hint: " + word;
+    document.getElementById('hint-us').style.display = 'block';
+    document.getElementById('hint-en').style.display = 'block';
+    document.getElementById('hint-vn').style.display = 'block';
+  } else if (level === 'medium') {
+    document.getElementById('hint-us').style.display = 'block';
+    document.getElementById('hint-vn').style.display = 'block';
+  } else if (level === 'hard') {
+    document.getElementById('hint-us').style.display = 'block';
+    document.getElementById('hint-en').style.display = 'block';
+  }
+
+  const area = document.getElementById('letter-area');
+  const areaRect = area.getBoundingClientRect();
+  const letterSize = 60; // chiều rộng mỗi chữ cái (bao gồm padding, border)
+  const padding = 10;
+  const placedRects = [];
+
+  shuffled.forEach((letter, index) => {
+    const el = document.createElement('div');
+    el.className = 'letter';
+    el.textContent = letter;
+
+    let x, y, tries = 0;
+    let overlap = true;
+
+    while (overlap && tries < 500) {
+      x = Math.floor(Math.random() * (areaRect.width - letterSize - padding));
+      y = Math.floor(Math.random() * (areaRect.height - letterSize - padding));
+      const newRect = { x, y, width: letterSize, height: letterSize };
+
+      overlap = placedRects.some(r =>
+        !(r.x + r.width < newRect.x || r.x > newRect.x + newRect.width ||
+          r.y + r.height < newRect.y || r.y > newRect.y + newRect.height)
+      );
+
+      tries++;
+    }
+
+    placedRects.push({ x, y, width: letterSize, height: letterSize });
+
+    el.style.left = `${x}px`;
+    el.style.top = `${y}px`;
+
+    el.onclick = () => {
+      if (el.classList.contains('selected')) {
+        el.classList.remove('selected');
+        const i = selected.lastIndexOf(letter);
+        if (i !== -1) selected.splice(i, 1);
+      } else {
+        el.classList.add('selected');
+        selected.push(letter);
+      }
+
+      document.getElementById('current-word').textContent = selected.join('');
+
+      if (selected.join('') === word) {
+        playTTS(word);
+        alert("🎉 Bạn đã ghép đúng từ: " + word + "\n🇻🇳 " + "<%= translation %>" + "\n🇬🇧 " + "<%= definition %>");
+        setTimeout(() => location.reload(), 2500);
+      } else if (selected.length === word.length) {
+        const tryAgain = confirm("❌ Sai rồi! Bạn muốn thử lại hay chuyển sang từ mới?");
+        if (tryAgain) {
+          location.reload();
+        } else {
+          window.location.href = "/next-word";
+        }
+      }
+    };
+
+    area.appendChild(el);
+  });
+
+  function playTTS(word) {
+    fetch("/tts/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ word })
+    })
+    .then(res => res.json())
+    .then(data => {
+      const audio = new Audio(data.url);
+      audio.play();
+    })
+    .catch(err => alert("Lỗi phát âm: " + err));
+  }
+
+  function toggleHint(type) {
+    const el = document.getElementById(`hint-${type}`);
+    el.style.display = (el.style.display === "none" || el.style.display === "") ? "block" : "none";
+  }
+</script>
+
+</script>
+
+</script>
+
+</body>
+</html>

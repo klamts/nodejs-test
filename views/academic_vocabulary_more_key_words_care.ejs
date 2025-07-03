@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>More Key Words</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f6fb;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      color: #1e88e5;
+      text-align: center;
+    }
+    .controls {
+      max-width: 500px;
+      margin: 0 auto 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .keywords {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 15px;
+      text-align: center;
+    }
+    .card img {
+      width: 100%;
+      max-height: 140px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .word {
+      font-weight: bold;
+      color: #fbc02d;
+      font-size: 20px;
+      margin: 10px 0 5px;
+    }
+    .example {
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 5px 10px;
+      margin: 3px;
+      font-size: 13px;
+      border: none;
+      border-radius: 6px;
+      background-color: #1e88e5;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #1565c0;
+    }
+    #result {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="controls">
+    <label><input type="checkbox" id="ttsToggle" checked> 🔊 Bật đọc tiếng Anh</label>
+
+    <label for="voiceSelect">🎙️ Chọn giọng đọc:</label>
+    <select id="voiceSelect"></select>
+
+    <label for="rate">🚀 Tốc độ: <span id="rateValue">1</span></label>
+    <input type="range" id="rate" min="0.5" max="2" value="1" step="0.1">
+
+    <label for="pitch">🎵 Cao độ: <span id="pitchValue">1</span></label>
+    <input type="range" id="pitch" min="0" max="2" value="1" step="0.1">
+  </div>
+
+  <h1>More Key Words</h1>
+  <div class="keywords" id="keywordsContainer"></div>
+
+  <div id="result"></div>
+
+  <script>
+    const wordsData = [
+      { word: "care", image: "images/care.jpg", example: "I care for my plant." },
+      { word: "celebrate", image: "images/celebrate.jpg", example: "We celebrate grandma's birthday." },
+      { word: "help", image: "images/help.jpg", example: "I help carry the clothes." },
+      { word: "play", image: "images/play.jpg", example: "We play a game." },
+      { word: "world", image: "images/world.jpg", example: "There are many people and places in the world." }
+    ];
+
+    const synth = window.speechSynthesis;
+    let voices = [];
+    const voiceSelect = document.getElementById("voiceSelect");
+    const ttsToggle = document.getElementById("ttsToggle");
+    const resultDiv = document.getElementById("result");
+
+    // Populate voice list
+    function populateVoices() {
+      voices = synth.getVoices();
+      voiceSelect.innerHTML = "";
+      voices.forEach((voice, i) => {
+        const option = document.createElement("option");
+        option.value = i;
+        option.textContent = `${voice.name} (${voice.lang})`;
+        voiceSelect.appendChild(option);
+      });
+    }
+    synth.onvoiceschanged = populateVoices;
+
+    function speakText(text) {
+      if (!ttsToggle.checked) return;
+      const utterance = new SpeechSynthesisUtterance(text);
+      const selectedVoice = voices[113] || voices[114];
+      utterance.voice = selectedVoice;
+      utterance.rate = parseFloat(document.getElementById("rate").value);
+      utterance.pitch = parseFloat(document.getElementById("pitch").value);
+      synth.cancel();
+      synth.speak(utterance);
+    }
+
+    // Render cards
+    const container = document.getElementById("keywordsContainer");
+    wordsData.forEach((item, index) => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+  <img src="${item.image}" alt="${item.word}" />
+  <div class="word">${item.word}</div>
+  <div class="example">${item.example}</div>
+  <button onclick="speakText('${item.example.replace(/'/g, "\\'")}')">🔈 Nghe</button>
+  <button onclick="startRecognition('${item.example.replace(/'/g, "\\'")}')">🎤 Kiểm tra phát âm</button>
+  <button onclick="playUserAudio()">🔁 Nghe lại giọng bạn</button>
+`;
+
+      container.appendChild(card);
+    });
+
+    // Update rate/pitch display
+    document.getElementById('rate').addEventListener('input', function () {
+      document.getElementById('rateValue').textContent = this.value;
+    });
+    document.getElementById('pitch').addEventListener('input', function () {
+      document.getElementById('pitchValue').textContent = this.value;
+    });
+
+    // Recognition and user audio playback
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    let userAudioBlob = null;
+
+    function startRecognition(correctText) {
+      resultDiv.innerText = "🎙️ Đang nghe...";
+      recognition.start();
+
+      // Ghi âm bằng MediaRecorder
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+        const mediaRecorder = new MediaRecorder(stream);
+        const chunks = [];
+
+        mediaRecorder.ondataavailable = e => chunks.push(e.data);
+        mediaRecorder.onstop = () => {
+          userAudioBlob = new Blob(chunks, { type: 'audio/webm' });
+          stream.getTracks().forEach(track => track.stop());
+        };
+
+        recognition.onresult = (event) => {
+          const spokenText = event.results[0][0].transcript.toLowerCase();
+          const expected = correctText.toLowerCase();
+          resultDiv.innerText = spokenText === expected
+            ? "✅ Đúng! Phát âm tốt!"
+            : `❌ Sai"${spokenText}". Đúng là: "${correctText}"`;
+          mediaRecorder.stop();
+        };
+
+        recognition.onerror = () => {
+          resultDiv.innerText = "⚠️ Lỗi nhận diện giọng nói.";
+          mediaRecorder.stop();
+        };
+
+        mediaRecorder.start();
+      }).catch(err => {
+        resultDiv.innerText = "❌ Không thể truy cập micro.";
+        console.error(err);
+      });
+    }
+
+    function playUserAudio() {
+      if (!userAudioBlob) {
+        resultDiv.innerText = "⚠️ Chưa có bản ghi nào.";
+        return;
+      }
+      const audioURL = URL.createObjectURL(userAudioBlob);
+      const audio = new Audio(audioURL);
+      audio.play();
+    }
+
+  </script>
+</body>
+</html>

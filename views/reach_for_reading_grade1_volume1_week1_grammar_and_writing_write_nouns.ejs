@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Write Nouns Practice</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #e0f7fa, #f0f8ff);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: linear-gradient(90deg, #4CAF50, #45a049);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      margin: 0;
+      font-size: 2em;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      flex-grow: 1;
+      text-align: center;
+    }
+    .instructions {
+      color: #333;
+      font-size: 1.1em;
+      margin: 15px 0;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 5px;
+    }
+    table {
+      width: 100%;
+      margin-bottom: 20px;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 12px;
+      text-align: center;
+    }
+    th {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .question {
+      margin-bottom: 20px;
+      padding: 15px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
+    }
+    .question:hover {
+      transform: translateY(-2px);
+    }
+    select {
+      font-size: 16px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      transition: border-color 0.3s;
+    }
+    select:focus {
+      border-color: #2196F3;
+      outline: none;
+    }
+    .controls {
+      margin-top: 20px;
+      padding: 15px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    button {
+      font-size: 16px;
+      margin-right: 10px;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      transform: translateY(-1px);
+    }
+    .check-btn {
+      background-color: #8BC34A;
+      color: white;
+    }
+    .check-btn:hover {
+      background-color: #7CB342;
+    }
+    .reset-btn {
+      background-color: #FF9800;
+      color: white;
+    }
+    .reset-btn:hover {
+      background-color: #F57C00;
+    }
+    .result {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .correct {
+      color: green;
+    }
+    .wrong {
+      color: red;
+    }
+    #score {
+      margin-top: 20px;
+      font-size: 1.2em;
+    }
+    footer {
+      background: #4CAF50;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>📘 Write Nouns (Singular vs Plural)</h2>
+  </header>
+  <div class="container">
+    <table border="1" cellpadding="8" style="margin-bottom: 20px">
+      <thead><tr><th>Singular Noun</th><th>Plural Noun</th></tr></thead>
+      <tbody>
+        <tr><td>child</td><td>children</td></tr>
+        <tr><td>brother</td><td>brothers</td></tr>
+        <tr><td>house</td><td>houses</td></tr>
+      </tbody>
+    </table>
+    <div class="instructions">Read each sentence. Find a word from the word bank that completes the sentence. Write the word in the sentence</div>
+    <div id="exercise"></div>
+
+    <div class="controls">
+      <button class="check-btn" onclick="checkAnswers()">✔ Check Answers</button>
+      <button class="reset-btn" onclick="reset()">🔄 Reset</button>
+    </div>
+    <div id="score" class="result"></div>
+  </div>
+  <footer>
+    <p>© 2025 Write Nouns Practice. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const questions = [
+      {
+        sentence: "My mom and dad are my ___",
+        options: ["parent", "parents"],
+        correct: "parents"
+      },
+      {
+        sentence: "They have two ___",
+        options: ["child", "children"],
+        correct: "children"
+      },
+      {
+        sentence: "I have one ___",
+        options: ["brother", "brothers"],
+        correct: "brother"
+      },
+      {
+        sentence: "We live in a ___",
+        options: ["house", "houses"],
+        correct: "house"
+      },
+      {
+        sentence: "We play many ___",
+        options: ["game", "games"],
+        correct: "games"
+      },
+      {
+        sentence: "I love my ___",
+        options: ["family", "families"],
+        correct: "family"
+      }
+    ];
+
+    let recognition;
+    const supportsSpeech = 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;
+
+    const container = document.getElementById("exercise");
+    questions.forEach((q, i) => {
+      const div = document.createElement("div");
+      div.className = "question";
+      div.innerHTML = `
+        <p id="s${i}">${i + 1}. ${q.sentence.replace("___", `
+          <select id='q${i}'>
+            <option value=''>--Choose--</option>
+            <option value='${q.options[0]}'>${q.options[0]}</option>
+            <option value='${q.options[1]}'>${q.options[1]}</option>
+          </select>
+        `)}</p>
+        <button onclick="speakSentence(${i})">🔊</button>
+        ${supportsSpeech ? `<button onclick="record(${i})">🎤</button>` : ""}
+        <div id="r${i}" class="result"></div>
+      `;
+      container.appendChild(div);
+    });
+
+    function speakSentence(i) {
+      const select = document.getElementById(`q${i}`);
+      const chosen = select.value || questions[i].correct;
+      const sentence = questions[i].sentence.replace("___", chosen);
+      const u = new SpeechSynthesisUtterance(sentence);
+      const voices = speechSynthesis.getVoices();
+      const indexvoice_want = 115;
+
+      if (voices.length > indexvoice_want) {
+        u.voice = voices[indexvoice_want];
+        console.log("✅ Using voice:", voices[indexvoice_want].name, voices[indexvoice_want].lang);
+      } else {
+        console.warn("❌ Voice index", indexvoice_want, "không tồn tại trong danh sách.");
+      }
+
+      u.lang = "en-US";
+      speechSynthesis.speak(u);
+    }
+
+    function record(i) {
+      if (!supportsSpeech) return alert("Speech recognition not supported.");
+      const sentence = questions[i].sentence.replace("___", questions[i].correct).toLowerCase();
+
+      recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = "en-US";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onresult = e => {
+        const said = e.results[0][0].transcript.trim().toLowerCase();
+        const resultDiv = document.getElementById(`r${i}`);
+        if (said === sentence) {
+          resultDiv.textContent = `🎤 ✅ Good reading!`;
+          resultDiv.className = "result correct";
+        } else {
+          resultDiv.textContent = `🎤 ❌ You said: "${said}"`;
+          resultDiv.className = "result wrong";
+        }
+      };
+
+      recognition.onerror = e => {
+        const resultDiv = document.getElementById(`r${i}`);
+        resultDiv.textContent = `🎤 ❌ Error: ${e.error}`;
+        resultDiv.className = "result wrong";
+      };
+
+      recognition.start();
+    }
+
+    function checkAnswers() {
+      let score = 0;
+      questions.forEach((q, i) => {
+        const select = document.getElementById(`q${i}`);
+        const answer = select.value;
+        const resultDiv = document.getElementById(`r${i}`);
+        if (answer === q.correct) {
+          resultDiv.textContent = "✅ Correct!";
+          resultDiv.className = "result correct";
+          score++;
+        } else {
+          resultDiv.textContent = `❌ Correct answer: ${q.correct}`;
+          resultDiv.className = "result wrong";
+        }
+      });
+      document.getElementById("score").textContent = `🎯 You got ${score}/${questions.length} correct.`;
+    }
+
+    function reset() {
+      questions.forEach((q, i) => {
+        document.getElementById(`q${i}`).value = "";
+        document.getElementById(`r${i}`).textContent = "";
+        document.getElementById(`r${i}`).className = "result";
+      });
+      document.getElementById("score").textContent = "";
+    }
+  </script>
+</body>
+</html>

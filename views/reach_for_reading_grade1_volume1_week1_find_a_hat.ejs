@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Find a Hat - Practice</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #e0f7fa, #f0f8ff);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: linear-gradient(90deg, #4CAF50, #45a049);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      margin: 0;
+      font-size: 2em;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .instructions {
+      text-align: center;
+      color: #333;
+      font-size: 1.1em;
+      margin: 15px 0;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 5px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      flex-grow: 1;
+    }
+    .sentence {
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
+    }
+    .sentence:hover {
+      transform: translateY(-2px);
+    }
+    input {
+      font-size: 18px;
+      padding: 8px;
+      width: 120px;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      transition: border-color 0.3s;
+    }
+    input:focus {
+      border-color: #2196F3;
+      outline: none;
+    }
+    button {
+      margin: 0 5px;
+      padding: 8px 15px;
+      font-size: 14px;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      transform: translateY(-1px);
+    }
+    .speak-btn {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .speak-btn:hover {
+      background-color: #45a049;
+    }
+    .pronounce-btn {
+      background-color: #2196F3;
+      color: white;
+    }
+    .pronounce-btn:hover {
+      background-color: #1976D2;
+    }
+    .replay-btn {
+      background-color: #9C27B0;
+      color: white;
+    }
+    .replay-btn:hover {
+      background-color: #7B1FA2;
+    }
+    .play-btn {
+      background-color: #FF9800;
+      color: white;
+    }
+    .play-btn:hover {
+      background-color: #F57C00;
+    }
+    .check-btn {
+      background-color: #8BC34A;
+      color: white;
+    }
+    .check-btn:hover {
+      background-color: #7CB342;
+    }
+    .result {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .hf-words {
+      margin-bottom: 20px;
+      padding: 15px;
+      background: #f0f0f0;
+      border-left: 5px solid #4caf50;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .hf-words strong {
+      margin-right: 10px;
+    }
+    .hf-words span {
+      margin-right: 10px;
+      font-weight: bold;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 5px 10px;
+      background: #fff;
+      border-radius: 15px;
+      transition: transform 0.2s, background-color 0.2s;
+    }
+    .hf-words span:hover {
+      transform: scale(1.1);
+      background-color: #4CAF50;
+      color: white;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 15px auto;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    #score {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 1.2em;
+      color: #333;
+    }
+    footer {
+      background: #4CAF50;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>🧢 Find a Hat - Listening & Speaking Practice</h2>
+  </header>
+  <div class="container">
+    <div class="instructions">🧢 Write a word from the box to complete each sentence.</div>
+    <img src="/images/find_a_hat.jpg" alt="Find a Hat Image" onerror="this.style.display='none'">
+    <div class="hf-words">
+      <strong>High-Frequency Words:</strong>
+      <span onclick="speakWord('find')">find</span>
+      <span onclick="speakWord('has')">has</span>
+      <span onclick="speakWord('have')">have</span>
+      <span onclick="speakWord('his')">his</span>
+      <span onclick="speakWord('mother')">mother</span>
+      <span onclick="speakWord('too')">too</span>
+    </div>
+
+    <div id="exercise"></div>
+    <div style="text-align: center;">
+      <button class="check-btn" onclick="checkAllAnswers()">✔ Check All</button>
+    </div>
+    <div id="score"></div>
+  </div>
+  <footer>
+    <p>© 2025 Find a Hat Practice. All rights reserved.</p>
+  </footer>
+
+  <script>
+    let selectedVoiceIndex = 114;
+    const voiceSelect = document.getElementById("voiceSelect");
+
+    // Khởi tạo danh sách giọng
+    function populateVoiceList() {
+      if (!voiceSelect) {
+        const voiceContainer = document.createElement("div");
+        voiceContainer.innerHTML = `<label for="voiceSelect">Chọn giọng: </label><select id="voiceSelect" onchange="updateVoiceSelection()"></select>`;
+        document.querySelector(".container").insertBefore(voiceContainer, document.getElementById("exercise"));
+        voiceSelect = document.getElementById("voiceSelect");
+      }
+      voiceSelect.innerHTML = '<option value="-1">Tự động chọn</option>';
+      const voices = speechSynthesis.getVoices();
+      voices.forEach((voice, index) => {
+        const option = document.createElement("option");
+        option.value = index;
+        option.text = `${voice.name} (${voice.lang})`;
+        voiceSelect.appendChild(option);
+      });
+    }
+
+    // Xử lý sự kiện voiceschanged
+    speechSynthesis.onvoiceschanged = populateVoiceList;
+
+    function updateVoiceSelection() {
+      selectedVoiceIndex = parseInt(voiceSelect.value);
+      console.log("Giọng được chọn:", selectedVoiceIndex);
+    }
+
+    // Dữ liệu câu hỏi
+    const questions = [
+      { id: 1, text: "Sam ___ a hat.", answer: "has" },
+      { id: 2, text: "___ hat is on the mat.", answer: "His" },
+      { id: 3, text: "His ___ sat on his hat!", answer: "mother" },
+      { id: 4, text: "I have a hat, ___", answer: "too" },
+      { id: 5, text: "___ my hat!", answer: "Find" },
+    ];
+
+    // Tạo giao diện câu hỏi
+    const container = document.getElementById('exercise');
+    questions.forEach(q => {
+      const div = document.createElement('div');
+      div.className = 'sentence';
+      const html = `
+        <p id="text-${q.id}">${q.text.replace('___', `<input type='text' id='input-${q.id}' data-answer='${q.answer.toLowerCase()}' oninput='checkOneAnswer(${q.id})' />`)}</p>
+        <button class="speak-btn" onclick="speakSentence(${q.id})">🔊</button>
+        <button class="pronounce-btn" onclick="checkPronunciation(${q.id})">🎤</button>
+        <button class="replay-btn" onclick="replayUserAudio(${q.id})">🔁</button>
+        <button class="play-btn" onclick="playRecording(${q.id})">▶️</button>
+        <div class='result' id='result-${q.id}'></div>
+        <audio id='audio-${q.id}' controls style="display:none"></audio>
+      `;
+      div.innerHTML = html;
+      container.appendChild(div);
+    });
+
+    // Phát từ vựng
+    function speakWord(word) {
+      const utterance = new SpeechSynthesisUtterance(word);
+      setVoice(utterance);
+      speechSynthesis.speak(utterance);
+    }
+
+    // Phát câu hoàn chỉnh
+    function speakSentence(id) {
+      const input = document.getElementById(`input-${id}`);
+      const word = input.value.trim() || questions.find(q => q.id === id).answer;
+      const question = questions.find(q => q.id === id).text.replace('___', word);
+      const utterance = new SpeechSynthesisUtterance(question);
+      setVoice(utterance);
+      utterance.rate = 0.9;
+      utterance.pitch = 1.0;
+      speechSynthesis.speak(utterance);
+    }
+
+    // Thiết lập giọng
+    function setVoice(utterance) {
+      const voices = speechSynthesis.getVoices();
+      if (selectedVoiceIndex >= 0 && selectedVoiceIndex < voices.length) {
+        utterance.voice = voices[selectedVoiceIndex];
+        console.log("Sử dụng giọng:", voices[selectedVoiceIndex].name, voices[selectedVoiceIndex].lang);
+      } else {
+        const defaultVoice = voices.find(voice => voice.lang.startsWith("en-US") && voice.name.includes("Wavenet"));
+        utterance.voice = defaultVoice || voices[0];
+        console.log("Sử dụng giọng mặc định:", utterance.voice.name);
+      }
+      utterance.lang = 'en-US';
+    }
+
+    // Kiểm tra phát âm
+    function checkPronunciation(id) {
+      const result = document.getElementById(`result-${id}`);
+      const expected = document.getElementById(`input-${id}`).dataset.answer;
+      const audio = document.getElementById(`audio-${id}`);
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      let chunks = [];
+      let mediaRecorder;
+
+      recognition.onstart = () => {
+        result.textContent = '🎤 Listening...';
+        navigator.mediaDevices.getUserMedia({ audio: true })
+          .then(stream => {
+            mediaRecorder = new MediaRecorder(stream);
+            mediaRecorder.ondataavailable = e => chunks.push(e.data);
+            mediaRecorder.start();
+          })
+          .catch(err => console.error("Microphone error:", err));
+      };
+
+      recognition.onend = () => {
+        if (mediaRecorder) mediaRecorder.stop();
+      };
+
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'audio/webm' });
+        const url = URL.createObjectURL(blob);
+        audio.src = url;
+        audio.style.display = 'block';
+        audio.dataset.blobUrl = url;
+      };
+
+      recognition.onresult = (e) => {
+        const said = e.results[0][0].transcript.trim().toLowerCase();
+        if (said === expected) {
+          result.textContent = '✅ Good pronunciation';
+          result.style.color = 'green';
+        } else {
+          result.textContent = `❌ You said: ${said}`;
+          result.style.color = 'red';
+        }
+      };
+
+      recognition.onerror = (e) => {
+        result.textContent = '🎤 ❌ Error: ' + e.error;
+        result.style.color = 'gray';
+      };
+
+      recognition.start();
+    }
+
+    // Phát lại ghi âm
+    function replayUserAudio(id) {
+      const audio = document.getElementById(`audio-${id}`);
+      if (audio && audio.dataset.blobUrl) {
+        audio.play().catch(err => alert("Không thể phát lại: " + err));
+      } else {
+        alert("Chưa có ghi âm để phát lại!");
+      }
+    }
+
+    // Phát từ đã nhập
+    function playRecording(id) {
+      const utterance = document.getElementById(`input-${id}`).value.trim();
+      if (!utterance) {
+        alert("Vui lòng nhập từ trước khi phát!");
+        return;
+      }
+      const u = new SpeechSynthesisUtterance(utterance);
+      setVoice(u);
+      speechSynthesis.speak(u);
+    }
+
+    // Kiểm tra từng câu
+    function checkOneAnswer(id) {
+      const input = document.getElementById(`input-${id}`);
+      const value = input.value.trim().toLowerCase();
+      const answer = input.dataset.answer;
+      const result = document.getElementById(`result-${id}`);
+      if (value === '') {
+        result.textContent = '';
+        return;
+      }
+      if (value === answer) {
+        result.textContent = '✅ Correct';
+        result.style.color = 'green';
+      } else {
+        result.textContent = '❌ Wrong';
+        result.style.color = 'red';
+      }
+    }
+
+    // Kiểm tra tất cả
+    function checkAllAnswers() {
+      let correct = 0;
+      questions.forEach(q => {
+        const input = document.getElementById(`input-${q.id}`);
+        const value = input.value.trim().toLowerCase();
+        const answer = input.dataset.answer;
+        const result = document.getElementById(`result-${q.id}`);
+        if (value === answer) {
+          result.textContent = '✅ Correct';
+          result.style.color = 'green';
+          correct++;
+        } else {
+          result.textContent = `❌ Correct: ${answer}`;
+          result.style.color = 'red';
+        }
+      });
+      document.getElementById('score').innerHTML = `<strong>✅ You got ${correct}/${questions.length} correct</strong>`;
+    }
+
+    // Khởi tạo
+    populateVoiceList();
+  </script>
+</body>
+</html>

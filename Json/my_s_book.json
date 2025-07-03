@@ -1,0 +1,14 @@
+{
+  "letter": "S s",
+  "words": [
+    {"id": "seal", "src": "/images/seal.jpg", "label": "seal", "ipa": "/siːl/"},
+    {"id": "monkey", "src": "/images/monkey.jpg", "label": "monkey", "ipa": "/ˈmʌŋki/"},
+    {"id": "sink", "src": "/images/sink.jpg", "label": "sink", "ipa": "/sɪŋk/"},
+    {"id": "sock", "src": "/images/sock.jpg", "label": "sock", "ipa": "/sɑːk/"},
+    {"id": "six", "src": "/images/six.jpg", "label": "six", "ipa": "/sɪks/"},
+    {"id": "dog", "src": "/images/dog.jpg", "label": "dog", "ipa": "/dɔːɡ/"},
+    {"id": "soap", "src": "/images/soap.jpg", "label": "soap", "ipa": "/soʊp/"},
+    {"id": "cow", "src": "/images/cow.jpg", "label": "cow", "ipa": "/kaʊ/"}
+    
+  ]
+}

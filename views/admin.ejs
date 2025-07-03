@@ -1,0 +1,20 @@
+<h2>Phân quyền môn học</h2>
+<form method="POST" action="/assign">
+  <label>Người dùng:</label>
+  <select name="user_id">
+    <% users.forEach(u => { %>
+      <option value="<%= u.id %>"><%= u.username %></option>
+    <% }) %>
+  </select>
+
+  <label>Môn học:</label>
+  <select name="subject_id">
+    <% subjects.forEach(s => { %>
+      <option value="<%= s.id %>"><%= s.name %></option>
+    <% }) %>
+  </select>
+
+  <button type="submit">Gán</button>
+</form>
+
+<a href="/dashboard">Quay lại</a>

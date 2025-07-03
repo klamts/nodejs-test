@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Words with ee, ea, ie</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f0f2f5; padding:20px; }
+    h1 { text-align:center; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:16px; }
+    .card { background:white; border-radius:8px; padding:12px; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
+    .word { font-weight:bold; font-size:1.2em; margin:8px 0; }
+    .meaning { color:#555; }
+    .example { font-size:0.9em; color:#666; margin-top:8px; }
+    .controls button { margin:4px; }
+    audio { margin-top:8px; width:100%; }
+    .image-container img {max-width: 200px;margin: 10px auto;display: block;border-radius: 10px;box-shadow: 0 2px 8px rgba(0,0,0,0.1);}
+  </style>
+</head>
+<body>
+    <a href="/game_words_with_ee_ea_ie_done"> game words with ee ea ie</a><br>
+<h1>Words with ee, ea, ie</h1>
+<div class="grid">
+  <% words.forEach(word => { %>
+    <div class="card">
+      <div class="word"><%= word.word_text %></div>
+      <div class="meaning"><%= word.meaning_vi %></div>
+      <% if (word.image_url) { %>
+        <div class="image-container">
+          <img src="/<%= word.image_url %>" alt="<%= word.word_text %>">
+        </div>
+      <% } %>
+      <div class="example">
+        <em><%= word.example_en %></em><br/>
+        <%= word.example_vi %>
+      </div>
+      <div class="controls">
+        <button onclick="speak('<%= word.word_text %>')">🔊 Phát âm</button>
+        <button onclick="startRecording('<%= word.word_text %>')">🎤 Ghi âm</button>
+        <button onclick="playRecording()">▶️ Nghe lại</button>
+      </div>
+      <audio id="player" controls style="display:none;"></audio>
+    </div>
+  <% }) %>
+</div>
+
+<script>
+       let voices = [];
+
+    function loadVoices() {
+  voices = speechSynthesis.getVoices();
+  const voiceSelect = document.getElementById("voiceSelect");
+  voiceSelect.innerHTML = '';
+
+ let defaultIndex = 114;
+
+voices.forEach((voice, i) => {
+  const option = document.createElement("option");
+  option.value = i;
+  option.textContent = `${voice.name} (${voice.lang})`;
+  voiceSelect.appendChild(option);
+
+  // Gán chỉ số nếu trùng với Microsoft Ana
+  if (
+    voice.name === "Microsoft Ana Online (Natural)" &&
+    voice.lang === "en-US"
+  ) {
+    defaultIndex = i;
+  }
+});
+
+voiceSelect.selectedIndex = defaultIndex;
+} 
+
+    // Đảm bảo chạy khi danh sách voice có sẵn
+    if (speechSynthesis.getVoices().length === 0) {
+      speechSynthesis.onvoiceschanged = loadVoices;
+    } else {
+      loadVoices();
+    }
+
+    // Có browsers cần đợi
+    speechSynthesis.onvoiceschanged = loadVoices;
+  // Phát âm Voice[114]
+  function speak(text) {
+    const utter = new SpeechSynthesisUtterance(text);
+    const voices = window.speechSynthesis.getVoices();
+    utter.voice = voices.find(v => v.voiceURI.includes("114")) || voices[114];
+    utter.lang = 'en-US';
+    window.speechSynthesis.speak(utter);
+  }
+
+  // Ghi âm
+  let mediaRecorder;
+  let audioChunks = [];
+
+  function startRecording(word) {
+    if (!navigator.mediaDevices) {
+      alert("Trình duyệt không hỗ trợ ghi âm.");
+      return;
+    }
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(stream => {
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+        mediaRecorder.start();
+        alert(`🔴 Đang ghi âm từ: ${word}. Nhấn "Nghe lại" để dừng.`);
+        mediaRecorder.addEventListener("dataavailable", event => {
+          audioChunks.push(event.data);
+        });
+      })
+      .catch(err => console.error('❌ Lỗi ghi âm:', err));
+  }
+
+  function playRecording() {
+    if (mediaRecorder && mediaRecorder.state !== "inactive") {
+      mediaRecorder.stop();
+      mediaRecorder.addEventListener("stop", () => {
+        const audioBlob = new Blob(audioChunks);
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = document.getElementById("player");
+        audio.src = audioUrl;
+        audio.style.display = "block";
+        audio.play();
+      });
+    } else {
+      alert("⚠️ Bạn chưa ghi âm hoặc ghi âm đã kết thúc.");
+    }
+  }
+</script>
+</body>
+</html>

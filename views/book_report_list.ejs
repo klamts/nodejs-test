@@ -1,0 +1,25 @@
+<h1>📚 Danh sách phiếu đọc sách</h1>
+<hr>
+
+<% if (reports.length === 0) { %>
+  <p>❗ Bạn chưa gửi phiếu nào.</p>
+<% } else { %>
+  <% reports.forEach((r, index) => { %>
+    <div style="margin-bottom: 20px; padding: 10px; border: 1px solid #ccc; border-radius: 8px;">
+      <h3>📖 <%= index + 1 %>. <%= r.book_title %></h3>
+      <p><strong>Chương:</strong> <%= r.chapter %></p>
+      <p><strong>Cảm nhận:</strong> <%= r.reflection %></p>
+      <p><small>🕒 Gửi lúc: <%= r.submitted_at %></small></p>
+    <% if (r.audio_path === null ) { %> 
+        <p>❗ Không có ghi âm</p>
+        <!-- <p><strong>Ghi âm:</strong> <audio controls><source src="/uploads/<%= r.audio_path %>" type="audio/webm"></audio></p> -->
+      <% } else { %>
+        <p>❗ có ghi âm</p>
+        <p><strong>Ghi âm:</strong> <audio controls><source src="/Upload/<%= r.audio_path %>" type="audio/webm"></audio></p>
+      <% } %>  
+      
+    </div>
+  <% }) %>
+<% } %>
+
+<a href="/dashboard">⬅️ Quay lại Dashboard</a>

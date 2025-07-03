@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phrase Order Game</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f0f4f8;
+      padding: 2rem;
+      text-align: center;
+    }
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      margin-bottom: 1rem;
+    }
+    .word-buttons, .selected-words {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      margin: 1rem 0;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      border: none;
+      background: #0077cc;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.2s ease;
+    }
+    button:hover {
+      background: #005fa3;
+    }
+    button.used {
+      background: #cccccc;
+      color: #444;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    .result, .score-board {
+      font-weight: bold;
+      margin-top: 1rem;
+    }
+    .meaning {
+      margin-top: 1rem;
+      color: #555;
+    }
+    .review-box {
+      background: #fff3cd;
+      border: 1px solid #ffeeba;
+      padding: 0.5rem;
+      margin-top: 1rem;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Arrange the phrase correctly</h2>
+    <div id="word-buttons" class="word-buttons"></div>
+    <h4>Your answer:</h4>
+    <div id="selected-words" class="selected-words"></div>
+    <button onclick="checkAnswer()">Check</button>
+    <div id="result" class="result"></div>
+    <div id="meaning" class="meaning"></div>
+    <div id="score" class="score-board"></div>
+    <div id="vi-quiz" class="meaning"></div>
+    <div id="review" class="review-box"></div>
+    <div id="leaderboard" class="score-board" style="margin-top: 2rem;"></div>
+  </div>
+
+  <script>
+    const videoId = 3;
+    const apiUrl = `/api/gamelearnwithvideo/${videoId}`;
+    let gameData = [], currentIndex = 0, selectedWords = [], score = 0;
+    let gameStartTime = Date.now();
+    let playerName = null;
+    let wrongMeaningsLog = [];
+
+    const wordButtonsContainer = document.getElementById("word-buttons");
+    const selectedWordsContainer = document.getElementById("selected-words");
+    const resultContainer = document.getElementById("result");
+    const meaningContainer = document.getElementById("meaning");
+    const scoreContainer = document.getElementById("score");
+    const reviewContainer = document.getElementById("review");
+
+    function startRound() {
+      selectedWords = [];
+      resultContainer.textContent = "";
+      meaningContainer.innerHTML = "";
+      wordButtonsContainer.innerHTML = "";
+      selectedWordsContainer.innerHTML = "";
+      document.getElementById("vi-quiz").innerHTML = "";
+      reviewContainer.innerHTML = "";
+
+      const item = gameData[currentIndex];
+      item.shuffled.forEach(word => {
+        const btn = document.createElement("button");
+        btn.textContent = word;
+        btn.onclick = () => {
+          if (!selectedWords.includes(word)) {
+            selectedWords.push(word);
+            updateSelected();
+            btn.classList.add("used");
+            speak(word);
+          }
+        };
+        wordButtonsContainer.appendChild(btn);
+      });
+      updateSelected();
+    }
+
+    function updateSelected() {
+      selectedWordsContainer.innerHTML = "";
+      selectedWords.forEach((word, index) => {
+        const span = document.createElement("button");
+        span.textContent = word;
+        span.onclick = () => {
+          selectedWords.splice(index, 1);
+          updateSelected();
+          const buttons = wordButtonsContainer.querySelectorAll("button");
+          buttons.forEach(btn => {
+            if (btn.textContent === word) btn.classList.remove("used");
+          });
+        };
+        selectedWordsContainer.appendChild(span);
+      });
+    }
+
+    function checkAnswer() {
+      const item = gameData[currentIndex];
+      const isCorrect = JSON.stringify(selectedWords) === JSON.stringify(item.correctOrder);
+      if (!isCorrect) {
+        resultContainer.textContent = "❌ Try again.";
+        setTimeout(() => startRound(), 1000);
+        return;
+      }
+
+      speak(item.correctOrder.join(" "));
+      resultContainer.textContent = "✅ Correct!";
+      meaningContainer.innerHTML = `
+        <p><strong>Meaning (VI):</strong> ${item.meaning_vi}</p>
+        <p><strong>Meaning (EN):</strong> ${item.meaning_en}</p>
+        <p><a href="${item.video_link}" target="_blank">▶ Watch in video</a></p>
+      `;
+
+      score++;
+      scoreContainer.textContent = `Score: ${score}/${gameData.length}`;
+      showViMeaningQuiz(item);
+    }
+
+    function showViMeaningQuiz(item) {
+      const container = document.getElementById("vi-quiz");
+      container.innerHTML = "<strong>🧠 Chọn nghĩa tiếng Việt đúng của cụm từ:</strong><br>";
+      const allChoices = gameData
+        .filter(e => e.meaning_vi && e.meaning_vi !== item.meaning_vi)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 2)
+        .map(e => e.meaning_vi);
+      allChoices.push(item.meaning_vi);
+      allChoices.sort(() => Math.random() - 0.5);
+
+      allChoices.forEach(vi => {
+        const btn = document.createElement("button");
+        btn.textContent = vi;
+        btn.style.margin = "0.5rem";
+        btn.onclick = () => {
+          if (vi === item.meaning_vi) {
+            container.innerHTML = "✅ Đúng rồi!";
+            setTimeout(() => {
+              container.innerHTML = "";
+              currentIndex++;
+              if (currentIndex < gameData.length) {
+                startRound();
+                updateScoreAndLeaderboard();
+              } else {
+                resultContainer.textContent += " 🎉 Game finished!";
+                showReviewList();
+              }
+            }, 1500);
+          } else {
+            wrongMeaningsLog.push({
+              phrase: item.correctOrder.join(" "),
+              chosen: vi,
+              correct: item.meaning_vi
+            });
+            const action = confirm("❌ Sai rồi! Bạn muốn chơi lại không? Ấn 'Hủy' để thử lại hoặc chuyển câu.");
+            if (action) {
+              location.reload();
+            } else {
+              const next = confirm("Bạn muốn ➡ qua câu tiếp theo không? Ấn 'Hủy' để quay lại câu trước.");
+              if (next) {
+                currentIndex = Math.min(currentIndex + 1, gameData.length - 1);
+              } else {
+                currentIndex = Math.max(currentIndex - 1, 0);
+              }
+              startRound();
+            }
+          }
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function showReviewList() {
+      if (wrongMeaningsLog.length > 0) {
+        let html = `<h4>📌 Những câu bạn đã chọn sai nghĩa:</h4><ul>`;
+        wrongMeaningsLog.forEach(entry => {
+          html += `<li><strong>${entry.phrase}</strong><br>❌ Bạn chọn: ${entry.chosen}<br>✅ Đúng là: ${entry.correct}</li><br>`;
+        });
+        html += `</ul>`;
+        reviewContainer.innerHTML = html;
+      }
+    }
+
+    function updateScoreAndLeaderboard() {
+      const totalTime = Math.floor((Date.now() - gameStartTime) / 1000);
+      fetch("/api/score", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: playerName, score, totalTime })
+      })
+        .then(() => fetch("/api/leaderboard"))
+        .then(res => res.json())
+        .then(data => {
+          const leaderboardHtml = `<h3>🏆 Top 10 người chơi</h3><ol>` +
+            data.leaderboard.map(p =>
+              `<li>${p.username}: ${p.score} điểm (${p.total_time}s)</li>`
+            ).join('') + `</ol>`;
+          document.getElementById("leaderboard").innerHTML = leaderboardHtml;
+        });
+    }
+
+    function speak(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "en-US";
+      speechSynthesis.speak(utterance);
+    }
+
+    fetch(apiUrl)
+      .then(res => res.json())
+      .then(json => {
+        gameData = json.data;
+        if (gameData.length > 0) {
+          playerName = prompt("📛 Nhập tên của bạn:") || "Anonymous";
+          startRound();
+        } else {
+          resultContainer.textContent = "⚠ Không có dữ liệu trò chơi.";
+        }
+      })
+      .catch(err => {
+        resultContainer.textContent = "❌ Lỗi tải dữ liệu.";
+        console.error(err);
+      });
+  </script>
+</body>
+</html>

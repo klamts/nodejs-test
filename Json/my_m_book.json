@@ -1,0 +1,14 @@
+{
+  "letter": "S s",
+  "words": [
+    {"id": "mitt", "src": "/images/mitt.jpg", "label": "mitt", "ipa": "/mɪt/"},
+    {"id": "nail", "src": "/images/nail.jpg", "label": "nail", "ipa": "/neɪl/"},
+    {"id": "cup", "src": "/images/cup.jpg", "label": "cup", "ipa": "/kʌp/"},
+    {"id": "mouse", "src": "/images/mouse.jpg", "label": "mouse", "ipa": "/maʊs/"},
+    {"id": "saw", "src": "/images/saw.jpg", "label": "saw", "ipa": "/sɔː/"},
+    {"id": "mask", "src": "/images/mask.jpg", "label": "mask", "ipa": "/mæsk/"},
+    {"id": "milk", "src": "/images/milk.jpg", "label": "milk", "ipa": "/mɪlk/"},
+    {"id": "moon", "src": "/images/moon.jpg", "label": "moon", "ipa": "/muːn/"}
+    
+  ]
+}

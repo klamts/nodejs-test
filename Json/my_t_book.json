@@ -1,0 +1,13 @@
+{
+  "letter": "T t",
+  "words": [
+    {"id": "table", "src": "/images/table.jpg", "label": "table", "ipa": "/ˈteɪbəl/"},
+    {"id": "hammer", "src": "/images/hammer.jpg", "label": "hammer", "ipa": "/ˈhæmər/"},
+    {"id": "turtle", "src": "/images/turtle.jpg", "label": "turtle", "ipa": "/ˈtɜːrtəl/"},
+    {"id": "telephone", "src": "/images/telephone.jpg", "label": "telephone", "ipa": "/ˈtelɪfoʊn/"},
+    {"id": "turkey", "src": "/images/turkey.jpg", "label": "turkey", "ipa": "/ˈtɜːrki/"},
+    {"id": "comb", "src": "/images/comb.jpg", "label": "comb", "ipa": "/koʊm/"},
+    {"id": "two", "src": "/images/two.jpg", "label": "two", "ipa": "/tuː/"},
+    {"id": "cow", "src": "/images/cow.jpg", "label": "cow", "ipa": "/kaʊ/"}
+  ]
+}

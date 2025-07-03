@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Interactive Vocabulary Video</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      background: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .top-controls {
+      width: 80%;
+      max-width: 800px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    video {
+      width: 80%;
+      max-width: 800px;
+      margin-bottom: 1rem;
+    }
+
+    .vocab-popup {
+      display: none;
+      position: fixed;
+      top: 100px;
+      right: 40px;
+      background: #ffffff;
+      border: 2px solid #007bff;
+      padding: 1rem;
+      border-radius: 10px;
+      width: 320px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 999;
+    }
+
+    .word-box {
+      font-size: 1.4em;
+      font-weight: bold;
+      color: #007bff;
+      margin-bottom: 0.5rem;
+    }
+
+    .pos {
+      color: #666;
+      font-style: italic;
+    }
+
+    .popup-buttons {
+      margin-top: 1rem;
+    }
+
+    .popup-buttons button {
+      margin-right: 8px;
+    }
+
+    #history {
+      width: 80%;
+      max-width: 800px;
+      margin-top: 2rem;
+      text-align: left;
+    }
+
+    #history h3 {
+      margin-bottom: 0.5rem;
+    }
+
+    #history-list {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    #history-list li {
+      background: #e6f0ff;
+      margin-bottom: 4px;
+      padding: 6px 10px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>📘 We Are All Different - Interactive Vocabulary</h1>
+  <li><a href="/gamelearnwithvideo/3">📚 game 1</a></li>
+  <li><a href="/game/rebuild-sentence">📚 game 2</a></li>
+  <div class="top-controls">
+    <label>
+      <input type="checkbox" id="stickMode" />
+      ⏸ Tự động dừng khi xuất hiện popup
+    </label>
+  </div>
+  <label>
+    🔈 Chọn giọng đọc:
+    <select id="voiceSelect"></select>
+  </label>
+
+  <video id="video" controls crossorigin="anonymous">
+    <source src="<%= videoPath || '/videos/We_Are_All_Different.mp4' %>" type="video/mp4" />
+    <track label="English" kind="subtitles" srclang="en" src="/subtitles/We_Are_All_Different.en.vtt" default>
+    Your browser does not support the video tag.
+  </video>
+
+  <div id="popup" class="vocab-popup"></div>
+
+  <div id="history">
+    <h3>🕘 Từ đã hiển thị:</h3>
+    <ul id="history-list"></ul>
+  </div>
+
+  <script>
+    const video = document.getElementById('video');
+    const popup = document.getElementById('popup');
+    const historyList = document.getElementById('history-list');
+    const stickMode = document.getElementById('stickMode');
+    const voiceSelect = document.getElementById('voiceSelect');
+    let availableVoices = [];
+    const vocabData = <%- JSON.stringify(vocabList) %>;
+    function populateVoiceList() {
+  availableVoices = speechSynthesis.getVoices();
+  voiceSelect.innerHTML = ''; // Clear cũ
+  availableVoices.forEach((voice, index) => {
+    const option = document.createElement('option');
+    option.value = index;
+    option.textContent = `${voice.name} (${voice.lang})`;
+    voiceSelect.appendChild(option);
+  });
+}
+
+// Một số trình duyệt chỉ load voices sau event này
+speechSynthesis.onvoiceschanged = populateVoiceList;
+    const showQueue = vocabData.map(entry => ({
+      time: parseFloat(entry.example_end),
+      word: entry.word,
+      vi: entry.vi,
+      en: entry.en,
+      part_of_speech: entry.part_of_speech,
+      ipa: entry.ipa,
+      syllables: entry.syllables,
+      example: entry.example,
+      example_vi: entry.example_vi
+    })).sort((a, b) => a.time - b.time);
+
+    const popupQueue = [];
+    let shown = {};
+    let currentPopupTime = null;
+    let showingPopup = false;
+
+    video.addEventListener('timeupdate', () => {
+      const currentTime = video.currentTime;
+
+      if (showingPopup) return;
+
+      const itemsToShow = showQueue.filter(item =>
+        !shown[item.word] && Math.abs(item.time - currentTime) <= 0.4
+      );
+
+      if (itemsToShow.length > 0) {
+        showingPopup = true;
+        currentPopupTime = itemsToShow[0].time;
+
+        itemsToShow.forEach(item => {
+          shown[item.word] = true;
+          popupQueue.push(item);
+        });
+
+        if (stickMode.checked) video.pause();
+        displayNextPopup();
+      }
+    });
+
+    function displayNextPopup() {
+      const item = popupQueue.shift();
+      if (!item) {
+        showingPopup = false;
+        if (stickMode.checked && video.paused) video.play();
+        return;
+      }
+
+      popup.innerHTML = `
+        <div class="word-box">${item.word} <span class="pos">(${item.part_of_speech})</span></div>
+        <div><strong>🔤 IPA:</strong> ${item.ipa || ''}</div>
+        <div><strong>🧩 Syllables:</strong> ${item.syllables || ''}</div>
+        <div><strong>🇬🇧 Meaning:</strong> ${item.en}</div>
+        <div><strong>🇻🇳 Nghĩa:</strong> ${item.vi}</div>
+        <div><strong>💬 Example (EN):</strong> ${item.example}</div>
+        <div><strong>💬 Ví dụ (VI):</strong> ${item.example_vi}</div>
+        <div class="popup-buttons">
+          <button class="speak-btn">🔊 Phát âm</button>
+          <button onclick="markAsRead()">✅ Đã đọc</button>
+        </div>
+          `;
+        popup.querySelector('.speak-btn').addEventListener('click', () => speakWord(item.word));
+          
+      popup.style.display = 'block';
+      addToHistory(item.word);
+    }
+
+    function markAsRead() {
+      popup.style.display = 'none';
+      setTimeout(displayNextPopup, 300);
+    }
+
+    function speakWord(text) {
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'en-US';
+
+  const selectedIndex = voiceSelect.value;
+  if (availableVoices[selectedIndex]) {
+    utterance.voice = availableVoices[selectedIndex];
+  }
+
+  speechSynthesis.cancel();
+  speechSynthesis.speak(utterance);
+}
+
+
+    function addToHistory(word) {
+      const li = document.createElement('li');
+      li.textContent = word;
+      historyList.prepend(li);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>🎧 Luyện nghe âm - <%= unit %></title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; }
+    .sound-buttons button { margin: 5px; padding: 10px 20px; font-size: 16px; }
+    .position-options button { margin: 10px; padding: 10px 20px; font-size: 16px; }
+    .correct { color: green; font-weight: bold; }
+    .incorrect { color: red; font-weight: bold; }
+    #feedback { margin-top: 15px; font-size: 18px; }
+    #wordLabel {display: none;}
+    @keyframes flash {0%   { color: #d62828; }25%  { color: #f4a261; }50%  { color: #2a9d8f; }75%  { color: #e76f51; }100% { color: #d62828; }}
+    .word-highlight {font-size: 24px;font-weight: bold;animation: flash 2s ease-in-out 1;}
+  </style>
+</head>
+<body>
+    <label for="voiceSelect">🔊 Chọn giọng đọc:</label>
+  <select id="voiceSelect"></select>
+  <h2>🎧 Luyện nghe âm - Unit <%= unit %></h2>
+
+  <button onclick="nextQuestion()">⏭ Từ tiếp theo</button><br><br>
+  <h2 id="wordLabel"></h2>
+  <button onclick="playWord()">🔊 Nghe từ</button>
+  
+
+  <div class="sound-buttons">
+    <% targetSounds.forEach(sound => { %>
+      <button onclick="selectSound('<%= sound %>')">/<%= sound %>/</button>
+    <% }) %>
+  </div>
+
+  <div id="positionOptions" class="position-options" style="display:none;">
+    <p>📌 Âm /<span id="currentSound"></span>/ xuất hiện ở vị trí nào?</p>
+    <button onclick="checkAnswer('start')">Đầu</button>
+    <button onclick="checkAnswer('middle')">Giữa</button>
+    <button onclick="checkAnswer('end')">Cuối</button>
+    <button onclick="checkAnswer('none')">Không có</button>
+  </div>
+
+  <div id="feedback"></div>
+
+  <script>
+    const words = <%- JSON.stringify(words) %>;
+     let voices = [];
+
+  // Load danh sách voice
+  function loadVoices() {
+    voices = speechSynthesis.getVoices();
+
+    const voiceSelect = document.getElementById("voiceSelect");
+    voiceSelect.innerHTML = ''; // reset
+
+    voices.forEach((voice, index) => {
+      const option = document.createElement('option');
+      option.value = index;
+      option.textContent = `${voice.name} (${voice.lang})`;
+      voiceSelect.appendChild(option);
+    });
+    voiceSelect.selectedIndex = 114;
+  }
+
+  // Một số trình duyệt cần đợi event này mới có danh sách voice
+  speechSynthesis.onvoiceschanged = loadVoices;
+
+    let currentWord = null;
+    let currentSound = "";
+
+    const ipaConsonants = ['tʃ','dʒ','ʃ','ʒ','θ','ð','ŋ','t','d','k','g','p','b','s','z','m','n','l','r','f','v','h','j','w','ʔ'];
+    const ipaVowels = ['iː','ɪ','e','æ','ʌ','ɑː','ɒ','ɔː','ʊ','uː','ə','ɜː','eɪ','aɪ','ɔɪ','aʊ','əʊ','ɪə','eə','ʊə'];
+    const ipaUnits = [...ipaConsonants, ...ipaVowels].sort((a, b) => b.length - a.length);
+
+    function splitIPA(ipaText) {
+      if (!ipaText) return [];
+      let ipa = ipaText.replace(/^\/|\/$/g, '');
+      const result = [];
+      while (ipa.length > 0) {
+        let matched = false;
+        for (const unit of ipaUnits) {
+          if (ipa.startsWith(unit)) {
+            result.push(unit);
+            ipa = ipa.slice(unit.length);
+            matched = true;
+            break;
+          }
+        }
+        if (!matched) {
+          result.push(ipa[0]);
+          ipa = ipa.slice(1);
+        }
+      }
+      return result;
+    }
+
+    function nextQuestion() {
+      const random = words[Math.floor(Math.random() * words.length)];
+      currentWord = random;
+      currentSound = "";
+      document.getElementById("wordLabel").textContent = random.word_text;
+      // Xóa phản hồi
+      const feedbackElem = document.getElementById("feedback");
+      feedbackElem.innerHTML = "";         // ✅ Xóa nội dung phản hồi (dùng innerHTML)
+      feedbackElem.className = "";         // ✅ Xóa class "correct"/"incorrect"
+      document.getElementById("positionOptions").style.display = "none";
+    }
+
+    function playWord() {
+  if (!currentWord) return;
+  const utterance = new SpeechSynthesisUtterance(currentWord.word_text);
+
+  const voiceSelect = document.getElementById("voiceSelect");
+  const selectedIndex = parseInt(voiceSelect.value, 10);
+  if (voices[selectedIndex]) {
+    utterance.voice = voices[selectedIndex];
+  }
+
+  utterance.lang = "en-US";
+  speechSynthesis.speak(utterance);
+}
+
+    function selectSound(sound) {
+      currentSound = sound;
+      document.getElementById("currentSound").textContent = sound;
+      document.getElementById("positionOptions").style.display = "block";
+      document.getElementById("feedback").textContent = "";
+    }
+
+    function checkAnswer(selectedPosition) {
+  const ipa = currentWord.ipa;
+  
+  const ipaForSplit = ipa.replace(/^\/|\/$/g, '').replace(/[ˈˌ]/g, ''); // bỏ dấu trọng âm cho xử lý
+  const segments = splitIPA(ipaForSplit);
+  const feedbackElem = document.getElementById("feedback");
+
+  let actual = 'none';
+  const indexes = [];
+
+  // tìm tất cả vị trí xuất hiện của âm đang xét
+  segments.forEach((s, i) => {
+    if (s === currentSound) indexes.push(i);
+  });
+
+  if (indexes.length === 0) {
+    actual = 'none';
+  } else {
+    // kiểm tra từng vị trí: đầu, cuối, hoặc giữa
+    if (indexes.includes(0)) actual = 'start';
+    else if (indexes.includes(segments.length - 1)) actual = 'end';
+    else actual = 'middle';
+  }
+
+  if (selectedPosition === actual) {
+    feedbackElem.innerHTML = `✅ Chính xác! Âm /${currentSound}/ nằm ở vị trí <strong>${vietnamesePos(actual)}</strong> trong từ <span class="word-highlight">${currentWord.word_text}</span><br>IPA: <code>${ipa}</code>`;
+    feedbackElem.className = 'correct';
+  } else {
+    feedbackElem.innerHTML = `❌ Sai. Âm /${currentSound}/ nằm ở vị trí <strong>${vietnamesePos(actual)}</strong><br>Từ: <strong>${currentWord.word_text}</strong><br>IPA: <code>${ipa}</code>`;
+    feedbackElem.className = 'incorrect';
+  }
+}
+
+    function vietnamesePos(pos) {
+      return pos === 'start' ? 'đầu' :
+             pos === 'middle' ? 'giữa' :
+             pos === 'end' ? 'cuối' : 'không có';
+    }
+
+    // khởi động lần đầu
+    nextQuestion();
+  </script>
+</body>
+</html>

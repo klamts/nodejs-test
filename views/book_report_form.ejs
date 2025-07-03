@@ -1,0 +1,101 @@
+<form id="reportForm" enctype="multipart/form-data">
+  <label>Tên sách:</label><br>
+  <input type="text" name="book_title" required><br><br>
+
+  <label>Chương:</label><br>
+  <textarea name="chapter" rows="2" cols="50" required></textarea><br><br>  
+
+  <label>Cảm nhận:</label><br>
+  <textarea name="reflection" rows="5" cols="50" required></textarea><br><br>
+    <button id="start">🎤 Bắt đầu ghi</button>
+    <button id="stop">⏹️ Dừng ghi</button>
+    <audio id="audio" controls></audio>
+
+  <button type="button" onclick="submitWithAudio()">📤 Gửi kèm ghi âm</button>
+</form>
+<script>
+let mediaRecorder;
+let audioChunks = [];
+let audioBlob = null;
+
+document.getElementById('start').onclick = async () => {
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  mediaRecorder = new MediaRecorder(stream);
+  audioChunks = [];
+  mediaRecorder.start();
+
+  mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+};
+
+document.getElementById('stop').onclick = () => {
+  mediaRecorder.stop();
+  mediaRecorder.onstop = () => {
+    audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+    document.getElementById('audio').src = URL.createObjectURL(audioBlob);
+  };
+};
+
+// function submitWithAudio() {
+//   const form = document.getElementById('reportForm');
+//   const formData = new FormData(form);
+
+//   // Lấy các giá trị từ form
+//   const bookTitle = formData.get('book_title');
+//   const chapter = formData.get('chapter');
+//   const reflection = formData.get('reflection');
+
+//   // Nếu có file ghi âm
+//   if (audioBlob) {
+//     formData.append('audio', audioBlob, 'recording.webm');
+//   }
+
+//   fetch('/book-report', {
+//     method: 'POST',
+//     body: formData
+//   })
+//   .then(res => res.text())
+//   .then(msg => {
+//     // Hiển thị thông báo với thông tin đã gửi
+//     alert(`Thông tin đã được gửi!\nTên sách: ${bookTitle}\nChương: ${chapter}\nCảm nhận: ${reflection}\nGhi âm: ${audioBlob ? 'Đã gửi' : 'Chưa có ghi âm'}`);
+
+//     // Reset form và audio
+//     form.reset();
+//     document.getElementById('audio').src = '';
+//     audioBlob = null;
+//   });
+// }
+function submitWithAudio() {
+  const form = document.getElementById('reportForm');
+  const formData = new FormData(form);
+
+  // Kiểm tra nếu có ghi âm
+  if (audioBlob) {
+    formData.append('audio', audioBlob, 'recording.webm');
+  }
+
+  fetch('/book-report', {
+    method: 'POST',
+    body: formData
+  })
+  .then(res => res.text())
+  .then(msg => {
+    // Lấy thông tin từ form
+    const bookTitle = form.book_title.value;
+    const chapter = form.chapter.value;
+    const reflection = form.reflection.value;
+
+    // Lấy thông tin thư mục ghi âm (ở đây giả sử bạn có đường dẫn file)
+    const audioDirectory = audioBlob ? `${audioBlob.name}` : 'Không có ghi âm';
+
+    // Hiển thị thông báo
+    alert(`Thông tin đã được gửi!\nTên sách: ${bookTitle}\nChương: ${chapter}\nCảm nhận: ${reflection}\nGhi âm: ${audioBlob ? 'Đã gửi' : 'Chưa có ghi âm'}\nThư mục ghi âm: ${audioDirectory}`);
+    
+    // Reset form và audio sau khi gửi
+    form.reset();
+    document.getElementById('audio').src = '';
+    audioBlob = null;
+  });
+}
+
+</script>
+

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Families in Many Cultures</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      background-color: #f0f8ff;
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin: 20px auto;
+      padding: 20px;
+      max-width: 600px;
+    }
+    .image {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+    .highlight {
+      text-decoration: underline;
+      font-weight: bold;
+      color: darkblue;
+    }
+    button {
+      margin-top: 10px;
+      padding: 8px 12px;
+      font-size: 14px;
+      cursor: pointer;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <h1>Families in Many Cultures</h1>
+
+  <div class="card">
+    <img src="https://via.placeholder.com/600x300?text=Families+1" class="image" alt="Families 1">
+    <p><span class="highlight">Families</span> live around the world.</p>
+    <button onclick="speak('Families live around the world.')">🔊 Play</button>
+  </div>
+
+  <div class="card">
+    <img src="https://via.placeholder.com/600x300?text=Families+2" class="image" alt="Families 2">
+    <p><span class="highlight">Families</span> do many things.</p>
+    <p>They <span class="highlight">help</span> each other.</p>
+    <p>They <span class="highlight">eat</span> together.</p>
+    <button onclick="speak('Families do many things. They help each other. They eat together.')">🔊 Play</button>
+  </div>
+
+  <div class="card">
+    <img src="https://via.placeholder.com/600x300?text=Families+3" class="image" alt="Families 3">
+    <p><span class="highlight">Families</span> celebrate.</p>
+    <p>They <span class="highlight">play</span> together.</p>
+    <p>They <span class="highlight">laugh</span> together.</p>
+    <button onclick="speak('Families celebrate. They play together. They laugh together.')">🔊 Play</button>
+  </div>
+
+  <script>
+      function speak(text) {
+    const synth = window.speechSynthesis;
+    const voices = synth.getVoices();
+
+    // Nếu danh sách giọng đọc chưa sẵn sàng, đợi rồi gọi lại
+    if (voices.length === 0) {
+      synth.onvoiceschanged = () => speak(text);
+      return;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+
+    // Chọn giọng đọc thứ 114 nếu có
+    if (voices.length >= 115) {
+      utterance.voice = voices[114]; // chỉ số bắt đầu từ 0
+    } else {
+      console.warn("Danh sách giọng đọc không đủ 114 mục. Dùng giọng mặc định.");
+    }
+
+    synth.speak(utterance);
+  }
+  </script>
+</body>
+</html>

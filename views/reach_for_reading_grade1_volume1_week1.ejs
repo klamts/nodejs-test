@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vocabulary - <%= selectedWeek %></title>
+  <style>
+    body { 
+      font-family: sans-serif; 
+      margin: 20px; 
+      background: #f0f8ff;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .link-card {
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .link-card a {
+      text-decoration: none;
+      color: #2c3e50;
+      font-size: 16px;
+      display: block;
+      width: 100%;
+      word-wrap: break-word;
+    }
+    .link-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    .link-card a:hover {
+      color: #e74c3c;
+    }
+    .book {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 10px;
+      text-align: center;
+    }
+    img {
+      max-width: 100%;
+      height: 100px;
+      object-fit: contain;
+    }
+    input {
+      font-size: 16px;
+      padding: 5px;
+      text-align: center;
+    }
+    .controls {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .result {
+      margin-top: 5px;
+      font-weight: bold;
+    }
+    .tabs {
+      overflow: hidden;
+      border-bottom: 1px solid #ccc;
+      margin-bottom: 20px;
+    }
+    .tab {
+      display: inline-block;
+      padding: 10px 20px;
+      cursor: pointer;
+      background-color: #f0f0f0;
+      margin-right: 5px;
+    }
+    .tab.active {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-bottom: none;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  
+  <a href="/game_practice_reachforreading_week1">Game Image</a><br>
+  <h1>Vocabulary Hub - <%= selectedWeek %></h1>
+
+  <!-- Styled Link Section -->
+  <div class="link-grid">
+    <div class="link-card"><a href="/reach_for_reading_grade1_volume1/1/my_m_book">My M m Book</a></div>
+    <div class="link-card"><a href="/reach_for_reading_grade1_volume1/1/my_s_book">My S s Book</a></div>
+    <div class="link-card"><a href="/reach_for_reading_grade1_volume1/1/my_h_book">My H h Book</a></div>
+    <div class="link-card"><a href="/reach_for_reading_grade1_volume1/1/my_t_book">My T t Book</a></div>
+    <div class="link-card"><a href="/reach_for_reading_grade1_volume1/1/find_a_hat">High Frequency Words: Find A Hat</a></div>
+    <div class="link-card"><a href="/reach_for_reading_grade1_volume1/1/use_nouns">Grammar: Nouns Use Nouns</a></div>
+    <div class="link-card"><a href="/reach_for_reading_grade1_volume1/1/grammar_and_writing_write_nouns">Grammar and Writing: Write Nouns</a></div>
+    <div class="link-card"><a href="/reach_for_reading_grade1_volume1/1/vocabulary_yes_or_no">Vocabulary: Yes or No?</a></div>
+  </div>
+
+  <h2>📚 Vocabulary Practice - <%= selectedWeek %></h2>
+
+  <label for="week">Choose Week:</label>
+  <select id="week" onchange="location.href='/reach_for_reading_grade1_volume1/' + this.value.replace('week', '')">
+    <% weeks.forEach(week => { %>
+      <option value="<%= week %>" <%= week === selectedWeek ? 'selected' : '' %>><%= week %></option>
+    <% }) %>
+  </select>
+
+  <div style="margin: 15px 0;">
+    <label>
+      <input type="checkbox" id="toggle-head-hide" onchange="toggleHeadMode()"> Ẩn ký tự đầu của từ
+    </label>
+  </div>
+
+  <div class="tabs" id="tabHeaders">
+    <% 
+      const itemsPerPage = 9;
+      const totalItems = words.length;
+      const totalPages = Math.ceil(totalItems / itemsPerPage);
+      let currentPage = 1; // Mặc định là 1 vì server không truyền query.page
+    %>
+    <% for (let i = 1; i <= totalPages; i++) { %>
+      <div class="tab <%= i === currentPage ? 'active' : '' %>" onclick="switchTab(<%= i %>)">Page <%= i %></div>
+    <% } %>
+  </div>
+
+  <div id="tabContents">
+    <% for (let i = 1; i <= totalPages; i++) { %>
+      <div class="tab-content <%= i === currentPage ? 'active' : '' %>" id="tabContent<%= i %>">
+        <div class="book">
+          <% const pageStart = (i - 1) * itemsPerPage;
+             const pageEnd = Math.min(pageStart + itemsPerPage, totalItems);
+             const pageWords = words.slice(pageStart, pageEnd);
+             pageWords.forEach(item => {
+               const word = item.word_text.toLowerCase();
+               const head = word.charAt(0);
+               const tail = word.substring(1);
+          %>
+            <div class="card" data-head="<%= head %>" data-tail="<%= tail %>" data-full="<%= word %>">
+              <img src="<%= item.image_url || '/images/placeholder.jpg' %>" alt="<%= item.word_text %>">
+              <div class="mode-full">
+                <input type="text" class="full-input" placeholder="Enter full word" data-answer="<%= word %>">
+              </div>
+              <div class="mode-hide" style="display: none;">
+                <input type="text" maxlength="1" class="first-letter" placeholder="_" style="width: 30px;">
+                <span><%= tail %></span>
+              </div>
+              <div class="controls">
+                <button onclick="speak('<%= word %>')">🔊</button>
+                <button onclick="checkPronounce(this, '<%= word %>')">🎤</button>
+                <button onclick="checkInput(this)">✔</button>
+              </div>
+              <div class="result"></div>
+              <div><%= item.ipa %></div>
+              <div><%= item.meaning_vi %></div>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    <% } %>
+  </div>
+
+  <script>
+    const voices = speechSynthesis.getVoices();
+    voices.forEach((voice, index) => {
+      console.log(`[${index}] ${voice.name} - ${voice.lang}`);
+    });
+
+    function toggleHeadMode() {
+      const checked = document.getElementById('toggle-head-hide').checked;
+      const cards = document.querySelectorAll('.card');
+      cards.forEach(card => {
+        card.querySelector('.mode-full').style.display = checked ? 'none' : 'block';
+        card.querySelector('.mode-hide').style.display = checked ? 'block' : 'none';
+      });
+    }
+
+    function speak(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      const voices = speechSynthesis.getVoices();
+      const indexvoice_want = 115;
+
+      if (voices.length > indexvoice_want) {
+        utterance.voice = voices[indexvoice_want];
+        console.log("✅ Using voice:", voices[indexvoice_want].name, voices[indexvoice_want].lang);
+      } else {
+        console.warn("❌ Voice index", indexvoice_want, "không tồn tại trong danh sách.");
+      }
+
+      utterance.lang = 'en-US';
+      speechSynthesis.speak(utterance);
+    }
+
+    function checkPronounce(button, expected) {
+      const card = button.closest('.card');
+      const result = card.querySelector('.result');
+      const recog = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recog.lang = 'en-US';
+      recog.interimResults = false;
+      recog.maxAlternatives = 1;
+      recog.onresult = e => {
+        const said = e.results[0][0].transcript.trim().toLowerCase();
+        if (said === expected.toLowerCase()) {
+          result.textContent = '🎤 ✅ Good';
+          result.style.color = 'green';
+        } else {
+          result.textContent = `🎤 ❌ You said: ${said}`;
+          result.style.color = 'red';
+        }
+      };
+      recog.onerror = e => {
+        result.textContent = '🎤 ❌ Error: ' + e.error;
+        result.style.color = 'gray';
+      };
+      recog.start();
+    }
+
+    function checkInput(button) {
+      const card = button.closest('.card');
+      const result = card.querySelector('.result');
+      const hideMode = document.getElementById('toggle-head-hide').checked;
+
+      if (!hideMode) {
+        const input = card.querySelector('.full-input');
+        const answer = input.dataset.answer.toLowerCase();
+        const value = input.value.trim().toLowerCase();
+        if (value === answer) {
+          result.textContent = '✅ Correct';
+          result.style.color = 'green';
+        } else {
+          result.textContent = '❌ Try again';
+          result.style.color = 'red';
+        }
+      } else {
+        const first = card.querySelector('.first-letter').value.trim().toLowerCase();
+        const tail = card.dataset.tail;
+        const full = card.dataset.full;
+        if (first + tail === full) {
+          result.textContent = '✅ Correct';
+          result.style.color = 'green';
+        } else {
+          result.textContent = `❌ You wrote: ${first + tail}`;
+          result.style.color = 'red';
+        }
+      }
+    }
+
+    function switchTab(page) {
+      const tabs = document.querySelectorAll('.tab');
+      const contents = document.querySelectorAll('.tab-content');
+      tabs.forEach((tab, index) => {
+        tab.classList.toggle('active', index + 1 === page);
+        contents[index].classList.toggle('active', index + 1 === page);
+      });
+      // Cập nhật URL với tham số page
+      window.history.pushState({}, '', `?page=${page}`);
+    }
+
+    // Khởi tạo chế độ ẩn ký tự đầu khi tải trang
+    window.onload = () => {
+      toggleHeadMode();
+      // Đặt tab active dựa trên currentPage (mặc định là 1 nếu không có query)
+      const initialPage = parseInt(new URLSearchParams(window.location.search).get('page')) || 1;
+      if (initialPage) switchTab(initialPage);
+    };
+  </script>
+</body>
+</html>

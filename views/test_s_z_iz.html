@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pronunciation Game: /s/ /z/ /ɪz/</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<style>body {
+  background: #f0f4f8;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #007acc;
+  color: white;
+}
+
+th, td {
+  padding: 12px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: white;
+}
+
+.listen-btn {
+  background: #28a745;
+}
+
+.record-btn {
+  background: #ff9800;
+}
+
+.play-btn {
+  background: #6f42c1;
+}
+</style>
+<body>
+  <div class="container">
+    <div class="guide">
+  <h2>📝 Cách học nhanh phát âm đuôi -s/-es</h2>
+  <ul>
+    <li><strong>Vô thanh ➡️ /s/</strong>: p, t, k, f, θ</li>
+    <li><strong>Hữu thanh ➡️ /z/</strong>: nguyên âm, b, d, g, v, n, l, m, r,...</li>
+    <li><strong>Âm gió đặc biệt ➡️ /ɪz/</strong>: s, z, sh, ch, x, ge</li>
+  </ul>
+</div>
+    <h1>🎤 Pronunciation Game: /s/ /z/ /ɪz/</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Word</th>
+          <th>Ending</th>
+          <th>Listen</th>
+          <th>Record</th>
+          <th>Playback</th>
+        </tr>
+      </thead>
+      <thead>
+  <tr>
+    <th>Word</th>
+    <th>Your Answer</th>
+    <th>Check</th>
+    <th>Listen</th>
+    <th>Record</th>
+    <th>Playback</th>
+  </tr>
+</thead>
+<tbody id="wordsTable"></tbody>
+    </table>
+  </div>
+ <script>
+const wordsData = [
+  { word: "cooks", ending: "/s/" },
+  { word: "cups", ending: "/s/" },
+  { word: "maps", ending: "/s/" },
+  { word: "hats", ending: "/s/" },
+  { word: "laughs", ending: "/s/" },
+  { word: "dogs", ending: "/z/" },
+  { word: "plays", ending: "/z/" },
+  { word: "bags", ending: "/z/" },
+  { word: "girls", ending: "/z/" },
+  { word: "fans", ending: "/z/" },
+  { word: "buses", ending: "/ɪz/" },
+  { word: "dishes", ending: "/ɪz/" },
+  { word: "boxes", ending: "/ɪz/" },
+  { word: "watches", ending: "/ɪz/" },
+  { word: "glasses", ending: "/ɪz/" }
+];
+
+const tbody = document.getElementById('wordsTable');
+let mediaRecorder;
+let audioChunks = {};
+let recordings = {};
+
+wordsData.forEach((item, index) => {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td>${item.word}</td>
+    <td>
+      <input type="text" id="input-${index}" placeholder="e.g., /s/">
+    </td>
+    <td>
+      <button class="check-btn" onclick="checkAnswer(${index})">✅ Check</button>
+    </td>
+    <td>
+      <button class="listen-btn" onclick="speak('${item.word}')">🔊 Listen</button>
+    </td>
+    <td>
+      <button class="record-btn" onclick="startRecording(${index})">⏺️ Record</button>
+    </td>
+    <td>
+      <button class="play-btn" onclick="playRecording(${index})">▶️ Play</button>
+    </td>
+  `;
+  tbody.appendChild(tr);
+});
+
+function speak(text) {
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'en-US';
+  speechSynthesis.speak(utterance);
+}
+
+function startRecording(index) {
+  navigator.mediaDevices.getUserMedia({ audio: true })
+    .then(stream => {
+      if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        mediaRecorder.stop();
+      }
+
+      mediaRecorder = new MediaRecorder(stream);
+      audioChunks[index] = [];
+
+      mediaRecorder.ondataavailable = e => {
+        audioChunks[index].push(e.data);
+      };
+
+      mediaRecorder.onstop = e => {
+        const blob = new Blob(audioChunks[index], { 'type' : 'audio/ogg; codecs=opus' });
+        recordings[index] = URL.createObjectURL(blob);
+        alert("Recording saved! Click Play to listen.");
+      };
+
+      mediaRecorder.start();
+      alert("Recording... Click OK to stop.");
+      setTimeout(() => {
+        mediaRecorder.stop();
+      }, 3000);
+    })
+    .catch(error => {
+      console.error(error);
+      alert("Microphone access denied or error.");
+    });
+}
+
+function playRecording(index) {
+  if (recordings[index]) {
+    const audio = new Audio(recordings[index]);
+    audio.play();
+  } else {
+    alert("No recording available. Please record first.");
+  }
+}
+
+function checkAnswer(index) {
+  const userInput = document.getElementById(`input-${index}`).value.trim().toLowerCase();
+  const correct = wordsData[index].ending.toLowerCase();
+  if (userInput === correct) {
+    alert("✅ Correct!");
+  } else {
+    alert(`❌ Incorrect. The correct ending is ${wordsData[index].ending}`);
+  }
+}
+</script>
+
+  
+</body>
+</html>

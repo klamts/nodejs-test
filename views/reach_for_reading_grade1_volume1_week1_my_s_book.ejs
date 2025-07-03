@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My S s Book</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      background: #f0f8ff;
+    }
+    h1 {
+      text-align: center;
+    }
+    .book {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .drop-zone {
+      border: 2px dashed #999;
+      border-radius: 8px;
+      padding: 20px;
+      min-height: 150px;
+      text-align: center;
+      background-color: #fff;
+      position: relative;
+    }
+    .word-input {
+      margin-top: 10px;
+      padding: 5px;
+      font-size: 16px;
+      width: 80%;
+      max-width: 150px;
+    }
+    .ipa-transcription {
+      margin-top: 5px;
+      font-size: 14px;
+      color: #666;
+      font-style: italic;
+    }
+    .check-pronunciation, .record-button, .playback-button, .compare-result {
+      margin-top: 5px;
+      padding: 5px 10px;
+      font-size: 14px;
+      border: none;
+      border-radius: 4px;
+    }
+    .check-pronunciation {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .check-pronunciation:hover {
+      background-color: #45a049;
+    }
+    .record-button {
+      background-color: #2196F3;
+      color: white;
+    }
+    .record-button:hover {
+      background-color: #1976D2;
+    }
+    .playback-button {
+      background-color: #9C27B0;
+      color: white;
+    }
+    .playback-button:hover {
+      background-color: #7B1FA2;
+    }
+    .playback-button:disabled {
+      background-color: #B0BEC5;
+      cursor: not-allowed;
+    }
+    .compare-result {
+      background-color: #FFEB3B;
+      color: #333;
+      display: none;
+    }
+    .images {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .images .image-wrapper {
+      text-align: center;
+    }
+    .images img, .image-container img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 10px;
+      cursor: grab;
+    }
+    .word-label {
+      font-size: 14px;
+      margin-top: 4px;
+      display: none;
+    }
+    #toggle-labels {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .drop-zone .image-container {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>My S s Book</h1>
+<p style="text-align:center;">Drag the images into the boxes below and type the word. Click an image to remove it permanently.</p>
+
+<div id="toggle-labels">
+  <input type="checkbox" id="showLabels" onchange="toggleLabels()">
+  <label for="showLabels">Stick: Show word labels under images</label>
+</div>
+
+<div class="book">
+  <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)">
+    <div class="image-container"></div>
+    <input type="text" class="word-input" placeholder="Enter word" oninput="updateLabel(this)">
+    <div class="ipa-transcription" style="display:none;"></div>
+    <button class="check-pronunciation" onclick="checkPronunciation(this)" style="display:none;">Check Pronunciation</button>
+    <button class="record-button" onclick="startRecording(this)" style="display:none;">🎤 Record</button>
+    <button class="playback-button" onclick="playRecording(this)" disabled style="display:none;">🔊 Play</button>
+    <div class="compare-result" style="display:none;"></div>
+  </div>
+  <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)">
+    <div class="image-container"></div>
+    <input type="text" class="word-input" placeholder="Enter word" oninput="updateLabel(this)">
+    <div class="ipa-transcription" style="display:none;"></div>
+    <button class="check-pronunciation" onclick="checkPronunciation(this)" style="display:none;">Check Pronunciation</button>
+    <button class="record-button" onclick="startRecording(this)" style="display:none;">🎤 Record</button>
+    <button class="playback-button" onclick="playRecording(this)" disabled style="display:none;">🔊 Play</button>
+    <div class="compare-result" style="display:none;"></div>
+  </div>
+  <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)">
+    <div class="image-container"></div>
+    <input type="text" class="word-input" placeholder="Enter word" oninput="updateLabel(this)">
+    <div class="ipa-transcription" style="display:none;"></div>
+    <button class="check-pronunciation" onclick="checkPronunciation(this)" style="display:none;">Check Pronunciation</button>
+    <button class="record-button" onclick="startRecording(this)" style="display:none;">🎤 Record</button>
+    <button class="playback-button" onclick="playRecording(this)" disabled style="display:none;">🔊 Play</button>
+    <div class="compare-result" style="display:none;"></div>
+  </div>
+  <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)">
+    <div class="image-container"></div>
+    <input type="text" class="word-input" placeholder="Enter word" oninput="updateLabel(this)">
+    <div class="ipa-transcription" style="display:none;"></div>
+    <button class="check-pronunciation" onclick="checkPronunciation(this)" style="display:none;">Check Pronunciation</button>
+    <button class="record-button" onclick="startRecording(this)" style="display:none;">🎤 Record</button>
+    <button class="playback-button" onclick="playRecording(this)" disabled style="display:none;">🔊 Play</button>
+    <div class="compare-result" style="display:none;"></div>
+  </div>
+</div>
+<div class="images" id="image-bank">
+  <div class="image-wrapper" id="seal-wrapper">
+    <img src="/images/seal.jpg" alt="seal" draggable="true" ondragstart="drag(event)" id="seal">
+    <div class="word-label">seal</div>
+  </div>
+  <div class="image-wrapper" id="monkey-wrapper">
+    <img src="/images/monkey.jpg" alt="monkey" draggable="true" ondragstart="drag(event)" id="monkey">
+    <div class="word-label">monkey</div>
+  </div>
+  <div class="image-wrapper" id="sink-wrapper">
+    <img src="/images/sink.jpg" alt="sink" draggable="true" ondragstart="drag(event)" id="sink">
+    <div class="word-label">sink</div>
+  </div>
+  <div class="image-wrapper" id="sock-wrapper">
+    <img src="/images/sock.jpg" alt="sock" draggable="true" ondragstart="drag(event)" id="sock">
+    <div class="word-label">sock</div>
+  </div>
+  <div class="image-wrapper" id="six-wrapper">
+    <img src="/images/six.jpg" alt="six" draggable="true" ondragstart="drag(event)" id="six">
+    <div class="word-label">six</div>
+  </div>
+  <div class="image-wrapper" id="dog-wrapper">
+    <img src="/images/dog.jpg" alt="dog" draggable="true" ondragstart="drag(event)" id="dog">
+    <div class="word-label">dog</div>
+  </div>
+  <div class="image-wrapper" id="soap-wrapper">
+    <img src="/images/soap.jpg" alt="soap" draggable="true" ondragstart="drag(event)" id="soap">
+    <div class="word-label">soap</div>
+  </div>
+  <div class="image-wrapper" id="cow-wrapper">
+    <img src="/images/cow.jpg" alt="cow" draggable="true" ondragstart="drag(event)" id="cow">
+    <div class="word-label">cow</div>
+  </div>
+</div>
+
+<script>
+  // IPA transcriptions for each word
+  const ipaMap = {
+    "seal": "/siːl/",
+    "monkey": "/ˈmʌŋki/",
+    "sink": "/sɪŋk/",
+    "sock": "/sɑːk/",
+    "six": "/sɪks/",
+    "dog": "/dɔːɡ/",
+    "soap": "/soʊp/",
+    "cow": "/kaʊ/"
+  };
+
+  // Map to store media recorders and audio data per drop zone
+  const recorders = new WeakMap();
+  const audioData = new WeakMap();
+
+  function allowDrop(ev) {
+    ev.preventDefault();
+  }
+
+  function drag(ev) {
+    ev.dataTransfer.setData("text", ev.target.id);
+  }
+
+  function drop(ev) {
+    ev.preventDefault();
+    const data = ev.dataTransfer.getData("text");
+    const img = document.getElementById(data);
+    const dropZone = ev.target.closest('.drop-zone');
+    const imgContainer = dropZone.querySelector('.image-container');
+    const ipaElement = dropZone.querySelector('.ipa-transcription');
+    const checkButton = dropZone.querySelector('.check-pronunciation');
+    const recordButton = dropZone.querySelector('.record-button');
+    const playbackButton = dropZone.querySelector('.playback-button');
+    const compareResult = dropZone.querySelector('.compare-result');
+
+    // Return previous image to image-bank if exists
+    if (imgContainer.firstChild) {
+      const oldImg = imgContainer.firstChild;
+      const id = oldImg.id;
+      const originalWrapper = document.getElementById(id + "-wrapper");
+      originalWrapper.appendChild(oldImg);
+      // Clear and reset associated elements
+      const input = dropZone.querySelector('.word-input');
+      input.value = '';
+      ipaElement.style.display = 'none';
+      checkButton.style.display = 'none';
+      recordButton.style.display = 'none';
+      playbackButton.style.display = 'none';
+      playbackButton.disabled = true;
+      compareResult.style.display = 'none';
+      if (recorders.has(recordButton)) {
+        recorders.get(recordButton).stream.getTracks().forEach(track => track.stop());
+        recorders.delete(recordButton);
+      }
+      audioData.delete(recordButton);
+    }
+
+    // Clone new image and place it in drop-zone
+    const clone = img.cloneNode(true);
+    clone.setAttribute("draggable", false);
+    clone.onclick = removeImage;
+    imgContainer.innerHTML = '';
+    imgContainer.appendChild(clone);
+
+    // Display IPA, show buttons
+    const word = data;
+    ipaElement.textContent = ipaMap[word] || "IPA not available";
+    ipaElement.style.display = 'block';
+    checkButton.style.display = 'inline-block';
+    recordButton.style.display = 'inline-block';
+    playbackButton.style.display = 'inline-block';
+    compareResult.style.display = 'none'; // Reset comparison result
+
+    // Focus input for user to type word
+    const input = dropZone.querySelector('.word-input');
+    if (input) {
+      input.value = '';
+      input.focus();
+    }
+
+    // Text-to-Speech for the default word
+    const utterance = new SpeechSynthesisUtterance(word);
+    const voices = speechSynthesis.getVoices();
+    utterance.voice = voices[114] || voices.find(v => v.lang.startsWith('en-US'));
+    utterance.lang = 'en-US';
+    utterance.rate = 0.9;
+    utterance.pitch = 1.0;
+    speechSynthesis.speak(utterance);
+  }
+
+  function removeImage(ev) {
+    const img = ev.target;
+    const dropZone = img.closest('.drop-zone');
+    const imgContainer = dropZone.querySelector('.image-container');
+    imgContainer.innerHTML = '';
+    const input = dropZone.querySelector('.word-input');
+    input.value = '';
+    const ipaElement = dropZone.querySelector('.ipa-transcription');
+    ipaElement.style.display = 'none';
+    const checkButton = dropZone.querySelector('.check-pronunciation');
+    checkButton.style.display = 'none';
+    const recordButton = dropZone.querySelector('.record-button');
+    recordButton.style.display = 'none';
+    const playbackButton = dropZone.querySelector('.playback-button');
+    playbackButton.style.display = 'none';
+    playbackButton.disabled = true;
+    const compareResult = dropZone.querySelector('.compare-result');
+    compareResult.style.display = 'none';
+    if (recorders.has(recordButton)) {
+      recorders.get(recordButton).stream.getTracks().forEach(track => track.stop());
+      recorders.delete(recordButton);
+    }
+    audioData.delete(recordButton);
+  }
+
+  function checkPronunciation(button) {
+    const dropZone = button.closest('.drop-zone');
+    const imgContainer = dropZone.querySelector('.image-container');
+    if (imgContainer.firstChild) {
+      const id = imgContainer.firstChild.id;
+      const word = id;
+      const utterance = new SpeechSynthesisUtterance(word);
+      const voices = speechSynthesis.getVoices();
+      utterance.voice = voices[114] || voices.find(v => v.lang.startsWith('en-US'));
+      utterance.lang = 'en-US';
+      utterance.rate = 0.9;
+      utterance.pitch = 1.0;
+      speechSynthesis.speak(utterance);
+    }
+  }
+
+  function updateLabel(input) {
+    const dropZone = input.closest('.drop-zone');
+    const imgContainer = dropZone.querySelector('.image-container');
+    const ipaElement = dropZone.querySelector('.ipa-transcription');
+    if (imgContainer.firstChild) {
+      const word = input.value.trim().toLowerCase();
+      if (word && ipaMap.hasOwnProperty(word)) {
+        ipaElement.textContent = ipaMap[word];
+        ipaElement.style.display = 'block';
+        const utterance = new SpeechSynthesisUtterance(word);
+        const voices = speechSynthesis.getVoices();
+        const defaultVoice = voices.find(v => v.lang.startsWith('en-US'));
+        utterance.voice = defaultVoice || voices[0];
+        utterance.lang = 'en-US';
+        utterance.rate = 0.9;
+        utterance.pitch = 1.0;
+        speechSynthesis.speak(utterance);
+      } else {
+        ipaElement.style.display = 'none';
+      }
+    }
+  }
+
+  function toggleLabels() {
+    const show = document.getElementById("showLabels").checked;
+    const labels = document.querySelectorAll(".word-label");
+    labels.forEach(label => {
+      label.style.display = show ? "block" : "none";
+    });
+  }
+
+  async function startRecording(button) {
+    const dropZone = button.closest('.drop-zone');
+    const playbackButton = button.nextElementSibling;
+    const compareResult = dropZone.querySelector('.compare-result');
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      alert("Microphone access is not supported in this browser.");
+      return;
+    }
+
+    // Stop any existing recording
+    if (recorders.has(button)) {
+      recorders.get(button).stream.getTracks().forEach(track => track.stop());
+      recorders.delete(button);
+    }
+    compareResult.style.display = 'none'; // Reset comparison result
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      let chunks = [];
+
+      mediaRecorder.ondataavailable = event => chunks.push(event.data);
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(chunks, { type: 'audio/webm' });
+        const audioURL = URL.createObjectURL(audioBlob);
+        audioData.set(button, audioURL);
+        playbackButton.disabled = false;
+
+        // Start speech recognition after recording
+        recognizeSpeech(button, compareResult);
+      };
+
+      recorders.set(button, { stream, mediaRecorder });
+      mediaRecorder.start();
+      button.textContent = "⏹ Stop";
+      button.onclick = () => stopRecording(button, playbackButton);
+    } catch (err) {
+      console.error("Recording error:", err);
+      alert("Failed to access microphone.");
+    }
+  }
+
+  function stopRecording(button, playbackButton) {
+    const recorder = recorders.get(button);
+    if (recorder && recorder.mediaRecorder.state === "recording") {
+      recorder.mediaRecorder.stop();
+      recorder.stream.getTracks().forEach(track => track.stop());
+      recorders.delete(button);
+    }
+    button.textContent = "🎤 Record";
+    button.onclick = () => startRecording(button);
+  }
+
+  function playRecording(button) {
+    const audioURL = audioData.get(button.previousElementSibling);
+    if (audioURL) {
+      const audio = new Audio(audioURL);
+      audio.play();
+    }
+  }
+
+  async function recognizeSpeech(button, compareResult) {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      compareResult.textContent = "Speech recognition not supported in this browser.";
+      compareResult.style.display = 'block';
+      return;
+    }
+
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    const dropZone = button.closest('.drop-zone');
+    const imgContainer = dropZone.querySelector('.image-container');
+    const expectedWord = imgContainer.firstChild ? imgContainer.firstChild.id : '';
+
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript.toLowerCase().trim();
+      compareResult.style.display = 'block';
+      if (transcript === expectedWord) {
+        compareResult.textContent = "Correct pronunciation!";
+        compareResult.style.backgroundColor = "#4CAF50";
+        compareResult.style.color = "white";
+      } else {
+        compareResult.textContent = `Try again. Expected: ${expectedWord}, Got: ${transcript}`;
+        compareResult.style.backgroundColor = "#FF4444";
+        compareResult.style.color = "white";
+      }
+    };
+
+    recognition.onerror = (event) => {
+      compareResult.textContent = "Error during speech recognition.";
+      compareResult.style.display = 'block';
+      compareResult.style.backgroundColor = "#FFEB3B";
+      compareResult.style.color = "#333";
+    };
+
+    recognition.start();
+  }
+
+  // Populate voice list when voices are loaded
+  speechSynthesis.onvoiceschanged = function() {
+    toggleLabels();
+  };
+</script>
+
+</body>
+</html>

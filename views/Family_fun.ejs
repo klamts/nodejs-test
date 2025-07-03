@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Grammar Game: Nouns</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background: #f4f9fb;
+      padding: 20px;
+    }
+    .question-card {
+      background: #e0f7fa;
+      padding: 20px;
+      border-radius: 15px;
+      width: 600px;
+      margin: auto;
+      box-shadow: 2px 2px 10px #ccc;
+    }
+    .options button, .extra-controls button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+    }
+    .feedback {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+      .blinking {
+    animation: blink 1s steps(2, start) infinite;
+  }
+  @keyframes blink {
+    to {
+      visibility: hidden;
+    }
+  }
+  </style>
+</head>
+<body>
+ <div style="margin-top: 20px;">
+    <label for="voiceSelect">🔊 Chọn giọng đọc:</label>
+    <select id="voiceSelect"></select>
+  </div>
+  <h2>Singular and Plural Noun Practice</h2>
+
+  <div class="rules">
+    <h3>📘 Grammar Rules</h3>
+    <ul>
+      <li><strong>1 A noun name a person</strong><br> <em> My <u>sister</u> and I play together. </em></li>
+      <li><strong>2 A noun names a place</strong><br> <em> Eunji play in  the <u>park</u>. </em></li>
+      <li><strong>3 A noun names a thing</strong><br> <em> My family lives in a <u>house</u>. </em></li>
+    </ul>
+  </div>
+
+
+<h2>📘 Grammar Game – Person / Place / Thing</h2>
+
+<div class="question-card">
+  <p id="sentence"></p>
+  <div class="options">
+    <button onclick="checkAnswer('person')">👤 Person</button>
+    <button onclick="checkAnswer('place')">🏞️ Place</button>
+    <button onclick="checkAnswer('thing')">📦 Thing</button>
+  </div>
+
+  <div class="extra-controls">
+    <button onclick="speakSentence()">🔊 Đọc câu</button>
+    <button onclick="startListening()">🎙️ Nói câu</button>
+    <button onclick="playUserRecording()">🔁 Nghe lại giọng mình</button>
+  </div>
+
+  <p class="feedback" id="feedback"></p>
+  <button onclick="nextQuestion()">🔁 Next</button>
+</div>
+<p id="recordingStatus"></p>
+<p id="transcript">🗣️ Bạn nói: ...</p>
+<audio id="userAudio" controls style="display:none;"></audio>
+
+<script>
+ const questions = [
+  { text: "First we eat a big breakfast.", type: "thing", highlight: "breakfast" },
+  { text: "Then we go to the park.", type: "place", highlight: "park" },
+  { text: "My father runs with me.", type: "person", highlight: "father" },
+  { text: "My friend meets us there.", type: "person", highlight: "friend" },
+  { text: "We play with a ball.", type: "thing", highlight: "ball" },
+  { text: "Finally we go home.", type: "place", highlight: "home" }
+];
+
+  let currentIndex = 0;
+  let mediaRecorder;
+  let audioChunks = [];
+  let recordedAudio = null;
+  let userAudioBlob = null;
+  let lastSpoken = "";
+  function loadQuestion() {
+  const question = questions[currentIndex];
+  const sentence = question.text;
+  const keyword = question.highlight;
+
+  // Gạch dưới keyword (danh từ)
+  const highlighted = sentence.replace(
+    new RegExp(`\\b(${keyword})\\b`, 'i'),
+    '<u>$1</u>'
+  );
+
+  document.getElementById("sentence").innerHTML = highlighted;
+  document.getElementById("feedback").innerText = "";
+}
+
+  function checkAnswer(userChoice) {
+    const correct = questions[currentIndex].type;
+    if (userChoice === correct) {
+      document.getElementById("feedback").innerText = "✅ Đúng rồi!";
+    } else {
+      document.getElementById("feedback").innerText = `❌ Sai rồi. Đáp án là: ${correct}`;
+    }
+  }
+
+  function nextQuestion() {
+    currentIndex = (currentIndex + 1) % questions.length;
+    loadQuestion();
+  }
+
+  function speakSentence() {
+  const utterance = new SpeechSynthesisUtterance(questions[currentIndex].text);
+  utterance.rate = 1.0;
+  utterance.pitch = 1.0;
+
+  if (selectedVoice) {
+    utterance.voice = selectedVoice;
+  } else {
+    console.warn("⚠️ Chưa có giọng đọc nào được chọn. Dùng mặc định.");
+  }
+
+  speechSynthesis.speak(utterance);
+}
+
+  async function startRecording() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      audioChunks = [];
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+        recordedAudio = new Audio(URL.createObjectURL(audioBlob));
+      };
+      mediaRecorder.start();
+      setTimeout(() => {
+        mediaRecorder.stop();
+      }, 4000); // 4 giây thu âm
+    } catch (err) {
+      alert("🎤 Không thể thu âm. Hãy kiểm tra micro.");
+    }
+  }
+
+  function playRecording() {
+    if (recordedAudio) {
+      recordedAudio.play();
+    } else {
+      alert("🎧 Chưa có bản ghi nào.");
+    }
+  }
+
+  // Load voices để tránh delay khi phát
+  window.speechSynthesis.onvoiceschanged = () => {};
+  function startListening() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    alert("❌ Trình duyệt của bạn không hỗ trợ Speech Recognition.");
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = "en-US";
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  recognition.start();
+
+  recognition.onresult = (event) => {
+    const spoken = event.results[0][0].transcript.trim();
+    lastSpoken = spoken;
+    document.getElementById("transcript").textContent = `🗣️ Bạn nói: "${spoken}"`;
+
+    const expected = questions[currentIndex].text.toLowerCase().replace(/[.]/g, "");
+    const said = spoken.toLowerCase().replace(/[.]/g, "");
+
+    if (said === expected) {
+      document.getElementById("feedback").textContent = "✅ Đúng rồi!";
+    } else {
+      document.getElementById("feedback").textContent = `❌ Sai. Câu đúng: "${questions[currentIndex].text}"`;
+    }
+  };
+
+  recognition.onerror = () => {
+    document.getElementById("feedback").textContent = "❌ Lỗi nhận diện giọng nói.";
+  };
+
+  // ======== GHI ÂM GIỌNG NGƯỜI DÙNG ========
+  navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+    const mediaRecorder = new MediaRecorder(stream);
+    const chunks = [];
+
+    mediaRecorder.ondataavailable = e => chunks.push(e.data);
+    mediaRecorder.onstop = () => {
+      userAudioBlob = new Blob(chunks, { type: 'audio/webm' });
+      const audioURL = URL.createObjectURL(userAudioBlob);
+      const audio = document.getElementById("userAudio");
+      audio.src = audioURL;
+      audio.style.display = "block";
+    };
+
+    mediaRecorder.start();
+    setTimeout(() => {
+      mediaRecorder.stop();
+    }, 4000);
+  });
+
+  // Hiển thị trạng thái ghi âm
+  const statusElem = document.getElementById("recordingStatus");
+  statusElem.textContent = "🔴 Đang ghi âm...";
+  statusElem.classList.add("blinking");
+
+  // Ẩn sau 4 giây
+  setTimeout(() => {
+    statusElem.textContent = "";
+    statusElem.classList.remove("blinking");
+  }, 4000);
+}
+
+function playUserRecording() {
+  const audio = document.getElementById("userAudio");
+  if (userAudioBlob) {
+    audio.play();
+  } else {
+    alert("Chưa có bản ghi âm nào!");
+  }
+}
+function loadVoices() {
+    const voiceSelect = document.getElementById('voiceSelect');
+    const voices = window.speechSynthesis.getVoices();
+
+    // Xóa lựa chọn cũ (nếu có)
+    voiceSelect.innerHTML = '';
+
+    voices.forEach((voice, index) => {
+      const option = document.createElement('option');
+      option.value = index;
+      option.textContent = `${index + 1}. ${voice.name} (${voice.lang})`;
+      voiceSelect.appendChild(option);
+    });
+
+    // Mặc định chọn giọng đầu tiên
+    selectedVoice = voices[114];
+    voiceSelect.selectedIndex = 114;
+
+    voiceSelect.addEventListener('change', () => {
+      selectedVoice = voices[voiceSelect.value];
+    });
+  }
+
+  // Gọi sau khi danh sách voice được cập nhật
+  window.speechSynthesis.onvoiceschanged = loadVoices;
+  function speak(text) {
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.rate = 1.14;
+  utterance.lang = 'en-US';
+
+  if (selectedVoice) {
+    utterance.voice = selectedVoice;
+    console.log("Using voice:", selectedVoice.name);
+  } else {
+    console.warn("⚠️ No voice selected.");
+  }
+
+  window.speechSynthesis.speak(utterance);
+}
+
+  loadQuestion();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Use Nouns - Tic Tac Toe vs Computer</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #e0f7fa, #f0f8ff);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: linear-gradient(90deg, #4CAF50, #45a049);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      margin: 0;
+      font-size: 2em;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      flex-grow: 1;
+      text-align: center;
+    }
+    .instructions {
+      color: #333;
+      font-size: 1.1em;
+      margin: 15px 0;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 5px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      max-width: 600px;
+      margin: 20px auto;
+    }
+    .cell {
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      padding: 15px;
+      min-height: 130px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      background-color: #f9f9f9;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .cell:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    .cell img {
+      max-height: 70px;
+      transition: transform 0.2s;
+    }
+    .cell:hover img {
+      transform: scale(1.1);
+    }
+    .cell span {
+      margin-top: 8px;
+      font-weight: bold;
+      text-transform: capitalize;
+      font-size: 1.1em;
+    }
+    .played-user {
+      background: #d1f5d3;
+      pointer-events: none;
+    }
+    .played-computer {
+      background: #fce4ec;
+      pointer-events: none;
+    }
+    .controls {
+      margin-top: 20px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .sentence-input {
+      width: 90%;
+      max-width: 300px;
+      padding: 8px;
+      margin-top: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      transition: border-color 0.3s;
+    }
+    .sentence-input:focus {
+      border-color: #2196F3;
+      outline: none;
+    }
+    .voice-select {
+      margin-top: 10px;
+    }
+    .voice-select label {
+      font-size: 1em;
+      color: #333;
+    }
+    button {
+      margin: 0 5px;
+      padding: 8px 15px;
+      font-size: 14px;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      transform: translateY(-1px);
+    }
+    .check-btn {
+      background-color: #8BC34A;
+      color: white;
+    }
+    .check-btn:hover {
+      background-color: #7CB342;
+    }
+    .reset-btn {
+      background-color: #FF9800;
+      color: white;
+    }
+    .reset-btn:hover {
+      background-color: #F57C00;
+    }
+    label {
+      margin-right: 10px;
+      font-size: 1em;
+    }
+    #feedback {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    footer {
+      background: #4CAF50;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>🎮 Use Nouns - Tic Tac Toe (You vs Computer)</h2>
+  </header>
+  <div class="container">
+    <div>
+      <label><input type="checkbox" id="toggleSpeak" checked> 🔊 Enable speaking</label>
+      <label><input type="checkbox" id="toggleType" checked> 📝 Include type (person/place/thing)</label>
+    </div>
+    <div class="instructions">Click a square, say the word, tell what it is (person/place/thing), and use it in a sentence!</div>
+
+    <div class="grid" id="board"></div>
+    <div class="controls">
+      <div class="voice-select">
+        <label for="voiceSelect">Chọn giọng: </label>
+        <select id="voiceSelect" onchange="updateVoiceSelection()"></select>
+      </div>
+      <p id="info"></p>
+      <input type="text" id="sentenceInput" class="sentence-input" placeholder="Write a sentence with the word...">
+      <div style="margin-top: 10px">
+        <button class="check-btn" onclick="checkSentence()">✔ Check Sentence</button>
+        <button class="reset-btn" onclick="resetGame()">🔄 Reset</button>
+      </div>
+      <div id="feedback" style="margin-top:10px; font-weight:bold;"></div>
+    </div>
+  </div>
+  <footer>
+    <p>© 2025 Use Nouns Tic Tac Toe. All rights reserved.</p>
+  </footer>
+
+  <script>
+    let selectedVoiceIndex = -1;
+    const voiceSelect = document.getElementById("voiceSelect");
+
+    // Khởi tạo danh sách giọng
+    function populateVoiceList() {
+      voiceSelect.innerHTML = '<option value="-1">Tự động chọn</option>';
+      const voices = speechSynthesis.getVoices();
+      voices.forEach((voice, index) => {
+        const option = document.createElement("option");
+        option.value = index;
+        option.text = `${voice.name} (${voice.lang})`;
+        voiceSelect.appendChild(option);
+      });
+    }
+
+    // Xử lý sự kiện voiceschanged
+    speechSynthesis.onvoiceschanged = populateVoiceList;
+
+    function updateVoiceSelection() {
+      selectedVoiceIndex = parseInt(voiceSelect.value);
+      console.log("Giọng được chọn:", selectedVoiceIndex);
+    }
+
+    const nouns = [
+      { word: "child", img: "👦", type: "person" },
+      { word: "feet", img: "🦶🦶", type: "thing" },
+      { word: "woman", img: "👩", type: "person" },
+      { word: "foot", img: "🦶", type: "thing" },
+      { word: "draw", img: "✏️", type: "custom" },
+      { word: "men", img: "👨‍🦳👨‍🦳", type: "person" },
+      { word: "man", img: "👨", type: "person" },
+      { word: "women", img: "👩👩", type: "person" },
+      { word: "children", img: "🧒🧒🧒", type: "person" },
+    ];
+
+    let selectedWord = null;
+    let playerTurn = true;
+    const board = document.getElementById("board");
+
+    nouns.forEach((item, index) => {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      cell.setAttribute("data-index", index);
+      cell.innerHTML = `
+        <div>${item.img}</div>
+        <span>${item.word}</span>
+      `;
+      cell.onclick = () => playerTurn && selectCell(item, cell);
+      board.appendChild(cell);
+    });
+
+    function selectCell(item, cellEl) {
+      selectedWord = item;
+      const toggleSpeak = document.getElementById('toggleSpeak').checked;
+      const toggleType = document.getElementById('toggleType').checked;
+      const text = toggleSpeak ? (toggleType ? `${item.word}. It is a ${item.type === 'custom' ? 'noun' : item.type}.` : item.word) : "";
+      document.getElementById("info").textContent = `🗣 You chose: "${item.word}" — Type: ${item.type === 'custom' ? 'noun' : item.type}`;
+      if (text) speak(text);
+      cellEl.classList.add("played-user");
+      cellEl.onclick = null;
+      checkSentencePrompt();
+      setTimeout(computerMove, 1500); // Tăng thời gian để người chơi phản hồi
+    }
+
+    function speak(text) {
+      const toggle = document.getElementById('toggleSpeak');
+      if (!toggle || !toggle.checked) return;
+      const utterance = new SpeechSynthesisUtterance(text);
+      setVoice(utterance);
+      utterance.rate = 0.9;
+      utterance.pitch = 1.0;
+      speechSynthesis.speak(utterance);
+    }
+
+    function setVoice(utterance) {
+      const voices = speechSynthesis.getVoices();
+      if (selectedVoiceIndex >= 0 && selectedVoiceIndex < voices.length) {
+        utterance.voice = voices[selectedVoiceIndex];
+        console.log("Sử dụng giọng:", voices[selectedVoiceIndex].name, voices[selectedVoiceIndex].lang);
+      } else {
+        const defaultVoice = voices.find(voice => voice.lang.startsWith("en-US") && voice.name.includes("Wavenet"));
+        utterance.voice = defaultVoice || voices[0];
+        console.log("Sử dụng giọng mặc định:", utterance.voice.name);
+      }
+      utterance.lang = 'en-US';
+    }
+
+    function checkSentencePrompt() {
+      document.getElementById("feedback").textContent = "📝 Please write a sentence using the word and check it!";
+      document.getElementById("feedback").style.color = "black";
+    }
+
+    function checkSentence() {
+      const sentence = document.getElementById("sentenceInput").value.trim().toLowerCase();
+      const fb = document.getElementById("feedback");
+      if (!selectedWord) {
+        fb.textContent = "❗ Please select a square first.";
+        fb.style.color = "red";
+        return;
+      }
+      if (sentence.includes(selectedWord.word.toLowerCase())) {
+        fb.textContent = "✅ Good! You used the word in a sentence.";
+        fb.style.color = "green";
+      } else {
+        fb.textContent = `❌ Make sure your sentence includes the word "${selectedWord.word}".`;
+        fb.style.color = "red";
+      }
+    }
+
+    function computerMove() {
+      const available = [...document.querySelectorAll('.cell')].filter(cell => !cell.classList.contains('played-user') && !cell.classList.contains('played-computer'));
+      if (available.length === 0) return;
+      const choice = available[Math.floor(Math.random() * available.length)];
+      const index = parseInt(choice.getAttribute('data-index'));
+      const item = nouns[index];
+
+      choice.classList.add("played-computer");
+      choice.onclick = null;
+      const toggleSpeak = document.getElementById('toggleSpeak').checked;
+      const toggleType = document.getElementById('toggleType').checked;
+      const text = toggleSpeak ? (toggleType ? `${item.word}. It is a ${item.type === 'custom' ? 'noun' : item.type}.` : item.word) : "";
+      document.getElementById("info").textContent = `🤖 Computer chose: "${item.word}" — Type: ${item.type === 'custom' ? 'noun' : item.type}`;
+      if (text) speak(text);
+      checkWinner();
+      playerTurn = true;
+    }
+
+    function resetGame() {
+      document.querySelectorAll('.cell').forEach(cell => {
+        cell.classList.remove('played-user', 'played-computer');
+        cell.onclick = () => playerTurn && selectCell(nouns[cell.dataset.index], cell);
+      });
+      document.getElementById("sentenceInput").value = "";
+      document.getElementById("info").textContent = "";
+      document.getElementById("feedback").textContent = "";
+      document.getElementById("feedback").style.color = "black";
+      selectedWord = null;
+      playerTurn = true;
+    }
+
+    function checkWinner() {
+      const cells = document.querySelectorAll('.cell');
+      const winPatterns = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],
+        [0, 3, 6], [1, 4, 7], [2, 5, 8],
+        [0, 4, 8], [2, 4, 6]
+      ];
+
+      for (const pattern of winPatterns) {
+        const [a, b, c] = pattern;
+        const ca = cells[a], cb = cells[b], cc = cells[c];
+        if (ca.classList.contains('played-user') && cb.classList.contains('played-user') && cc.classList.contains('played-user')) {
+          document.getElementById("feedback").textContent = "🎉 You win!";
+          document.getElementById("feedback").style.color = "green";
+          disableBoard();
+          playSound("win");
+          return;
+        }
+        if (ca.classList.contains('played-computer') && cb.classList.contains('played-computer') && cc.classList.contains('played-computer')) {
+          document.getElementById("feedback").textContent = "💻 Computer wins!";
+          document.getElementById("feedback").style.color = "red";
+          disableBoard();
+          playSound("lose");
+          return;
+        }
+      }
+
+      const allPlayed = [...cells].every(cell => cell.classList.contains('played-user') || cell.classList.contains('played-computer'));
+      if (allPlayed) {
+        document.getElementById("feedback").textContent = "🤝 It's a draw!";
+        document.getElementById("feedback").style.color = "blue";
+        playSound("draw");
+      }
+    }
+
+    function disableBoard() {
+      document.querySelectorAll('.cell').forEach(cell => cell.onclick = null);
+    }
+
+    // Thay thế file âm thanh bằng TTS
+    function playSound(result) {
+      const toggle = document.getElementById('toggleSpeak');
+      if (!toggle || !toggle.checked) return;
+      const messages = {
+        win: "Congratulations, you win!",
+        lose: "Computer wins, better luck next time!",
+        draw: "It's a draw, well played!"
+      };
+      const utterance = new SpeechSynthesisUtterance(messages[result] || "Game over!");
+      setVoice(utterance);
+      speechSynthesis.speak(utterance);
+    }
+
+    // Khởi tạo
+    populateVoiceList();
+  </script>
+</body>
+</html>

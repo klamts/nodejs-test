@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>🖼️ Flashcard hình ảnh</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; }
+    #card-container { margin: 20px auto; width: 250px; border: 1px solid #ccc; padding: 10px; border-radius: 10px; }
+    .result.correct { color: green; }
+    .result.incorrect { color: red; }
+    .controls button { margin: 10px; padding: 5px 15px; }
+    progress { width: 100%; height: 10px; display: none; }
+  </style>
+</head>
+<body>
+  <div id="card-container">
+  <img id="card-image" src="" width="200"><br>
+  <p id="card-word" style="opacity: 0.3;"></p>
+  <input type="hidden" id="expected-word">
+  <button onclick="startRecognition()">🎤 Đọc</button>
+  <div class="result" id="result-box">...</div>
+</div>
+
+<div class="controls">
+  <button onclick="prevCard()">⏮ Trước</button>
+  <button onclick="nextCard()">⏭ Tiếp</button>
+</div>
+
+<table id="historyTable" border="1" style="margin: auto; margin-top:20px;">
+  <thead><tr><th>Từ đúng</th><th>Bạn nói</th><th>Kết quả</th></tr></thead>
+  <tbody></tbody>
+</table>
+
+
+  <script>
+ const words = <%- JSON.stringify(words) %>;
+let currentIndex = 0;
+
+const imageElem = document.getElementById("card-image");
+const wordElem = document.getElementById("card-word");
+const expectedInput = document.getElementById("expected-word");
+const resultBox = document.getElementById("result-box");
+
+function showCard(index) {
+  const word = words[index];
+  imageElem.src = "/" + word.image_url;
+  wordElem.textContent = "/" + word.word_text + "/";
+  expectedInput.value = word.word_text.toLowerCase();
+  resultBox.textContent = "...";
+  resultBox.className = "result";
+}
+
+function nextCard() {
+  currentIndex = (currentIndex + 1) % words.length;
+  showCard(currentIndex);
+}
+
+function prevCard() {
+  currentIndex = (currentIndex - 1 + words.length) % words.length;
+  showCard(currentIndex);
+}
+
+function startRecognition() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    alert("Trình duyệt của bạn không hỗ trợ SpeechRecognition.");
+    return;
+  }
+
+  function normalize(str) {
+    return str.toLowerCase().trim().replace(/[.,!?]/g, "");
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = "en-US";
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  resultBox.textContent = "🎤 Đang nghe...";
+  resultBox.className = "result";
+
+  recognition.start();
+
+  recognition.onresult = (event) => {
+    const transcriptRaw = event.results[0][0].transcript;
+    const transcript = normalize(transcriptRaw);
+    const expected = normalize(expectedInput.value);
+
+    const isCorrect = transcript === expected;
+
+    let html = `✅ Từ đúng: <strong>${expected}</strong>`;
+    html += `<br>🗣️ Bạn nói: <strong>${transcriptRaw}</strong>`;
+    html += `<br>🎯 ${isCorrect ? "<span style='color:green;'>Chính xác!</span>" : "<span style='color:red;'>Sai rồi!</span>"}`;
+
+    resultBox.innerHTML = html;
+    resultBox.className = "result " + (isCorrect ? "correct" : "incorrect");
+
+    // Lưu vào lịch sử
+    const row = document.createElement("tr");
+    row.innerHTML = `<td>${expected}</td><td>${transcriptRaw}</td><td>${isCorrect ? '✅' : '❌'}</td>`;
+    document.querySelector("#historyTable tbody").appendChild(row);
+  };
+
+  recognition.onerror = (e) => {
+    resultBox.textContent = "❌ Lỗi nhận dạng: " + e.error;
+    resultBox.className = "result incorrect";
+  };
+}
+
+// Hiển thị thẻ đầu tiên
+showCard(currentIndex);
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Trang Bài Tập - Từ Vựng & Nghe Hiểu</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #e0f7fa, #f0f8ff);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: linear-gradient(90deg, #2c3e50, #3498db);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      margin: 0;
+      font-size: 2em;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      flex-grow: 1;
+    }
+    .activity-container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .instructions {
+      color: #7f8c8d;
+      font-style: italic;
+      margin: 15px 0;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 5px;
+    }
+    .question {
+      display: flex;
+      align-items: center;
+      margin: 15px 0;
+      padding: 15px;
+      background: #ecf0f1;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
+    }
+    .question:hover {
+      transform: translateY(-2px);
+    }
+    .question p {
+      margin: 0 10px 0 0;
+      flex-grow: 1;
+      font-size: 1.1em;
+    }
+    input[type="text"] {
+      padding: 8px;
+      width: 180px;
+      border: 1px solid #bdc3c7;
+      border-radius: 4px;
+      transition: border-color 0.3s;
+    }
+    input[type="text"]:focus {
+      border-color: #3498db;
+      outline: none;
+    }
+    label {
+      margin: 0 15px;
+      color: #34495e;
+      font-size: 1em;
+    }
+    button {
+      padding: 8px 15px;
+      margin-left: 10px;
+      border: none;
+      border-radius: 20px;
+      background: #3498db;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      background: #2980b9;
+      transform: translateY(-1px);
+    }
+    select {
+      padding: 8px;
+      margin-left: 10px;
+      border: 1px solid #bdc3c7;
+      border-radius: 4px;
+      transition: border-color 0.3s;
+    }
+    select:focus {
+      border-color: #3498db;
+      outline: none;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #e8f4f8;
+      border-radius: 8px;
+      color: #27ae60;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .recording {
+      color: #e74c3c;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+    footer {
+      background: #2c3e50;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>Yes or No?</h2>
+  </header>
+  <div class="container">
+    <div class="activity-container">
+      <p class="instructions">Listen to the questions. Fill in the missing word and check Yes or No. Submit to see your score.</p>
+
+      <div id="questions"></div>
+
+      <label for="voiceSelect">Chọn giọng: </label>
+      <select id="voiceSelect" onchange="updateVoiceSelection()">
+        <option value="">Tự động chọn</option>
+      </select>
+
+      <button onclick="checkAnswers()">✅ Submit</button>
+      <div id="result"></div>
+    </div>
+  </div>
+  <footer>
+    <p>© 2025 Trang Bài Tập - Từ Vựng & Nghe Hiểu. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Dữ liệu từ JSON
+    const data = {
+      "week1": [
+        {"word_text": "meal", "meaning_en": "a type of food eaten at a specific time"},
+        {"word_text": "person", "meaning_en": "an individual human"},
+        {"word_text": "home", "meaning_en": "a place where someone lives"},
+        {"word_text": "holiday", "meaning_en": "a day of celebration"},
+        {"word_text": "celebrate", "meaning_en": "to observe an occasion with festivities"},
+        {"word_text": "class", "meaning_en": "a group of students taught together"}
+      ]
+    };
+
+    // Câu hỏi
+    const questions = [
+      "Is breakfast a ___?",
+      "Is a teacher a ___?",
+      "Can an apartment be a ___?",
+      "Is New Year's Day a ___?",
+      "Can you ___ a birthday?",
+      "Is a group of students a ___?"
+    ];
+
+    // Tạo câu hỏi động
+    const questionsDiv = document.getElementById("questions");
+    questions.forEach((q, index) => {
+      const div = document.createElement("div");
+      div.className = "question";
+      div.innerHTML = `
+        <p>${index + 1}. ${q.replace("___", `<input type="text" name="fill${index + 1}" placeholder="Nhập từ..." />`)}</p>
+        <label><input type="radio" name="q${index + 1}" value="yes"> Yes</label>
+        <label><input type="radio" name="q${index + 1}" value="no"> No</label>
+        <button onclick="speak(${index + 1})">🔊 Play</button>
+        <button onclick="startRecording(${index + 1})">🎤 Record</button>
+        <button onclick="playUserAudio(${index + 1})">🔁 Replay</button>
+        <span id="recordingStatus${index + 1}" class="recording"></span>
+      `;
+      questionsDiv.appendChild(div);
+    });
+
+    // Đáp án đúng
+    const correctAnswers = {
+      q1: { word: "meal", yesNo: "yes" },
+      q2: { word: "person", yesNo: "yes" },
+      q3: { word: "home", yesNo: "yes" },
+      q4: { word: "holiday", yesNo: "yes" },
+      q5: { word: "celebrate", yesNo: "yes" },
+      q6: { word: "class", yesNo: "yes" }
+    };
+
+    // Chọn giọng
+    let selectedVoiceIndex = -1;
+    const voiceSelect = document.getElementById("voiceSelect");
+
+    function populateVoiceList() {
+      const voices = speechSynthesis.getVoices();
+      voiceSelect.innerHTML = '<option value="">Tự động chọn</option>';
+      voices.forEach((voice, index) => {
+        const option = document.createElement("option");
+        option.value = index;
+        option.text = `${voice.name} (${voice.lang})`;
+        voiceSelect.appendChild(option);
+      });
+    }
+
+    // Xử lý sự kiện voiceschanged
+    speechSynthesis.onvoiceschanged = populateVoiceList;
+
+    function updateVoiceSelection() {
+      selectedVoiceIndex = parseInt(voiceSelect.value);
+      console.log("Giọng được chọn:", selectedVoiceIndex);
+    }
+
+    // Kiểm tra đáp án
+    function checkAnswers() {
+      let score = 0;
+      let feedback = "";
+      for (let i = 1; i <= 6; i++) {
+        const textInput = document.querySelector(`input[name="fill${i}"]`).value.trim().toLowerCase();
+        const answerInput = document.querySelector(`input[name="q${i}"]:checked`);
+        const correct = correctAnswers[`q${i}`];
+        const textCorrect = textInput === correct.word.toLowerCase();
+        const answerCorrect = answerInput && answerInput.value === correct.yesNo;
+
+        if (textCorrect && answerCorrect) {
+          score++;
+          feedback += `<p>Câu ${i}: Đúng! (${textInput} - ${correct.yesNo})</p>`;
+        } else {
+          feedback += `<p>Câu ${i}: Sai. Đáp án: ${correct.word} - ${correct.yesNo}</p>`;
+        }
+      }
+      document.getElementById("result").innerHTML = `Điểm của bạn: ${score}/6<br>${feedback}`;
+    }
+
+    // Phát audio bằng TTS
+    function speak(index) {
+      const questionText = questions[index - 1].replace("___", data.week1[index - 1].word_text);
+      const utterance = new SpeechSynthesisUtterance(questionText);
+      const voices = speechSynthesis.getVoices();
+      if (selectedVoiceIndex >= 0 && selectedVoiceIndex < voices.length) {
+        utterance.voice = voices[selectedVoiceIndex];
+        console.log("Sử dụng giọng:", voices[selectedVoiceIndex].name, voices[selectedVoiceIndex].lang);
+      } else {
+        // Chọn giọng mặc định nếu không có lựa chọn
+        const defaultVoice = voices.find(voice => voice.lang.startsWith("en-US") && voice.name.includes("Wavenet"));
+        utterance.voice = defaultVoice || voices[0];
+        console.warn("Không tìm thấy giọng chọn, dùng mặc định:", utterance.voice.name);
+      }
+
+      utterance.lang = 'en-US';
+      utterance.rate = 0.9; // Tốc độ nói
+      utterance.pitch = 1.0; // Cao độ
+      speechSynthesis.speak(utterance);
+    }
+
+    // Ghi âm
+    let mediaRecorder;
+    const recordings = {};
+    let recordingTimeouts = {};
+
+    function startRecording(index) {
+      if (mediaRecorder && mediaRecorder.state === "recording") {
+        document.getElementById(`recordingStatus${index}`).innerText = "Đang ghi...";
+        return;
+      }
+
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+          mediaRecorder = new MediaRecorder(stream);
+          const chunks = [];
+
+          mediaRecorder.ondataavailable = e => chunks.push(e.data);
+          mediaRecorder.onstop = () => {
+            const blob = new Blob(chunks, { type: 'audio/webm' });
+            recordings[index] = URL.createObjectURL(blob);
+            document.getElementById(`recordingStatus${index}`).innerText = "Ghi âm hoàn tất!";
+            clearTimeout(recordingTimeouts[index]);
+          };
+
+          mediaRecorder.start();
+          document.getElementById(`recordingStatus${index}`).innerText = "Đang ghi...";
+
+          recordingTimeouts[index] = setTimeout(() => {
+            mediaRecorder.stop();
+            stream.getTracks().forEach(track => track.stop());
+          }, 5000); // Ghi 5 giây
+        })
+        .catch(error => alert("Không thể truy cập micro: " + error));
+    }
+
+    // Phát lại ghi âm
+    function playUserAudio(index) {
+      if (recordings[index]) {
+        const audio = new Audio(recordings[index]);
+        audio.play().catch(error => alert("Không thể phát lại ghi âm!"));
+      } else {
+        alert("Bạn chưa ghi âm câu này!");
+      }
+    }
+  </script>
+</body>
+</html>

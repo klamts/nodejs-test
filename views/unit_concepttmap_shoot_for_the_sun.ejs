@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Shoot for the Sun</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; }
+    h2 { text-align: center; }
+    .tree-container { text-align: center; margin-top: 30px; }
+    .tree-question { font-weight: bold; font-size: 20px; margin: 20px 0; }
+    .leaf { margin: 10px; display: inline-block; }
+    .leaf input {
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      width: 220px;
+      font-size: 16px;
+    }
+    button {
+      padding: 8px 12px;
+      font-size: 16px;
+      margin: 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .hint { display: none; font-style: italic; color: #666; margin-top: 10px; }
+    .footer-controls { text-align: center; margin-top: 30px; }
+  </style>
+</head>
+<body>
+  <h2>Shoot for the Sun 🌳</h2>
+  <p style="text-align: center;"><strong>Big Question:</strong> When is something alive?</p>
+
+  <div class="tree-container">
+    <div class="tree-question">🌱 When is something alive?</div>
+
+    <div class="leaf"><input type="text" id="leaf1" placeholder="Answer 1"></div>
+    <button onclick="speakText(`leaf1`)">🔊 Listen</button>
+
+    <div class="leaf"><input type="text" id="leaf2" placeholder="Answer 2"></div>
+    <button onclick="speakText(`leaf2`)">🔊 Listen</button>
+    <div class="leaf"><input type="text" id="leaf3" placeholder="Answer 3"></div>
+    <button onclick="speakText(`leaf3`)">🔊 Listen</button>
+    <div class="leaf"><input type="text" id="leaf4" placeholder="Answer 4"></div>
+    <button onclick="speakText(`leaf4`)">🔊 Listen</button>
+    <div class="leaf"><input type="text" id="leaf5" placeholder="Answer 5"></div>
+    <button onclick="speakText(`leaf5`)">🔊 Listen</button>
+
+    <div class="hint" id="hintBox">
+      Hint: It grows.
+
+It breathes.
+
+It eats or takes in energy.
+
+It reproduces.
+
+It reacts to its environment.
+
+It moves (even slightly).
+
+It needs water.
+
+
+    </div>
+  </div>
+
+  <div class="footer-controls">
+    <button onclick="toggleHint()">💡 Show/Hide Hint</button>
+    <button onclick="speakQuestion()">🔊 Hear Question</button>
+  </div>
+
+  <script>
+    function toggleHint() {
+      const hint = document.getElementById('hintBox');
+      hint.style.display = hint.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function speakQuestion() {
+      const utterance = new SpeechSynthesisUtterance("When is something alive?");
+      utterance.lang = 'en-US';
+      utterance.rate = 0.75;
+      utterance.pitch = 0.75;
+      const voices = speechSynthesis.getVoices();
+      const ana = voices.find(v => v.name.includes("Ana Online"));
+      if (ana) utterance.voice = ana;
+      speechSynthesis.cancel();
+
+      speechSynthesis.speak(utterance);
+    }
+    function speakText(inputId) {
+      const text = document.getElementById(inputId).value;
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.75;
+      utterance.pitch = 0.75;
+      const voices = speechSynthesis.getVoices();
+      const ana = voices.find(v => v.name.includes("Ana Online"));
+      if (ana) utterance.voice = ana;
+      speechSynthesis.cancel();
+      speechSynthesis.speak(utterance);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🗣️ Luyện phát âm từ vựng</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      padding: 20px;
+      background: #f0f2f5;
+      color: #333;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #0056b3;
+    }
+    .word-card {
+      background: white;
+      padding: 20px;
+      margin: 20px auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 600px;
+    }
+    .word-card h2 {
+      color: #007bff;
+      font-size: 2em;
+    }
+    .word-details {
+      text-align: center;
+      color: #555;
+    }
+    .ipa-compare {
+      font-family: 'Courier New', monospace;
+      margin-top: 10px;
+      font-size: 1.1em;
+    }
+    .match {
+      color: green;
+    }
+    .mismatch {
+      color: red;
+      text-decoration: underline;
+    }
+    .buttons-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    button {
+      padding: 8px 15px;
+      border-radius: 20px;
+      border: none;
+      background-color: #28a745;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    .result {
+      text-align: center;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .correct { color: #28a745; }
+    .incorrect { color: #dc3545; }
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      display: none;
+      margin-top: 10px;
+    }
+    table {
+      width: 100%;
+      margin-top: 30px;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 8px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    th {
+      background-color: #e0e0e0;
+    }
+    .result.correct {
+      color: green;
+    }
+
+    .result.incorrect {
+      color: red;
+    }
+
+    .expected-word {
+      font-weight: bold;
+      color: #007bff;
+    }
+
+    .user-word {
+      font-weight: bold;
+      color: #ff5722;
+    }
+  </style>
+</head>
+<body>
+  <h1>🗣️ Luyện phát âm từ vựng</h1>
+  <input type="text" class="learner-name" placeholder="Tên của bạn">
+  <% words.forEach(word => { %>
+    <div class="word-card" data-word="<%= word.word_text.toLowerCase() %>">
+      <h2><%= word.word_text %></h2>
+      <div class="word-details">
+        <span><%= word.meaning_vi %></span><br>
+        <span><i><%= word.ipa %></i> | <%= word.pos %></span>
+      </div>
+      <p><b>VD:</b> <i><%= word.example_en %></i><br><%= word.example_vi %></p>
+      <div class="buttons-container">
+        <input type="hidden" class="expected-word" value="<%= word.word_text %>">
+        <button onclick="speakWord('<%= word.word_text %>')">🔊 Nghe phát âm</button>
+        <button onclick="recordAndSend(this)">🎙️ Nói thử</button>
+        <button class="replay-button" onclick="replayRecording(this)" disabled>🔁 Nghe lại</button>
+      </div>
+      <progress class="progress-bar" value="0" max="100"></progress>
+      <div class="result"></div>
+      <div class="ipa-compare"></div>
+    </div>
+  <% }); %>
+
+  <h2>Lịch sử luyện tập</h2>
+  <table id="historyTable">
+    <thead>
+      <tr><th>Từ</th><th>Bạn nói</th><th>Điểm</th><th>Kết quả</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    async function speakWord(word) {
+      const response = await fetch('/tts/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ word })
+      });
+      const data = await response.json();
+      if (data.url) new Audio(data.url).play();
+      else alert('Không phát được âm thanh');
+    }
+
+    function replayRecording(button) {
+      const card = button.closest('.word-card');
+      const blobUrl = card.dataset.blobUrl;
+      if (blobUrl) new Audio(blobUrl).play();
+    }
+
+    async function recordAndSend(button) {
+  const card = button.closest('.word-card');
+  const expectedWord = card.querySelector('.expected-word').value;
+  const learnerName = document.querySelector('.learner-name')?.value || 'Ẩn danh';
+  const resultElem = card.querySelector('.result');
+  const progressBar = card.querySelector('.progress-bar');
+  const replayButton = card.querySelector('.replay-button');
+  const ipaCompareElem = card.querySelector('.ipa-compare');
+
+  try {
+    if (!learnerName || learnerName.trim() === '') {
+      alert('Vui lòng nhập tên trước khi luyện tập.');
+      return;
+    }
+
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const mediaRecorder = new MediaRecorder(stream);
+    const chunks = [];
+
+    mediaRecorder.ondataavailable = e => chunks.push(e.data);
+    mediaRecorder.onstop = async () => {
+      const blob = new Blob(chunks, { type: 'audio/wav' });
+      const url = URL.createObjectURL(blob);
+      card.dataset.blobUrl = url;
+      replayButton.disabled = false;
+
+      const form = new FormData();
+      form.append('audio', blob, 'voice.wav');
+      form.append('expected', expectedWord);
+      form.append('name', learnerName);
+
+      resultElem.textContent = '⏳ Đang xử lý...';
+      resultElem.className = 'result';
+      progressBar.style.display = 'block';
+      progressBar.value = 20;
+
+      try {
+        const res = await fetch('/pronounce/ourworld1/unit8/upload', {
+          method: 'POST',
+          body: form
+        });
+
+        progressBar.value = 70;
+
+        const data = await res.json();  // ✅ Dùng đúng duy nhất 1 lần
+        console.log('📥 Parsed JSON:', data);
+
+        if (data.error) {
+          resultElem.textContent = `❌ ${data.error}`;
+          resultElem.className = 'result incorrect';
+          return;
+        }
+
+        const isCorrect = data.is_correct || data.isCorrect;
+        const userSaid = data.userSaid;
+        const ipa_expected = data.ipa_expected;
+        const ipa_user = data.ipa_user;
+        const feedback = data.feedback;
+        const similarity = data.similarity;
+
+        let html = `<strong>${feedback}</strong>`;
+        html += `<br>✅ Từ đúng: <span class="expected-word">${expectedWord}</span>`;
+        html += `<br>🗣️ Whisper nghe là: <span class="user-word">${userSaid}</span>`;
+
+        if (ipa_expected && ipa_user) {
+          html += `<br>🔤 IPA đúng: <code>${ipa_expected}</code>`;
+          html += `<br>🎧 IPA bạn nói: <code>${ipa_user}</code>`;
+          html += `<br>📊 Độ giống nhau: <strong>${Math.round(similarity * 100)}%</strong>`;
+        }
+
+        resultElem.innerHTML = html;
+        resultElem.className = 'result ' + (isCorrect ? 'correct' : 'incorrect');
+        resultElem.className = 'result ' + (isCorrect ? 'correct' : 'incorrect');
+        progressBar.value = 100;
+
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${expectedWord}</td><td>${userSaid}</td><td>${Math.round(similarity * 100)}</td><td>${isCorrect ? '✅' : '❌'}</td>`;
+        document.querySelector('#historyTable tbody').appendChild(row);
+
+        // So sánh từng ký tự IPA
+        let ipaDisplay = '';
+        if (ipa_expected && ipa_user && ipa_expected.length && ipa_user.length) {
+          const minLen = Math.min(ipa_expected.length, ipa_user.length);
+          for (let i = 0; i < minLen; i++) {
+            const ch = ipa_expected[i];
+            const match = ipa_user[i] === ch;
+            ipaDisplay += `<span class="${match ? 'match' : 'mismatch'}">${ch}</span>`;
+          }
+          ipaCompareElem.innerHTML = `📌 So sánh IPA:<br> ${ipaDisplay}`;
+        } else {
+          ipaCompareElem.innerHTML = `⚠️ Không thể so sánh IPA. Dữ liệu thiếu hoặc không hợp lệ.`;
+        }
+
+      } catch (err) {
+        console.error('❌ Lỗi khi xử lý response:', err);
+        resultElem.textContent = '❌ Lỗi khi gửi';
+        resultElem.className = 'result incorrect';
+      }
+
+      setTimeout(() => progressBar.style.display = 'none', 1000);
+    };
+
+    resultElem.textContent = '🎤 Ghi âm trong 4 giây...';
+    mediaRecorder.start();
+    setTimeout(() => mediaRecorder.stop(), 4000);
+
+  } catch (err) {
+    alert('Lỗi ghi âm: ' + err.message);
+  }
+}
+
+  </script>
+</body>
+</html>

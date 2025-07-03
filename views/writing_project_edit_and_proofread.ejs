@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit and Proofread</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .sentence { margin: 20px 0; }
+    .feedback { font-weight: bold; margin-top: 5px; }
+    .correct { color: green; }
+    .incorrect { color: red; }
+  </style>
+</head>
+<body>
+  <h1>Edit and Proofread</h1>
+  <p><strong>Use the Editing Marks to edit and proofread this essay. Look for:</strong></p>
+  <ul>
+    <li>details that match the topic</li>
+    <li>misspelled words with the letters s, m, h, t, and a</li>
+    <li>correct use of plural nouns (-s and -es)</li>
+    <li>a capital letter beginning each proper noun</li>
+  </ul>
+
+  <h2>The State Fair of Texas</h2>
+  <p><em>By Matt Brown</em></p>
+
+  <p><strong>Instructions:</strong> Read each sentence with errors. Rewrite it correctly. Click the speaker to hear the correct sentence, and you may also record your voice to compare.</p>
+
+  <div class="sentence">
+    <p><strong>Original:</strong> We go to the state fair of texos every summer.</p>
+    <input type="text" id="input0" placeholder="Type your corrected sentence here" style="width: 100%">
+    <br><br>
+    <button onclick="checkAnswer(0)">✅ Check</button>
+    <button onclick="speakCorrect(0)">🔊 Hear Correct</button>
+    <button onclick="startRecording(0)">🎤 Record</button>
+    <button onclick="stopRecording(0)">⏹️ Stop</button>
+    <p id="result0" class="feedback"></p>
+    <audio id="audio0" controls style="display:none;"></audio>
+  </div>
+
+  <div class="sentence">
+    <p><strong>Original:</strong> This my brother sam at the ham stand.</p>
+    <input type="text" id="input1" placeholder="Type your corrected sentence here" style="width: 100%">
+    <br><br>
+    <button onclick="checkAnswer(1)">✅ Check</button>
+    <button onclick="speakCorrect(1)">🔊 Hear Correct</button>
+    <button onclick="startRecording(1)">🎤 Record</button>
+    <button onclick="stopRecording(1)">⏹️ Stop</button>
+    <p id="result1" class="feedback"></p>
+    <audio id="audio1" controls style="display:none;"></audio>
+  </div>
+
+  <div class="sentence">
+    <p><strong>Original:</strong> This is my sister jan with the man who does magic trickes.</p>
+    <input type="text" id="input2" placeholder="Type your corrected sentence here" style="width: 100%">
+    <br><br>
+    <button onclick="checkAnswer(2)">✅ Check</button>
+    <button onclick="speakCorrect(2)">🔊 Hear Correct</button>
+    <button onclick="startRecording(2)">🎤 Record</button>
+    <button onclick="stopRecording(2)">⏹️ Stop</button>
+    <p id="result2" class="feedback"></p>
+    <audio id="audio2" controls style="display:none;"></audio>
+  </div>
+
+  <div class="sentence">
+    <p><strong>Original:</strong> Magik is easy to learn.</p>
+    <input type="text" id="input3" placeholder="Type your corrected sentence here" style="width: 100%">
+    <br><br>
+    <button onclick="checkAnswer(3)">✅ Check</button>
+    <button onclick="speakCorrect(3)">🔊 Hear Correct</button>
+    <button onclick="startRecording(3)">🎤 Record</button>
+    <button onclick="stopRecording(3)">⏹️ Stop</button>
+    <p id="result3" class="feedback"></p>
+    <audio id="audio3" controls style="display:none;"></audio>
+  </div>
+
+  <script>
+    const correctSentences = [
+      "We go to the State Fair of Texas every summer.",
+      "This is my brother Sam at the ham stand.",
+      "This is my sister Jan with the man who does magic tricks.",
+      "Magic is easy to learn."
+    ];
+
+    const mediaRecorders = [];
+    const audioChunks = [[], [], [], []];
+
+    function checkAnswer(index) {
+      const userAns = document.getElementById("input" + index).value.trim();
+      const result = document.getElementById("result" + index);
+      if (userAns.toLowerCase() === correctSentences[index].toLowerCase()) {
+        result.textContent = "✅ Correct!";
+        result.className = "feedback correct";
+      } else {
+        result.textContent = "❌ Try again.";
+        result.className = "feedback incorrect";
+      }
+    }
+
+    function speakCorrect(index) {
+      const utter = new SpeechSynthesisUtterance(correctSentences[index]);
+      utter.lang = 'en-US';
+      speechSynthesis.speak(utter);
+    }
+
+    async function startRecording(index) {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorders[index] = new MediaRecorder(stream);
+
+      mediaRecorders[index].ondataavailable = e => audioChunks[index].push(e.data);
+
+      mediaRecorders[index].onstop = () => {
+        const audioBlob = new Blob(audioChunks[index]);
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = document.getElementById("audio" + index);
+        audio.src = audioUrl;
+        audio.style.display = 'block';
+        audioChunks[index] = [];
+      };
+
+      mediaRecorders[index].start();
+    }
+
+    function stopRecording(index) {
+      if (mediaRecorders[index]) mediaRecorders[index].stop();
+    }
+  </script>
+</body>
+</html>

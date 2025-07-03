@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học Tập Gia Đình Tương Tác</title>
+    <style>
+        body { font-family: Arial; text-align: center; margin: 20px; background: #f0f0f0; }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; background: #fff; border-radius: 10px; }
+        .game, .web, .story, .leaderboard { margin: 20px 0; }
+        .circle { width: 100px; height: 100px; border: 2px solid #000; border-radius: 50%; display: inline-block; margin: 10px; line-height: 100px; cursor: move; }
+        .match-item { display: inline-block; margin: 10px; }
+        .match-word, .match-image { padding: 10px; border: 1px solid #ccc; }
+        textarea { width: 80%; height: 100px; padding: 10px; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; background: #4CAF50; color: white; border: none; border-radius: 5px; }
+        button:hover { background: #45a049; }
+        #result, #storyResult, #leaderboard { font-size: 16px; }
+        .tree { height: 0; transition: height 1s; }
+        .grow { height: 100px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Học Tập Gia Đình Tương Tác</h1>
+
+        <!-- Trò chơi ghép từ -->
+        <div class="game">
+            <h2>Trò chơi Ghép Từ</h2>
+            <div class="match-item"><span class="match-word" draggable="true">care</span></div>
+            <div class="match-item"><span class="match-word" draggable="true">plant</span></div>
+            <div class="match-item"><span class="match-word" draggable="true">play</span></div>
+            <div class="match-item"><img class="match-image" src="https://via.placeholder.com/50?text=Care" draggable="true" ondragstart="drag(event)"></div>
+            <div class="match-item"><img class="match-image" src="https://via.placeholder.com/50?text=Plant" draggable="true" ondragstart="drag(event)"></div>
+            <div class="match-item"><img class="match-image" src="https://via.placeholder.com/50?text=Play" draggable="true" ondragstart="drag(event)"></div>
+            <div id="dropZone" ondrop="drop(event)" ondragover="allowDrop(event)">Kéo và thả ở đây</div>
+            <p id="matchResult"></p>
+        </div>
+
+        <!-- Sơ đồ tương tác -->
+        <div class="web">
+            <h2>Sơ đồ Ý Tưởng</h2>
+            <div id="ideaWeb">
+                <div class="circle" contenteditable="true">Idea 1</div>
+                <div class="circle" contenteditable="true">Idea 2</div>
+            </div>
+            <button onclick="addCircle()">Thêm Vòng</button>
+            <p id="webResult"></p>
+        </div>
+
+        <!-- Ghi âm và so sánh -->
+        <div class="record">
+            <h2>Ghi Âm và So Sánh</h2>
+            <button onclick="startRecording()">Bắt Đầu Ghi Âm</button>
+            <button onclick="stopRecording()">Kết Thúc Ghi Âm</button>
+            <p id="recordResult"></p>
+        </div>
+
+        <!-- Câu chuyện tùy chỉnh -->
+        <div class="story">
+            <h2>Tạo Câu Chuyện</h2>
+            <select id="storyKeywords">
+                <option value="care">care</option>
+                <option value="plant">plant</option>
+                <option value="play">play</option>
+            </select>
+            <textarea id="storyInput" placeholder="Viết câu chuyện của bạn..."></textarea>
+            <button onclick="buildStory()">Tạo và Đọc Câu Chuyện</button>
+            <p id="storyResult"></p>
+        </div>
+
+        <!-- Bảng xếp hạng -->
+        <div class="leaderboard">
+            <h2>Bảng Xếp Hạng Hoạt Động</h2>
+            <input id="activityInput" placeholder="Nhập hoạt động gia đình...">
+            <button onclick="addActivity()">Thêm Hoạt Động</button>
+            <p id="leaderboard"></p>
+        </div>
+
+        <!-- Hiệu ứng -->
+        <div id="effectZone">
+            <h2>Hiệu Ứng</h2>
+            <button onclick="playSound()">Phát Tiếng Cười</button>
+            <div class="tree" id="tree"></div>
+        </div>
+    </div>
+
+    <script>
+        const synth = window.speechSynthesis;
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'en-US';
+        let activities = {};
+
+        // Trò chơi ghép từ
+        function allowDrop(ev) { ev.preventDefault(); }
+        function drag(ev) { ev.dataTransfer.setData("text", ev.target.innerText || ev.target.src); }
+        function drop(ev) {
+            ev.preventDefault();
+            const data = ev.dataTransfer.getData("text");
+            if ((data.includes("care") || data.includes("plant") || data.includes("play")) && 
+                (ev.target.className === "match-image" || ev.target.id === "dropZone")) {
+                ev.target.innerText = data;
+                document.getElementById('matchResult').innerText = "Ghép đúng!";
+            } else {
+                document.getElementById('matchResult').innerText = "Ghép sai, thử lại!";
+            }
+        }
+
+        // Sơ đồ tương tác
+        function addCircle() {
+            const web = document.getElementById('ideaWeb');
+            const circle = document.createElement('div');
+            circle.className = 'circle';
+            circle.contenteditable = true;
+            circle.innerText = 'New Idea';
+            web.appendChild(circle);
+            document.getElementById('webResult').innerText = "Vòng mới được thêm!";
+        }
+
+        // Ghi âm và so sánh
+        function startRecording() { recognition.start(); }
+        function stopRecording() { recognition.stop(); }
+        recognition.onresult = (event) => {
+            const spoken = event.results[0][0].transcript;
+            document.getElementById('recordResult').innerText = `Bạn nói: ${spoken}. So sánh với: 'What does your family do?'`;
+        };
+
+        // Câu chuyện tùy chỉnh
+        function buildStory() {
+            const keyword = document.getElementById('storyKeywords').value;
+            const story = document.getElementById('storyInput').value || `My family loves to ${keyword}.`;
+            const utterance = new SpeechSynthesisUtterance(story);
+            synth.speak(utterance);
+            document.getElementById('storyResult').innerText = "Câu chuyện của bạn đã được đọc!";
+        }
+
+        // Bảng xếp hạng
+        function addActivity() {
+            const activity = document.getElementById('activityInput').value;
+            activities[activity] = (activities[activity] || 0) + 1;
+            let leaderboard = "Hoạt động phổ biến:<br>";
+            for (let act in activities) leaderboard += `${act}: ${activities[act]} lần<br>`;
+            document.getElementById('leaderboard').innerHTML = leaderboard;
+        }
+
+        // Hiệu ứng
+        function playSound() {
+            const audio = new Audio('https://www.soundjay.com/human/laughing-01.mp3');
+            audio.play();
+            document.getElementById('tree').classList.add('grow');
+            setTimeout(() => document.getElementById('tree').classList.remove('grow'), 1000);
+        }
+    </script>
+</body>
+</html>

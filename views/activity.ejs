@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lesson <%= lesson.lesson %>: Step <%= activity.step %></title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <script src="/js/tesseract.min.js"></script>
+</head>
+<body>
+  <h1>Lesson <%= lesson.lesson %>: Step <%= activity.step %></h1>
+  <p><%= activity.description %></p>
+  <button onclick="readText('<%= activity.description %>')">Read Description</button>
+
+  <h2>Instructions</h2>
+  <ul>
+    <% activity.instructions.forEach(instruction => { %>
+      <li><%= instruction %></li>
+    <% }); %>
+  </ul>
+  <button onclick="readText('<%= activity.instructions.join('. ') %>')">Read Instructions</button>
+
+  <h2>Audio Tracks</h2>
+  <% if (activity.audioTrack) { %>
+    <ul>
+      <% activity.audioTrack.forEach(track => { %>
+        <li>
+          <%= track.track %>: <%= track.words ? track.words.join(', ') : track.description %>
+          <audio controls>
+            <source src="/audio/<%= track.track %>.mp3" type="audio/mpeg">
+          </audio>
+          <button onclick="readText('<%= track.words ? track.words.join(', ') : track.description %>')">Read Words</button>
+          <button onclick="playAudio('/audio/<%= track.track %>.mp3')">Replay Audio</button>
+        </li>
+      <% }); %>
+    </ul>
+  <% } %>
+
+  <h2>Practice Pronunciation</h2>
+  <p>Say the words: <%= activity.audioTrack[0]?.words.join(', ') %></p>
+  <button id="startRecord">Start Recording</button>
+  <button id="stopRecord" disabled>Stop Recording</button>
+  <p id="transcription"></p>
+
+  <h2>Image Recognition</h2>
+  <input type="file" id="imageInput" accept="image/*">
+  <p id="imageResult"></p>
+  <img id="preview" style="max-width: 200px; display: none;">
+  <% if (activity.audioTrack[0]?.words) { %>
+    <p>Expected images: <%= activity.audioTrack[0].words.join(', ') %></p>
+    <% activity.audioTrack[0].words.forEach(word => { %>
+      <img src="/images/<%= word %>.jpg" alt="<%= word %>" style="max-width: 100px;">
+    <% }); %>
+  <% } %>
+
+  <a href="/lesson/<%= lesson.lesson %>">Back to Lesson</a>
+
+  <script>
+    // Text-to-Speech
+    function readText(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // Play Audio
+    function playAudio(src) {
+      const audio = new Audio(src);
+      audio.play();
+    }
+
+    // Speech Recognition
+    const startRecord = document.getElementById('startRecord');
+    const stopRecord = document.getElementById('stopRecord');
+    const transcription = document.getElementById('transcription');
+    let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'en-US';
+
+    startRecord.onclick = () => {
+      recognition.start();
+      startRecord.disabled = true;
+      stopRecord.disabled = false;
+    };
+
+    stopRecord.onclick = () => {
+      recognition.stop();
+      startRecord.disabled = false;
+      stopRecord.disabled = true;
+    };
+
+    recognition.onresult = (event) => {
+      const spokenText = event.results[0][0].transcript.toLowerCase();
+      transcription.textContent = `You said: ${spokenText}`;
+      const expectedWords = <%= JSON.stringify(activity.audioTrack[0]?.words || []) %>;
+      if (expectedWords.some(word => spokenText.includes(word))) {
+        transcription.textContent += ' - Correct!';
+      } else {
+        transcription.textContent += ' - Try again!';
+      }
+    };
+
+    // Image Recognition
+    const imageInput = document.getElementById('imageInput');
+    const imageResult = document.getElementById('imageResult');
+    const preview = document.getElementById('preview');
+
+    imageInput.onchange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = 'block';
+        Tesseract.recognize(file, 'eng').then(({ data: { text } }) => {
+          imageResult.textContent = `Recognized text: ${text}`;
+          const expectedWords = <%= JSON.stringify(activity.audioTrack[0]?.words || []) %>;
+          if (expectedWords.some(word => text.toLowerCase().includes(word))) {
+            imageResult.textContent += ' - Image matches expected word!';
+          } else {
+            imageResult.textContent += ' - Image does not match. Try another!';
+          }
+        });
+      }
+    };
+  </script>
+</body>
+</html>

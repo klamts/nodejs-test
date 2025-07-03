@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Meet My Family - Grammar Practice</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+    h1 { color: #2c3e50; }
+    .rule { background: #eef; padding: 15px; border-left: 4px solid #339; margin-bottom: 20px; }
+    .question { margin-bottom: 20px; }
+    input { width: 150px; padding: 5px; }
+    button { margin: 5px; padding: 6px 10px; }
+    .feedback { font-weight: bold; margin-left: 10px; }
+    .correct { color: green; }
+    .wrong { color: red; }
+  </style>
+</head>
+<body>
+  <h1>📘 Meet My Family</h1>
+
+  <div class="rule">
+    <strong>Grammar Rules:</strong><br>
+    1. A proper noun names a specific person, place, animal, or thing.<br>
+    2. Always start a proper noun with a capital letter.
+    <br> <em> <u>Mario</u> lives in <u>Arizona </u>with his dog,<u> Buster</u>. </em>
+    <br><button onclick="speakText('A proper noun names a specific person, place, animal, or thing. Always start a proper noun with a capital letter. Mario lives in Arizona with his dog, Buster.')">🔊 Phát âm</button>
+  </div>
+
+  <div id="quiz">
+    <div class="question">
+      1. This is my sister <em>carla</em> → <input id="q0" placeholder="Điền từ viết hoa đúng"> 
+      <button onclick="speakText('This is my sister Carla.')">🔊</button>
+      <span id="f0" class="feedback"></span>
+    </div>
+    <div class="question">
+      2. This is my uncle <em>juan</em> → <input id="q1">
+      <button onclick="speakText('This is my uncle Juan.')">🔊</button>
+      <span id="f1" class="feedback"></span>
+    </div>
+    <div class="question">
+      3. He lives in <em>houston</em> → <input id="q2">
+      <button onclick="speakText('He lives in Houston.')">🔊</button>
+      <span id="f2" class="feedback"></span>
+    </div>
+    <div class="question">
+      4. My aunt rosa lives there → <input id="q3">
+      <button onclick="speakText('My aunt Rosa lives there.')">🔊</button>
+      <span id="f3" class="feedback"></span>
+    </div>
+    <div class="question">
+      5. Her dog's name is <em>spot</em> → <input id="q4">
+      <button onclick="speakText('Her dog\'s name is Spot.')">🔊</button>
+      <span id="f4" class="feedback"></span>
+    </div>
+  </div>
+
+  <button onclick="checkAnswers()">✅ Kiểm tra</button>
+
+  <h3>🎙️ Ghi âm để luyện nói:</h3>
+  <button onclick="startRecording()">🎤 Ghi âm</button>
+  <button onclick="playRecording()">▶️ Nghe lại</button>
+  <audio id="userAudio" controls style="display:none;"></audio>
+
+  <script>
+    const correctAnswers = ['Carla', 'Juan', 'Houston', 'Rosa', 'Spot'];
+
+    function checkAnswers() {
+      correctAnswers.forEach((ans, i) => {
+        const userInput = document.getElementById('q' + i).value.trim();
+        const feedback = document.getElementById('f' + i);
+        if (userInput === ans) {
+          feedback.textContent = "✔️ Đúng";
+          feedback.className = "feedback correct";
+        } else {
+          feedback.textContent = `❌ Sai. Đúng là: ${ans}`;
+          feedback.className = "feedback wrong";
+        }
+      });
+    }
+
+    function speakText(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.75;
+      utterance.pitch = 0.75;
+      const voices = speechSynthesis.getVoices();
+      const ana = voices.find(v => v.name.includes("Ana Online"));
+      if (ana) utterance.voice = ana;
+      speechSynthesis.cancel();
+      speechSynthesis.speak(utterance);
+    }
+
+    // Ghi âm
+    let userBlob = null;
+    function startRecording() {
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+        const mediaRecorder = new MediaRecorder(stream);
+        const chunks = [];
+
+        mediaRecorder.ondataavailable = e => chunks.push(e.data);
+        mediaRecorder.onstop = () => {
+          userBlob = new Blob(chunks, { type: 'audio/webm' });
+          const audio = document.getElementById("userAudio");
+          audio.src = URL.createObjectURL(userBlob);
+          audio.style.display = "block";
+        };
+
+        mediaRecorder.start();
+        setTimeout(() => mediaRecorder.stop(), 4000);
+      });
+    }
+
+    function playRecording() {
+      if (userBlob) document.getElementById("userAudio").play();
+      else alert("Bạn chưa ghi âm!");
+    }
+
+    // Đảm bảo load voice Ana
+    window.speechSynthesis.onvoiceschanged = () => {};
+  </script>
+</body>
+</html>

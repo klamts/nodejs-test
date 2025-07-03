@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Name Game</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; }
+    h1 { color: #333; }
+    .section { margin-bottom: 20px; }
+    label, p { margin: 10px 0 5px; }
+    input[type="text"], textarea {
+      width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;
+    }
+    button { padding: 10px 15px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #45a049; }
+  </style>
+</head>
+<body>
+  <h1>Name Game 🎲</h1>
+
+  <div class="section">
+    <h2>📘 Grammar Rule</h2>
+    <p><strong>Start a proper noun with a capital letter.</strong></p>
+    <p>Example: <em>My dog <strong>Max</strong> is the best dog in the world.</em></p>
+  </div>
+
+  <div class="section">
+    <h2>🎯 Instructions</h2>
+    <ol>
+      <li>Play with a partner.</li>
+      <li>Spin the spinner.</li>
+      <li>Write a sentence with a proper noun based on the spinner result.</li>
+    </ol>
+  </div>
+
+  <div class="section">
+    <h2>🔤 Spinner Options</h2>
+    <p>Choose a topic or imagine a spinner result:</p>
+    <ul>
+      <li>City</li>
+      <li>Classmate</li>
+      <li>School</li>
+      <li>Team</li>
+      <li>Store</li>
+      <li>Pet</li>
+      <li>Friend</li>
+      <li>Teacher</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>📝 Example Sentences</h2>
+    <p><strong>Spinner: pet</strong></p>
+    <p>➡️ My pet's name is <strong>Lucky</strong>.</p>
+    <button onclick="speakText('My pet\'s name is Lucky.')">🔊 Listen</button>
+
+    <p><strong>Spinner: city</strong></p>
+    <p>➡️ I live in <strong>Ho Chi Minh City</strong>.</p>
+    <button onclick="speakText('I live in Ho Chi Minh City.')">🔊 Listen</button>
+
+    <p><strong>Spinner: classmate</strong></p>
+    <p>➡️ My classmate <strong>Anna</strong> helps me with homework.</p>
+    <button onclick="speakText('My classmate Anna helps me with homework.')">🔊 Listen</button>
+
+    <p><strong>Spinner: school</strong></p>
+    <p>➡️ I go to <strong>Greenwood Elementary School</strong>.</p>
+    <button onclick="speakText('I go to Greenwood Elementary School.')">🔊 Listen</button>
+
+    <p><strong>Spinner: team</strong></p>
+    <p>➡️ My favorite team is <strong>Manchester United</strong>.</p>
+    <button onclick="speakText('My favorite team is Manchester United.')">🔊 Listen</button>
+
+    <p><strong>Spinner: store</strong></p>
+    <p>➡️ We went shopping at <strong>Walmart</strong>.</p>
+    <button onclick="speakText('We went shopping at Walmart.')">🔊 Listen</button>
+
+    <p><strong>Spinner: friend</strong></p>
+    <p>➡️ My friend <strong>John</strong> is very funny.</p>
+    <button onclick="speakText('My friend John is very funny.')">🔊 Listen</button>
+
+    <p><strong>Spinner: teacher</strong></p>
+    <p>➡️ <strong>Ms. Smith</strong> is my English teacher.</p>
+    <button onclick="speakText('Ms. Smith is my English teacher.')">🔊 Listen</button>
+  </div>
+
+  <div class="section">
+    <h2>✍️ Your Turn!</h2>
+    <label for="studentSentence">Write your sentence with a proper noun:</label>
+    <textarea id="studentSentence" rows="3"></textarea>
+    <button onclick="speakStudentText()">🔊 Listen to Your Sentence</button>
+    <button onclick="recordYourVoice()">🎤 Read Aloud</button>
+    <p id="status"></p>
+  </div>
+
+  <script>
+    function speakText(text) {
+      const msg = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.speak(msg);
+    }
+
+    function speakStudentText() {
+      const text = document.getElementById("studentSentence").value;
+      if (text.trim()) {
+        speakText(text);
+      } else {
+        alert("Please write your sentence first.");
+      }
+    }
+
+    function recordYourVoice() {
+      document.getElementById("status").innerText = "🎙️ Recording feature coming soon... (Use your phone or app to practice speaking aloud!)";
+    }
+  </script>
+</body>
+</html>

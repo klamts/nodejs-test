@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Papá and Me - Interactive Reader</title>
+  <style>
+    body { font-family: Arial; padding: 20px; max-width: 800px; margin: auto; }
+    h1 { color: #2c3e50; }
+    .scene { margin-bottom: 25px; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
+    .scene img { width: 150px; display: block; margin-bottom: 10px; }
+    .actions button { margin-right: 10px; margin-top: 5px; }
+    audio { display: block; margin-top: 5px; }
+  </style>
+</head>
+<body>
+  <h1>📖 Papá and Me</h1>
+  <p>Read the scenes. Click to hear or record your voice. Practice reading aloud with expression!</p>
+
+  <div id="story"></div>
+
+  <script>
+    const storyData = [
+      {
+        img: "https://via.placeholder.com/150?text=Scene+1",
+        text: "The boy and his papa have many ideas for the day. They walk. They hold hands."
+      },
+      {
+        img: "https://via.placeholder.com/150?text=Scene+2",
+        text: "They go to the park. They draw pictures. They ride the bus."
+      },
+      {
+        img: "https://via.placeholder.com/150?text=Scene+3",
+        text: "The boy and his papa hug the boy’s grandparents."
+      }
+    ];
+
+    const storyDiv = document.getElementById("story");
+    const recordings = [];
+
+    storyData.forEach((scene, index) => {
+      const div = document.createElement("div");
+      div.className = "scene";
+      div.innerHTML = `
+        <h3>Scene ${index + 1}</h3>
+        <img src="${scene.img}" alt="Scene ${index + 1}">
+        <p>${scene.text}</p>
+        <div class="actions">
+          <button onclick="speakText('${scene.text}')">🔊 Listen</button>
+          <button onclick="recordVoice(${index})">🎙️ Record</button>
+          <button onclick="playVoice(${index})">▶️ Playback</button>
+          <audio id="audio-${index}" controls style="display:none;"></audio>
+        </div>
+      `;
+      storyDiv.appendChild(div);
+    });
+
+    function speakText(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      const voices = speechSynthesis.getVoices();
+      const ana = voices.find(v => v.name.includes("Ana Online"));
+      if (ana) utterance.voice = ana;
+      speechSynthesis.cancel();
+      speechSynthesis.speak(utterance);
+    }
+
+    window.speechSynthesis.onvoiceschanged = () => {};
+
+    function recordVoice(index) {
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+        const audioElem = document.getElementById(`audio-${index}`);
+        const recorder = new MediaRecorder(stream);
+        const chunks = [];
+
+        recorder.ondataavailable = e => chunks.push(e.data);
+        recorder.onstop = () => {
+          const blob = new Blob(chunks, { type: 'audio/webm' });
+          recordings[index] = blob;
+          audioElem.src = URL.createObjectURL(blob);
+          audioElem.style.display = 'block';
+        };
+
+        recorder.start();
+        setTimeout(() => {
+          recorder.stop();
+          stream.getTracks().forEach(track => track.stop());
+        }, 4000);
+      }).catch(() => {
+        alert("Microphone not accessible.");
+      });
+    }
+
+    function playVoice(index) {
+      const audio = document.getElementById(`audio-${index}`);
+      if (recordings[index]) {
+        audio.play();
+      } else {
+        alert("No recording available.");
+      }
+    }
+  </script>
+</body>
+</html>

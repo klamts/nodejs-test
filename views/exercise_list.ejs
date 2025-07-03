@@ -1,0 +1,7 @@
+<h2>Danh sách bài tập</h2>
+<ul>
+  <% exercises.forEach(ex => { %>
+    <a href="/exercises/<%= ex.subject_id %>/<%= ex.id %>"><%= ex.title %></a>
+  <% }); %>
+   <p style="color:green">Nếu bạn thấy dòng này mà không thấy bài toán → dữ liệu HTML trống hoặc sai.</p>
+</ul>

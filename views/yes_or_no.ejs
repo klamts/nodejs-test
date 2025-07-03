@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Yes or No? - Interactive</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    h1 { color: #333; }
+    .question { margin-bottom: 30px; }
+    input.keyword-input { width: 150px; }
+    .feedback { font-weight: bold; color: green; margin-left: 10px; }
+    .wrong { color: red; }
+    button { margin-top: 10px; padding: 5px 10px; margin-right: 5px; }
+    .blinking { animation: blink 1s infinite; }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <h1>📝 Yes or No?</h1>
+  <p>Type the Key Word and choose Yes or No. Click "Check" to see your answers.</p>
+
+  <div id="questions"></div>
+
+  <button onclick="checkAnswers()">✅ Kiểm tra</button>
+
+  <script>
+    const data = [
+      { sentence: "Is breakfast a ___?", keyword: "meal", answer: "yes" },
+      { sentence: "Is a teacher a ___?", keyword: "family member", answer: "no" },
+      { sentence: "Can an apartment be a ___?", keyword: "home", answer: "yes" },
+      { sentence: "Is New Year's Day a ___?", keyword: "holiday", answer: "yes" },
+      { sentence: "Can you ___ a birthday?", keyword: "celebrate", answer: "yes" },
+      { sentence: "Is a group of students a ___?", keyword: "family", answer: "no" }
+    ];
+
+    const userAudioBlobs = {};
+    const container = document.getElementById("questions");
+
+    data.forEach((item, index) => {
+      const div = document.createElement("div");
+      div.className = "question";
+      div.innerHTML = `
+        <div>
+          ${index + 1}. ${item.sentence.replace("___", `<input type="text" class="keyword-input" id="kw-${index}">`)}
+        </div>
+        <label><input type="radio" name="q${index}" value="yes"> Yes</label>
+        <label><input type="radio" name="q${index}" value="no"> No</label>
+        <br>
+        <button onclick="speakSentence(${index})">🔊 Phát âm</button>
+        <button onclick="startListening(${index})">🎙️ Nói câu</button>
+        <button onclick="playUserRecording(${index})">🔁 Nghe lại</button>
+        <span id="fb-${index}" class="feedback"></span>
+        <p id="recordingStatus-${index}"></p>
+        <p id="transcript-${index}">🗣️ Bạn nói: ...</p>
+        <audio id="userAudio-${index}" controls style="display:none;"></audio>
+      `;
+      container.appendChild(div);
+    });
+
+    function checkAnswers() {
+      data.forEach((item, index) => {
+        const kw = document.getElementById(`kw-${index}`).value.trim().toLowerCase();
+        const selected = document.querySelector(`input[name="q${index}"]:checked`);
+        const feedback = document.getElementById(`fb-${index}`);
+        if (!selected) {
+          feedback.textContent = "Bạn chưa chọn Yes/No!";
+          feedback.className = "feedback wrong";
+        } else {
+          const correctKeyword = kw === item.keyword.toLowerCase();
+          const correctAnswer = selected.value === item.answer;
+          if (correctKeyword && correctAnswer) {
+            feedback.textContent = "✔️ Đúng rồi!";
+            feedback.className = "feedback";
+          } else {
+            feedback.textContent = "❌ Sai rồi!";
+            feedback.className = "feedback wrong";
+          }
+        }
+      });
+    }
+
+    function speakSentence(index) {
+      const sentence = data[index].sentence.replace("___", data[index].keyword);
+      const utterance = new SpeechSynthesisUtterance(sentence);
+      utterance.lang = 'en-US';
+      const voices = speechSynthesis.getVoices();
+      const anaVoice = voices.find(v => v.name.includes("Ana Online"));
+      if (anaVoice) utterance.voice = anaVoice;
+      speechSynthesis.cancel();
+      speechSynthesis.speak(utterance);
+    }
+
+    window.speechSynthesis.onvoiceschanged = () => {};
+
+    function startListening(index) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("❌ Trình duyệt của bạn không hỗ trợ Speech Recognition.");
+        return;
+      }
+
+      const recognition = new SpeechRecognition();
+      recognition.lang = "en-US";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.start();
+
+      const transcriptElem = document.getElementById(`transcript-${index}`);
+      const feedbackElem = document.getElementById(`fb-${index}`);
+      recognition.onresult = (event) => {
+        const spoken = event.results[0][0].transcript.trim();
+        transcriptElem.textContent = `🗣️ Bạn nói: "${spoken}"`;
+        const expected = data[index].sentence.replace("___", data[index].keyword).toLowerCase().replace(/[.]/g, "");
+        const said = spoken.toLowerCase().replace(/[.]/g, "");
+        if (said === expected) {
+          feedbackElem.textContent = "✅ Phát âm đúng!";
+          feedbackElem.className = "feedback";
+        } else {
+          feedbackElem.textContent = `❌ Sai. Câu đúng: "${expected}"`;
+          feedbackElem.className = "feedback wrong";
+        }
+      };
+
+      recognition.onerror = () => {
+        feedbackElem.textContent = "❌ Lỗi nhận diện giọng nói.";
+        feedbackElem.className = "feedback wrong";
+      };
+
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+        const mediaRecorder = new MediaRecorder(stream);
+        const chunks = [];
+        mediaRecorder.ondataavailable = e => chunks.push(e.data);
+        mediaRecorder.onstop = () => {
+          userAudioBlobs[index] = new Blob(chunks, { type: 'audio/webm' });
+          const audioURL = URL.createObjectURL(userAudioBlobs[index]);
+          const audio = document.getElementById(`userAudio-${index}`);
+          audio.src = audioURL;
+          audio.style.display = "block";
+        };
+        mediaRecorder.start();
+        setTimeout(() => mediaRecorder.stop(), 4000);
+      });
+
+      const statusElem = document.getElementById(`recordingStatus-${index}`);
+      statusElem.textContent = "🔴 Đang ghi âm...";
+      statusElem.classList.add("blinking");
+      setTimeout(() => {
+        statusElem.textContent = "";
+        statusElem.classList.remove("blinking");
+      }, 4000);
+    }
+
+    function playUserRecording(index) {
+      const audio = document.getElementById(`userAudio-${index}`);
+      if (userAudioBlobs[index]) {
+        audio.play();
+      } else {
+        alert("Chưa có bản ghi âm nào!");
+      }
+    }
+  </script>
+</body>
+</html>

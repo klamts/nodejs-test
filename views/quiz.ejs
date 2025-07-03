@@ -1,0 +1,752 @@
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title><%= video.title %></title>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    h1, h2 {
+      color: #333;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+.sticky-question {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 300px;
+  z-index: 1000;
+  display: none;
+}
+.sticky-question.show {
+  display: block;
+}
+    #quiz-container {
+      display: none;
+      position: fixed; /* Changed to fixed for better overlay behavior */
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%; /* Responsive width */
+      max-width: 600px; /* Max width for larger screens */
+      background: rgba(255,255,255,0.98); /* Slightly more opaque */
+      border: 2px solid #007bff; /* Blue border for a modern look */
+      padding: 25px;
+      border-radius: 15px; /* More rounded corners */
+      text-align: center;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2); /* Stronger shadow */
+      z-index: 10;
+      animation: fadeIn 0.5s ease-out; /* Fade in animation */
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translate(-50%, -60%); }
+      to { opacity: 1; transform: translate(-50%, -50%); }
+    }
+
+    #quiz-container button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 8px; /* Increased margin */
+      border-radius: 8px; /* Rounded buttons */
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    #quiz-container button:hover {
+      background-color: #0056b3;
+      transform: translateY(-2px); /* Slight lift on hover */
+      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    }
+
+    #quiz-container button:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    video {
+      width: 100%;
+      max-width: 800px;
+      margin-top: 10px;
+      border-radius: 10px; /* Rounded video player */
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    input[type="text"], select {
+      width: calc(80% - 10px); /* Adjust width for padding */
+      padding: 10px; /* Increased padding */
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    #answers img {
+      max-width: 100px;
+      height: auto;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      margin: 10px;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    #answers img:hover {
+      transform: scale(1.05);
+      border-color: #007bff;
+    }
+
+    #feedback {
+      font-weight: bold;
+      margin-top: 15px;
+      font-size: 1.1em;
+    }
+
+    /* Answer History Section */
+    #history {
+      position: fixed; /* Changed to fixed */
+      top: 20px;
+      right: 20px;
+      width: 300px;
+      max-height: calc(100vh - 40px); /* Adjust max-height */
+      overflow-y: auto;
+      background: #f9f9f9;
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      z-index: 5;
+    }
+    #history h3 {
+      margin-top: 0;
+      color: #555;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+    }
+    #history-list {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    #history-list li {
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #ddd;
+      font-size: 0.9em;
+      line-height: 1.4;
+    }
+    #history-list li:last-child {
+      border-bottom: none;
+    }
+    #history-list strong {
+      color: #444;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      #quiz-container {
+        width: 90%;
+        padding: 15px;
+      }
+      #history {
+        position: static; /* Stack on smaller screens */
+        width: 90%;
+        max-width: none;
+        margin-top: 20px;
+        left: auto;
+        right: auto;
+        transform: none;
+      }
+      body {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+    /* Style for the speaker icon button */
+    .speaker-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.5em; /* Adjust size as needed */
+      color: #007bff;
+      margin-left: 10px;
+      vertical-align: middle;
+      padding: 0;
+      transition: color 0.2s ease;
+    }
+
+    .speaker-button:hover {
+      color: #0056b3;
+    }
+
+    /* Style for voice selection dropdown */
+    #voice-select-container {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    #voice-select {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+
+    /* Style for pronunciation check status */
+    #pronunciation-status {
+      margin-top: 10px;
+      font-style: italic;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  
+  <h1>Interactive Video Quiz</h1>
+  
+  <h2><%= video.title %></h2>
+
+  <div id="voice-select-container">
+    <label for="voice-select">Select Voice:</label>
+    <select id="voice-select"></select>
+  </div>
+  <div style="margin-bottom: 15px; text-align: center;">
+  <label>
+    <input type="checkbox" id="toggle-quiz" checked />
+    Bật câu hỏi tương tác
+  </label>
+</div>
+<!-- Sticky pronunciation quiz -->
+<div id="stickyQuestion" class="sticky-question">
+  <h5>Câu hỏi: Đọc câu sau</h5>
+  <p id="sentenceText"></p>
+  <input type="hidden" id="expectedSentence">
+  <button id="recordBtn" class="record-btn">Ghi âm</button>
+  <button id="skipBtn" class="skip-btn">Bỏ qua</button>
+  <div id="feedback" class="feedback"></div>
+</div>
+
+  <div style="position: relative; width: 100%; max-width: 800px;">
+    <video id="myVideo" controls>
+      <source src="<%= videoPath %>" type="video/mp4">
+    </video>
+    <div id="quiz-container">
+      <p id="question-text"><strong>Question:</strong></p>
+      <div id="answers"></div>
+      <p id="feedback"></p>
+      <p id="status"></p>
+      <p id="result"></p>
+      <p id="pronunciation-status"></p> </div>
+  </div>
+
+  <div id="timeDisplay">Current Video Time: 0:00</div>
+
+  <div id="history">
+    <h3>Answer History</h3>
+    <ul id="history-list"></ul>
+  </div>
+  <a href="/practice-pronunciation" style="padding: 10px 20px; background-color: #17a2b8; color: white; text-decoration: none; border-radius: 6px;">
+    🗣️ Luyện phát âm từ vựng
+  </a>
+  <a href="/game/word-assemble" style="padding: 10px 20px; background-color: #28a745; color: white; text-decoration: none; border-radius: 6px;">
+    🎮 Trò chơi ghép từ
+  </a>
+  <a href="/game/context-clue" style="padding: 10px 20px; background-color: #28a745; color: white; text-decoration: none; border-radius: 6px;">
+    🎮 Trò chơi đoán từ qua ngữ cảnh
+  </a>
+  <a href="/game/match-word-meaning" style="padding: 10px 20px; background-color: #28a745; color: white; text-decoration: none; border-radius: 6px;">
+    🎮 Trò chơi nối từ với nghĩa tiếng Việt
+  </a>
+  <a href="/question/<%= video.subject_id %>">🎯 Làm bài Quiz tương tác</a>
+  <a href="/practice-questionanswer">🎮Hỏi đáp tiếng anh </a>
+  
+    <script>
+    const video = document.getElementById('myVideo');
+    const quizContainer = document.getElementById('quiz-container');
+    const questionText = document.getElementById('question-text');
+    const answersContainer = document.getElementById('answers');
+    const feedback = document.getElementById('feedback');
+    const timeDisplay = document.getElementById('timeDisplay');
+    const historyList = document.getElementById('history-list');
+    const voiceSelect = document.getElementById('voice-select');
+    const pronunciationStatus = document.getElementById('pronunciation-status');
+
+    // Khởi tạo SpeechSynthesis và SpeechRecognition
+    const synth = window.speechSynthesis;
+    let voices = [];
+    let selectedVoice = null;
+
+    // Kiểm tra hỗ trợ SpeechRecognition
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+    let isRecording = false;
+
+    // Lấy dữ liệu quiz từ server
+    const rawData = <%- JSON.stringify(quizData) %>;
+    const quizQuestions = [];
+
+    // Hàm trợ giúp để lấy thuộc tính lồng nhau từ đối tượng
+    function getNestedProperty(obj, path) {
+        return path.split('.').reduce((o, key) => {
+            if (o && typeof o === 'object') {
+                const arrayMatch = key.match(/(\w+)\[(\d+)\]/);
+                if (arrayMatch) {
+                    const arrayName = arrayMatch[1];
+                    const index = parseInt(arrayMatch[2], 10);
+                    return o[arrayName] ? o[arrayName][index] : undefined;
+                }
+                return o[key];
+            }
+            return undefined;
+        }, obj);
+    }
+
+    // Hàm chuẩn hóa chuỗi tiếng Việt (xóa dấu, chuyển chữ thường, bỏ khoảng trắng)
+    function normalizeVN(str) {
+      if (typeof str !== 'string') return ''; 
+      return str
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/đ/g, "d")
+        .replace(/Đ/g, "D")
+        .toLowerCase()
+        .trim();
+    }
+
+    // Hàm chuẩn hóa chuỗi tiếng Anh (chuyển chữ thường, bỏ khoảng trắng)
+    function normalizeEN(str) {
+        if (typeof str !== 'string') return '';
+        return str.toLowerCase().trim();
+    }
+
+    // Hàm định dạng thời gian từ giây sang MM:SS
+    function formatTime(seconds) {
+      const min = Math.floor(seconds / 60);
+      const sec = Math.floor(seconds % 60);
+      return `${min}:${sec < 10 ? '0' + sec : sec}`;
+    }
+
+    // Populate quizQuestions array from rawData
+    rawData.forEach(entry => {
+        entry.quiz_questions.forEach(q => {
+            q.timestamps.forEach(ts => {
+                const match = ts.match(/(\d+):(\d+):(\d+),(\d+)/); 
+                if (match) {
+                    const [, h, m, s, ms] = match.map(Number);
+                    const timeInSeconds = h * 3600 + m * 60 + s + ms / 1000;
+
+                    let correctAnswer; // Normalized for comparison
+                    let displayCorrectAnswer; // Original for display
+                    let englishWordForPronunciation = entry.word; // Default to entry.word
+                    let options = q.options || []; // Dòng này quan trọng: Khởi tạo options từ q.options
+
+                    if (q.type === 'multiple_choice_meaning_vn') {
+                        correctAnswer = normalizeVN(q.correct_answer_text || "");
+                        displayCorrectAnswer = q.correct_answer_text || ""; 
+                        // options = (q.options || []); // Dòng này có thể xóa nếu đã khai báo ở trên
+                    } else if (q.type === 'copy_word') {
+                        correctAnswer = normalizeVN(entry.word).repeat(3);
+                        displayCorrectAnswer = entry.word.repeat(3); 
+                    } else if (q.type === 'example_vn_fill_blank') {
+                        correctAnswer = normalizeVN(entry.word);
+                        displayCorrectAnswer = entry.word; 
+                    } else if (q.type === 'part_of_speech_vn') { 
+                        correctAnswer = normalizeVN(entry.part_of_speech_vn);
+                        displayCorrectAnswer = entry.part_of_speech_vn;
+                    } else if (q.type === 'pronunciation_check') { 
+                        correctAnswer = normalizeEN(entry.word); 
+                        displayCorrectAnswer = entry.word; 
+                    } else if (q.type === 'translate_sentence_en_to_vn') { // Xử lý loại câu hỏi dịch câu
+                        englishWordForPronunciation = q.english_sentence || ""; // Sử dụng câu tiếng Anh đầy đủ để phát âm
+                        correctAnswer = normalizeVN(q.correct_answer_text || "");
+                        displayCorrectAnswer = q.correct_answer_text || "";
+                        // options = (q.options || []); // Dòng này có thể xóa nếu đã khai báo ở trên
+                    } else if (q.answer_source_field) {
+                        try {
+                            const originalValue = getNestedProperty(entry, q.answer_source_field);
+                            correctAnswer = normalizeVN(originalValue);
+                            displayCorrectAnswer = originalValue; 
+                        } catch (e) {
+                            console.error(`Error getting answer for ${entry.word} from ${q.answer_source_field}:`, e);
+                            correctAnswer = "";
+                            displayCorrectAnswer = "";
+                        }
+                    } else {
+                        correctAnswer = ""; 
+                        displayCorrectAnswer = "";
+                    }
+
+                    quizQuestions.push({
+                        time: timeInSeconds,
+                        type: q.type,
+                        question: q.question_template
+                                    .replace('{word}', entry.word)
+                                    .replace('{part_of_speech}', entry.part_of_speech)
+                                    .replace('{part_of_speech_vn}', entry.part_of_speech_vn)
+                                    .replace('{english_sentence}', q.english_sentence || ''), // Sử dụng q.english_sentence trực tiếp
+                        correctAnswer: correctAnswer, 
+                        displayCorrectAnswer: displayCorrectAnswer, 
+                        options: options, // Đảm bảo options được đưa vào đây
+                        englishWordForPronunciation: englishWordForPronunciation 
+                    });
+                }
+            });
+        });
+    });
+
+    quizQuestions.sort((a, b) => a.time - b.time);
+
+    // Populate voice dropdown
+    function populateVoiceList() {
+      voices = synth.getVoices().sort((a, b) => a.name.localeCompare(b.name));
+      voiceSelect.innerHTML = ''; 
+
+      const defaultOption = document.createElement('option');
+      defaultOption.textContent = 'Default (Browser)';
+      defaultOption.value = '';
+      voiceSelect.appendChild(defaultOption);
+
+      for (let i = 0; i < voices.length; i++) {
+        if (voices[i].lang.startsWith('en')) { 
+          const option = document.createElement('option');
+          option.textContent = voices[i].name + ' (' + voices[i].lang + ')';
+          option.value = voices[i].name; 
+          
+          if (voices[i].name.includes('Google US English') && voices[i].name.includes('Female')) {
+            option.selected = true;
+            selectedVoice = voices[i];
+          } else if (voices[i].name.includes('Google US English') && voices[i].name.includes('Male') && !selectedVoice) {
+            option.selected = true;
+            selectedVoice = voices[i];
+          }
+          voiceSelect.appendChild(option);
+        }
+      }
+      if (!selectedVoice && voices.length > 0) {
+        selectedVoice = voices.find(voice => voice.lang.startsWith('en'));
+        if (selectedVoice) {
+            voiceSelect.value = selectedVoice.name;
+        }
+      }
+    }
+
+    populateVoiceList();
+    if (synth.onvoiceschanged !== undefined) {
+      synth.onvoiceschanged = populateVoiceList;
+    }
+
+    voiceSelect.addEventListener('change', () => {
+      const selectedVoiceName = voiceSelect.value;
+      selectedVoice = voices.find(voice => voice.name === selectedVoiceName);
+    });
+
+    function speakEnglishWord(word) {
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(word);
+        utterance.lang = 'en-US'; 
+        if (selectedVoice) {
+          utterance.voice = selectedVoice; 
+        }
+        synth.speak(utterance);
+      } else {
+        console.warn('SpeechSynthesis API not supported in this browser.');
+      }
+    }
+
+    let currentQuestionIndex = -1;
+    const shownQuestions = new Set();
+
+    video.addEventListener('seeked', () => {
+      const currentTime = video.currentTime;
+      const questionsToRemove = [];
+      for (let index of shownQuestions) {
+        if (quizQuestions[index].time > currentTime) {
+          questionsToRemove.push(index);
+        }
+      }
+      questionsToRemove.forEach(index => shownQuestions.delete(index));
+      resetQuizUI();
+    });
+
+    video.addEventListener('timeupdate', () => {
+  const currentTime = video.currentTime;
+  const quizEnabled = document.getElementById('toggle-quiz')?.checked;
+
+  if (!quizEnabled) return; // Không hiển thị câu hỏi nếu người dùng tắt
+
+  for (let i = 0; i < quizQuestions.length; i++) {
+    const q = quizQuestions[i];
+    if (currentTime >= q.time && !shownQuestions.has(i)) {
+      video.pause(); 
+      currentQuestionIndex = i;
+      showQuestion(q); 
+      shownQuestions.add(i); 
+      break; 
+    }
+  }
+});
+
+    function resetQuizUI() {
+      answersContainer.innerHTML = '';
+      feedback.textContent = '';
+      pronunciationStatus.textContent = ''; 
+      document.getElementById('status').innerText = '';
+      document.getElementById('result').innerText = '';
+      quizContainer.style.display = 'none';
+    }
+
+    function startRecording(targetWord) {
+      if (!SpeechRecognition) {
+        pronunciationStatus.textContent = "Speech Recognition not supported in this browser.";
+        return;
+      }
+
+      recognition = new SpeechRecognition();
+      recognition.lang = 'en-US'; 
+      recognition.interimResults = false; 
+      recognition.maxAlternatives = 1; 
+
+      recognition.onstart = () => {
+        isRecording = true;
+        pronunciationStatus.textContent = "Listening... Please say: '" + targetWord + "'";
+        answersContainer.querySelectorAll('button').forEach(btn => btn.disabled = true);
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        const confidence = event.results[0][0].confidence;
+        pronunciationStatus.textContent = `You said: "${transcript}" (Confidence: ${Math.round(confidence * 100)}%)`;
+        checkPronunciation(transcript, targetWord); 
+      };
+
+      recognition.onerror = (event) => {
+        isRecording = false;
+        pronunciationStatus.textContent = "Error: " + event.error;
+        answersContainer.querySelectorAll('button').forEach(btn => btn.disabled = false);
+        console.error("Speech Recognition Error:", event.error);
+      };
+
+      recognition.onend = () => {
+        isRecording = false;
+        if (!feedback.textContent) { 
+            pronunciationStatus.textContent += " (Recording ended)";
+        }
+        answersContainer.querySelectorAll('button').forEach(btn => btn.disabled = false);
+      };
+
+      recognition.start();
+    }
+
+    function stopRecording() {
+      if (recognition && isRecording) {
+        recognition.stop();
+        isRecording = false;
+      }
+    }
+
+    function checkPronunciation(userTranscript, targetWord) {
+        const normalizedUser = normalizeEN(userTranscript);
+        const normalizedTarget = normalizeEN(targetWord);
+
+        let correct = normalizedUser === normalizedTarget;
+
+        feedback.textContent = correct ? "✅ Correct pronunciation!" : `❌ Incorrect pronunciation. Expected: "${targetWord}"`;
+
+        const listItem = document.createElement('li');
+        listItem.innerHTML = 
+            `<strong>Question:</strong> Pronounce '${targetWord}'<br>
+            <strong>Your Pronunciation:</strong> ${userTranscript}<br>
+            <strong>Result:</strong> ${correct ? '✅ Correct' : `❌ Incorrect (Expected: ${targetWord})`}`;
+        historyList.appendChild(listItem);
+        historyList.scrollTop = historyList.scrollHeight;
+
+        setTimeout(() => {
+            quizContainer.style.display = 'none';
+            feedback.textContent = "";
+            pronunciationStatus.textContent = "";
+            video.play();
+        }, 2000);
+    }
+
+    function showQuestion(question) {
+      const questionSpan = document.createElement('span');
+      // Điều chỉnh câu hỏi hiển thị cho translate_sentence_en_to_vn
+      if (question.type === 'translate_sentence_en_to_vn') {
+        questionSpan.innerHTML = `<strong>Translate to Vietnamese:</strong> "${question.englishWordForPronunciation}"`;
+      } else {
+        questionSpan.innerHTML = `<strong>Question:</strong> ${question.question || ''}`;
+      }
+      
+      const speakerButton = document.createElement('button');
+      speakerButton.className = 'speaker-button';
+      speakerButton.innerHTML = '🔊'; 
+      speakerButton.onclick = () => speakEnglishWord(question.englishWordForPronunciation);
+
+      questionText.innerHTML = '';
+      questionText.appendChild(questionSpan);
+      questionText.appendChild(speakerButton);
+
+      answersContainer.innerHTML = ''; 
+      feedback.textContent = ""; 
+      pronunciationStatus.textContent = ""; 
+
+      // Cập nhật điều kiện này để bao gồm translate_sentence_en_to_vn
+      if (question.type === "multiple_choice_meaning_vn" || question.type === "translate_sentence_en_to_vn") {
+        let optionsToDisplay = [...question.options]; 
+        
+        // Đảm bảo có options để hiển thị
+        if (optionsToDisplay.length === 0) {
+          // Nếu không có options, có thể hiển thị một thông báo hoặc chuyển sang kiểu nhập liệu
+          const noOptionsMsg = document.createElement('p');
+          noOptionsMsg.textContent = "No options available for this question type. Please ensure 'options' array is present in your JSON.";
+          answersContainer.appendChild(noOptionsMsg);
+          // Fallback to text input if no options? Or just display the message.
+          // For now, just display the message and disable answering
+          return; 
+        }
+
+        for (let i = optionsToDisplay.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [optionsToDisplay[i], optionsToDisplay[j]] = [optionsToDisplay[j], optionsToDisplay[i]];
+        }
+
+        optionsToDisplay.forEach(option => {
+          const btn = document.createElement('button');
+          btn.className = 'option-button'; // Thêm class mới
+          btn.textContent = option; 
+          btn.onclick = () => checkAnswer(btn, option); // Truyền button để có thể thay đổi class
+          answersContainer.appendChild(btn);
+        });
+      } else if (question.type === "copy_word") {
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.placeholder = "Type the word 3 times, no spaces/accents";
+          const submitBtn = document.createElement('button');
+          submitBtn.textContent = "Answer";
+          submitBtn.onclick = () => checkAnswer(null, input.value.trim()); // Null cho button
+          answersContainer.appendChild(input);
+          answersContainer.appendChild(submitBtn);
+      } else if (question.type === "part_of_speech_vn") {
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.placeholder = "Enter Vietnamese part of speech";
+          const submitBtn = document.createElement('button');
+          submitBtn.textContent = "Answer";
+          submitBtn.onclick = () => checkAnswer(null, input.value.trim()); // Null cho button
+          answersContainer.appendChild(input);
+          answersContainer.appendChild(submitBtn);
+      } else if (question.type === "example_vn_fill_blank") {
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.placeholder = "Fill in the blank";
+          const submitBtn = document.createElement('button');
+          submitBtn.textContent = "Answer";
+          submitBtn.onclick = () => checkAnswer(null, input.value.trim()); // Null cho button
+          answersContainer.appendChild(input);
+          answersContainer.appendChild(submitBtn);
+      } else if (question.type === "pronunciation_check") { 
+          const wordToPronounce = question.englishWordForPronunciation;
+          const promptText = document.createElement('p');
+          promptText.textContent = `Please pronounce the word: "${wordToPronounce}"`;
+          answersContainer.appendChild(promptText);
+
+          const startRecBtn = document.createElement('button');
+          startRecBtn.textContent = "Start Recording 🎤";
+          startRecBtn.onclick = () => startRecording(wordToPronounce);
+          answersContainer.appendChild(startRecBtn);
+      // Loại bỏ block 'sentence_translation_en_vn' cũ vì nó sẽ được xử lý chung với multiple choice
+      } else { // Fallback for any other types or missing options
+          // Nếu không có options và không phải các loại đặc biệt, trở lại kiểu nhập liệu văn bản
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.placeholder = "Enter your answer here";
+          const submitBtn = document.createElement('button');
+          submitBtn.textContent = "Answer";
+          submitBtn.onclick = () => checkAnswer(null, input.value.trim());
+          answersContainer.appendChild(input);
+          answersContainer.appendChild(submitBtn);
+      }
+      
+      quizContainer.style.display = 'block'; 
+    }
+
+    // Chỉnh sửa hàm checkAnswer để nhận thêm tham số là nút đã được click
+    function checkAnswer(clickedButton, answer) {
+      const question = quizQuestions[currentQuestionIndex];
+      let correct = false;
+      
+      // Đối với các loại câu hỏi văn bản và lựa chọn, chúng ta chuẩn hóa và so sánh tiếng Việt
+      if (question.type === "multiple_choice_meaning_vn" || question.type === "translate_sentence_en_to_vn" || question.type === "copy_word" || question.type === "part_of_speech_vn" || question.type === "example_vn_fill_blank") {
+          let actualAnswer = normalizeVN(answer); 
+          let expectedAnswer = question.correctAnswer; 
+          correct = actualAnswer === expectedAnswer;
+      } else if (question.type === "pronunciation_check") {
+          // Kiểm tra phát âm có hàm checkPronunciation riêng, không gọi trực tiếp checkAnswer
+          return; 
+      } else {
+          // Dự phòng cho các loại khác không được xử lý rõ ràng bằng chuẩn hóa
+          correct = answer === question.correctAnswer;
+      }
+
+      // Vô hiệu hóa tất cả các nút hoặc input sau khi trả lời
+      answersContainer.querySelectorAll('button').forEach(btn => btn.disabled = true); 
+      answersContainer.querySelectorAll('input').forEach(input => input.disabled = true); 
+
+      // Đánh dấu nút được chọn (nếu có)
+      if (clickedButton) {
+        if (correct) {
+          clickedButton.classList.add('correct-answer');
+        } else {
+          clickedButton.classList.add('incorrect-answer');
+          // Highlight correct answer if it was a multiple choice question
+          answersContainer.querySelectorAll('.option-button').forEach(btn => {
+            if (normalizeVN(btn.textContent) === question.correctAnswer) {
+              btn.classList.add('correct-answer');
+            }
+          });
+        }
+      }
+
+      // Sử dụng displayCorrectAnswer để hiển thị phản hồi và lịch sử
+      const correctTextForDisplay = question.displayCorrectAnswer; 
+      feedback.textContent = correct ? "✅ Correct!" : `❌ Incorrect. The answer is: ${correctTextForDisplay}`;
+
+      const listItem = document.createElement('li');
+      const userAnswerText = answer; 
+      listItem.innerHTML = 
+        `<strong>Question:</strong> ${question.question}<br>
+        <strong>Your Answer:</strong> ${userAnswerText}<br>
+        <strong>Result:</strong> ${correct ? '✅ Correct' : `❌ Incorrect (Answer: ${correctTextForDisplay})`}`;
+      historyList.appendChild(listItem);
+      historyList.scrollTop = historyList.scrollHeight; 
+
+      setTimeout(() => {
+        quizContainer.style.display = 'none';
+        feedback.textContent = "";
+        pronunciationStatus.textContent = "";
+        video.play();
+      }, 2000);
+    }
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Papá and Me - Practice Reading</title>
+  <style>
+    body {
+      font-family: Georgia, serif;
+      background-color: #fef9f0;
+      padding: 30px;
+      line-height: 1.6;
+    }
+    h1, .instruction {
+      text-align: center;
+    }
+    .reading-text {
+      font-size: 24px;
+      text-align: center;
+      margin: 20px 0;
+    }
+    button {
+      display: inline-block;
+      margin: 10px;
+      padding: 10px 18px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .play-btn { background-color: #4CAF50; color: white; }
+    .record-btn { background-color: #2196F3; color: white; }
+    .stop-btn { background-color: #f44336; color: white; }
+    .check-btn { background-color: #ff9800; color: white; }
+    .audio-box {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .result {
+      font-size: 20px;
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Papá and Me</h1>
+  <p class="instruction">Use this passage to practice reading with proper intonation.</p>
+
+  <div class="reading-text" id="readingText">
+    <p>We share stories on the bus.</p>
+    <p>Our stop, our stop!</p>
+  </div>
+
+  <div style="text-align:center">
+    <button class="play-btn" onclick="readText()">🔊 Listen to Model</button>
+    <button class="record-btn" onclick="startRecording()">🎙️ Start Recording</button>
+    <button class="stop-btn" onclick="stopRecording()">🛑 Stop</button>
+    <button class="check-btn" onclick="markCorrect()">✅ Correct</button>
+    <button class="check-btn" onclick="markIncorrect()">❌ Needs Practice</button>
+  </div>
+
+  <div class="audio-box">
+    <p><strong>Student Recording:</strong></p>
+    <audio id="audioPlayback" controls></audio>
+  </div>
+
+  <div class="result" id="result"></div>
+
+  <script>
+    // 1. Speak sample text
+    function readText() {
+      const text = document.getElementById('readingText').innerText;
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.9;
+      const voices = speechSynthesis.getVoices();
+      const enVoice = voices.find(v => v.lang === 'en-US' && v.name.includes('Microsoft')) || voices.find(v => v.lang.startsWith('en'));
+      if (enVoice) utterance.voice = enVoice;
+      speechSynthesis.cancel();
+      speechSynthesis.speak(utterance);
+    }
+
+    window.speechSynthesis.onvoiceschanged = () => {};
+
+    // 2. Record student's voice
+    let mediaRecorder;
+    let audioChunks = [];
+
+    async function startRecording() {
+      audioChunks = [];
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.start();
+
+      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunks);
+        const audioUrl = URL.createObjectURL(audioBlob);
+        document.getElementById('audioPlayback').src = audioUrl;
+      };
+
+      console.log("Recording started...");
+    }
+
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state === "recording") {
+        mediaRecorder.stop();
+        console.log("Recording stopped.");
+      }
+    }
+
+    // 3. Mark result
+    function markCorrect() {
+      document.getElementById('result').innerHTML = "✅ Great job! You used good intonation.";
+    }
+
+    function markIncorrect() {
+      document.getElementById('result').innerHTML = "❌ Let's try again with better expression.";
+    }
+  </script>
+
+</body>
+</html>

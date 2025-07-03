@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #333;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        ul li {
+            margin: 10px 0;
+        }
+        ul li a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        ul li a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome, <%= user.username %></h1>
+        
+        <!-- Danh sách môn học -->
+        <h2>Your Subjects</h2>
+        <ul>
+            <% subjects.forEach(sub => { %>
+                <li>
+                    <a href="/subject/<%= sub.id %>"><%= sub.name %></a><br>
+                    <!-- Các liên kết khác nếu có -->
+                    <a href="/baihoc/phonic_Ourworld1/unit1">Bài học Phonic Our World 1 – Luyện Unit 1</a><br>
+                    <a href="/baihoc/phonic_Ourworld1/unit7">Bài học Phonic Our World 1 – Luyện Unit 7</a><br>
+                    <a href="/baihoc/phonic_Ourworld1/unit8">Bài học Phonic Our World 1 – Luyện Unit 8</a><br>
+                    <a href="/baihoc/phonic_Ourworld1/unit9">Bài học Phonic Our World 1 – Luyện Unit 9</a><br>
+                    <a href="/baihoc/StundentBook_Ourworld3_Unit0">Bài học Our World 3 – Unit 0</a><br>
+                    <a href="/baihoc/StundentBook_Ourworld3_Unit1">Bài học Our World 3 – Unit 1</a><br>
+                    
+                    <a href="/lesson/unit8">Bài học Unit 8</a><br>
+                    
+                    <a href="/practice-book-level_b">Reach Practice Book Level B</a><br>
+                    <a href="/book-level_b">Reach  Book Level B</a><br>
+                    <a href="/reach_for_reading_grade1_volume1/1">Reach for Reading common core program Grade 1 Volume 1 Week 1</a><br>
+                    
+                    <a href="/book_eating_up_and_diving_in">book eating up and diving in</a><br>
+             <% }) %>
+        </ul>
+
+        
+
+        <a href="/logout">Logout</a>
+    </div>
+</body>
+</html>

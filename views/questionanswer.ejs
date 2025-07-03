@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice Answer Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+      background-color: #f4f4f9;
+    }
+    h1, h2 {
+      color: #333;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+    button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    button:hover:not(:disabled) {
+      background-color: #45a049;
+    }
+    #recordingStatus {
+      color: red;
+      font-weight: bold;
+    }
+    #result, #hintDisplay {
+      margin-top: 20px;
+      font-size: 18px;
+      background-color: #fff;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    #history {
+      margin-top: 30px;
+      text-align: left;
+    }
+    .history-item {
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+    }
+    .checkbox-container, .mode-container {
+      margin: 15px 0;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    .progress {
+      margin: 10px 0;
+      font-size: 16px;
+      color: #555;
+    }
+    audio {
+      margin: 10px 0;
+    }
+    select {
+      padding: 8px;
+      font-size: 16px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎤 Voice Answer Quiz</h1>
+    <div class="checkbox-container">
+  <label for="voiceSelect">Select Voice:</label>
+  <select id="voiceSelect">
+    <option value="en-US-GuyNeural">Guy (US Male)</option>
+    <option value="en-US-AriaNeural">Aria (US Female)</option>
+    
+    <option value="en-GB-SoniaNeural">Sonia (UK Female)</option>
+    <option value="en-GB-RyanNeural">Ryan (UK Male)</option>
+    
+  </select>
+</div>
+  <div class="progress">
+    Question <span id="currentQuestion">1</span> of <span id="totalQuestions"><%- words.length %></span>
+  </div>
+
+  <div class="mode-container">
+    <label><input type="radio" name="mode" id="answererMode" checked> Answerer Mode</label>
+    <label><input type="radio" name="mode" id="questionerMode"> Questioner Mode</label>
+  </div>
+
+  <div id="questionContainer">
+    <h2 id="questionText">Loading question...</h2>
+    <audio id="questionAudio" controls></audio>
+  </div>
+
+  <div class="checkbox-container" id="hintContainer">
+    <label><input type="checkbox" id="fullHint"> Show Full Answer</label>
+    <label><input type="checkbox" id="partialHint"> Show Partial Answer</label>
+    <label><input type="checkbox" id="noHint" checked> No Answer</label>
+  </div>
+
+  <div id="hintDisplay"></div>
+
+  <div id="actionButtons">
+    <button id="playQuestion">🎙️ Play Question</button>
+    <button id="recordButton">🎙️ Record</button>
+    <button id="stopButton" disabled>🛑 Stop Recording</button>
+    <button id="replayAnswer" disabled>🔊 Replay Recording</button>
+    <button id="tryAgainButton" disabled>🔁 Next Question</button>
+  </div>
+
+  <p id="recordingStatus"></p>
+  <div id="result"></div>
+
+  <h2>🎓 History</h2>
+  <div id="history"></div>
+
+  <script>
+    let mediaRecorder;
+    let recordedChunks = [];
+    let currentQuestionIndex = 0;
+    let questions = <%- JSON.stringify(words) %>;
+    let history = [];
+    let userAudioUrl = null;
+    let isAnswererMode = true;
+    
+    // Load initial question
+    function loadQuestion() {
+      const question = questions[currentQuestionIndex];
+      document.getElementById('questionText').innerText = isAnswererMode ? question.question : question.answer;
+      document.getElementById('currentQuestion').innerText = currentQuestionIndex + 1;
+      document.getElementById('hintDisplay').innerText = '';
+      document.getElementById('fullHint').checked = false;
+      document.getElementById('partialHint').checked = false;
+      document.getElementById('noHint').checked = true;
+      document.getElementById('recordButton').innerText = isAnswererMode ? '🎙️ Record Answer' : '🎙️ Record Question';
+      generateTTS(isAnswererMode ? question.question : question.answer);
+      // Nếu đang ở chế độ Questioner → hiển thị câu hỏi trong hint
+if (!isAnswererMode) {
+  const question = questions[currentQuestionIndex];
+  document.getElementById('hintDisplay').innerText = `🧠 Please read this question aloud:\n${question.question}`;
+}
+    }
+
+    // Generate TTS
+    async function generateTTS(text) {
+      try {
+        const selectedVoice = document.getElementById('voiceSelect').value
+        const response = await fetch('/tts/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          
+          body: JSON.stringify({ word: text, voice: selectedVoice })
+        });
+        const data = await response.json();
+        if (data.url) {
+          const audio = document.getElementById('questionAudio');
+          audio.src = data.url;
+          audio.play().catch(err => {
+            console.error('Autoplay error:', err);
+            alert('Please click "Play Question" to hear the question.');
+          });
+        } else {
+          alert('Failed to generate audio.');
+        }
+      } catch (error) {
+        console.error('TTS error:', error);
+        alert('Error generating audio. Please try again.');
+      }
+    }
+
+    // Play question/answer audio
+    document.getElementById('playQuestion').addEventListener('click', () => {
+      const audio = document.getElementById('questionAudio');
+      audio.play();
+    });
+
+    // Start recording
+    document.getElementById('recordButton').addEventListener('click', async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        recordedChunks = [];
+
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) recordedChunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = async () => {
+          const audioBlob = new Blob(recordedChunks, { type: 'audio/wav' });
+          userAudioUrl = URL.createObjectURL(audioBlob);
+          document.getElementById('replayAnswer').disabled = false;
+
+          const formData = new FormData();
+          formData.append('audio', audioBlob, 'recording.wav');
+          formData.append('expected', isAnswererMode ? questions[currentQuestionIndex].answer : questions[currentQuestionIndex].question);
+
+          try {
+            const response = await fetch('/questionanswer/upload', {
+              method: 'POST',
+              body: formData
+            });
+            const result = await response.json();
+            displayResult(result);
+            updateHistory(result);
+            saveQuizResult(result);
+            document.getElementById('tryAgainButton').disabled = false;
+            // 👉 Nếu ở chế độ Questioner và trả lời đúng, thì đọc đáp án ra
+            if (!isAnswererMode && result.isCorrect) {
+            const answer = questions[currentQuestionIndex].answer;
+            generateTTS(answer);
+            }
+          } catch (error) {
+            console.error('Upload error:', error);
+            document.getElementById('result').innerText = 'Error processing recording.';
+          }
+        };
+
+        mediaRecorder.start();
+        document.getElementById('recordingStatus').innerText = 'Recording...';
+        document.getElementById('recordButton').disabled = true;
+        document.getElementById('stopButton').disabled = false;
+      } catch (error) {
+        console.error('Recording error:', error);
+        alert('Failed to access microphone. Please check permissions.');
+      }
+    });
+
+    // Stop recording
+    document.getElementById('stopButton').addEventListener('click', () => {
+      mediaRecorder.stop();
+      document.getElementById('recordingStatus').innerText = '';
+      document.getElementById('recordButton').disabled = false;
+      document.getElementById('stopButton').disabled = true;
+    });
+
+    // Replay recording
+    document.getElementById('replayAnswer').addEventListener('click', () => {
+      if (userAudioUrl) {
+        const audio = new Audio(userAudioUrl);
+        audio.play();
+      }
+    });
+
+    // Next question
+    document.getElementById('tryAgainButton').addEventListener('click', () => {
+      currentQuestionIndex = (currentQuestionIndex + 1) % questions.length;
+      document.getElementById('result').innerText = '';
+      document.getElementById('tryAgainButton').disabled = true;
+      document.getElementById('replayAnswer').disabled = true;
+      userAudioUrl = null;
+      loadQuestion();
+    });
+
+    // Handle mode switch
+    document.getElementById('answererMode').addEventListener('change', () => {
+      isAnswererMode = true;
+      document.getElementById('hintContainer').style.display = 'flex';
+      loadQuestion();
+    });
+
+    document.getElementById('questionerMode').addEventListener('change', () => {
+      isAnswererMode = false;
+      document.getElementById('hintContainer').style.display = 'none';
+      document.getElementById('hintDisplay').innerText = '';
+      loadQuestion();
+    });
+
+    // Handle hint checkboxes
+    function updateHintDisplay() {
+      if (!isAnswererMode) return;
+      const fullHint = document.getElementById('fullHint').checked;
+      const partialHint = document.getElementById('partialHint').checked;
+      const noHint = document.getElementById('noHint').checked;
+      const hintDisplay = document.getElementById('hintDisplay');
+      const answer = questions[currentQuestionIndex].answer;
+
+      if (fullHint) {
+        hintDisplay.innerText = `Hint: ${answer}`;
+        document.getElementById('partialHint').checked = false;
+        document.getElementById('noHint').checked = false;
+      } else if (partialHint) {
+        const partialAnswer = answer.split(' ').slice(0, Math.ceil(answer.split(' ').length / 2)).join(' ') + '...';
+        hintDisplay.innerText = `Hint: ${partialAnswer}`;
+        document.getElementById('fullHint').checked = false;
+        document.getElementById('noHint').checked = false;
+      } else {
+        hintDisplay.innerText = '';
+        document.getElementById('fullHint').checked = false;
+        document.getElementById('partialHint').checked = false;
+        document.getElementById('noHint').checked = true;
+      }
+    }
+
+    document.getElementById('fullHint').addEventListener('change', updateHintDisplay);
+    document.getElementById('partialHint').addEventListener('change', updateHintDisplay);
+    document.getElementById('noHint').addEventListener('change', updateHintDisplay);
+
+    // Display result
+    function displayResult(result) {
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = `
+        <p><strong>Your ${isAnswererMode ? 'Answer' : 'Question'}:</strong> ${result.userSaid}</p>
+        <p><strong>Expected ${isAnswererMode ? 'Answer' : 'Question'}:</strong> ${result.expected}</p>
+        <p><strong>Result:</strong> ${result.isCorrect ? 'Correct!' : 'Incorrect'}</p>
+        <p><strong>Score:</strong> ${result.score}</p>
+        <p><strong>Feedback:</strong> ${result.feedback}</p>
+      `;
+      if (!isAnswererMode) {
+        generateTTS(questions[currentQuestionIndex].answer); // Play answer in Questioner mode
+      }
+    }
+
+    // Update history
+    function updateHistory(result) {
+      history.push({
+        question: questions[currentQuestionIndex].question,
+        userSaid: result.userSaid,
+        expected: result.expected,
+        isCorrect: result.isCorrect,
+        score: result.score,
+        feedback: result.feedback,
+        mode: isAnswererMode ? 'Answerer' : 'Questioner'
+      });
+
+      const historyDiv = document.getElementById('history');
+      historyDiv.innerHTML = history.map((entry, index) => `
+        <div class="history-item">
+          <p><strong>${entry.mode} Mode - Question ${index + 1}:</strong> ${entry.question}</p>
+          <p><strong>Your ${entry.mode === 'Answerer' ? 'Answer' : 'Question'}:</strong> ${entry.userSaid}</p>
+          <p><strong>Expected ${entry.mode === 'Answerer' ? 'Answer' : 'Question'}:</strong> ${entry.expected}</p>
+          <p><strong>Result:</strong> ${entry.isCorrect ? 'Correct' : 'Incorrect'}</p>
+          <p><strong>Score:</strong> ${entry.score}</p>
+          <p><strong>Feedback:</strong> ${entry.feedback}</p>
+        </div>
+      `).join('');
+    }
+
+    // Save quiz result to database
+    async function saveQuizResult(result) {
+      try {
+        const response = await fetch('/save-quiz-result', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            question_text: questions[currentQuestionIndex].question,
+            correct_answer: result.expected,
+            user_answer: result.userSaid,
+            is_correct: result.isCorrect
+          })
+        });
+        const data = await response.json();
+        if (!data.success) {
+          console.error('Failed to save quiz result:', data.message);
+        }
+      } catch (error) {
+        console.error('Error saving quiz result:', error);
+      }
+    }
+
+    // Initialize
+    questions = questions.sort(() => Math.random() - 0.5); // Shuffle questions
+    loadQuestion();
+  </script>
+</body>
+</html>

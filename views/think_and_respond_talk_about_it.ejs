@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Families Practice</title>
+  <style>
+    body { font-family: Arial; background: #f9f9f9; padding: 20px; max-width: 800px; margin: auto; }
+    h1, h2 { color: #2c3e50; }
+    .question { margin-bottom: 20px; }
+    textarea { width: 100%; height: 60px; }
+    button { padding: 8px 15px; margin: 5px 5px 5px 0; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { background: #2980b9; }
+    .hint { background: #ecf0f1; padding: 10px; border-left: 4px solid #2980b9; margin-top: 10px; display: none; }
+    .recording { color: red; font-weight: bold; animation: blink 1s infinite; }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Families in Many Cultures - Practice</h1>
+
+  <div class="question" data-id="q1">
+    <h2>1. What do families celebrate?</h2>
+    <textarea placeholder="Families celebrate..."></textarea><br>
+    <button onclick="showHint(this)">Gợi ý</button>
+    <button onclick="speakText(this)">🔊 Phát âm</button>
+    <button onclick="checkPronunciation(this)">🎤 Kiểm tra phát âm</button>
+    <button onclick="recordAudio(this)">⏺️ Ghi âm</button>
+    <button onclick="playRecording(this)">▶️ Nghe lại</button>
+    <div class="hint">Families celebrate holidays, birthdays, and special events.</div>
+    <div class="status"></div>
+  </div>
+
+  <div class="question" data-id="q2">
+    <h2>2. How are some families the same?</h2>
+    <textarea placeholder="Some families..."></textarea><br>
+    <button onclick="showHint(this)">Gợi ý</button>
+    <button onclick="speakText(this)">🔊 Phát âm</button>
+    <button onclick="checkPronunciation(this)">🎤 Kiểm tra phát âm</button>
+    <button onclick="recordAudio(this)">⏺️ Ghi âm</button>
+    <button onclick="playRecording(this)">▶️ Nghe lại</button>
+    <div class="hint">Some families eat meals together or celebrate the same holidays.</div>
+    <div class="status"></div>
+  </div>
+
+  <div class="question" data-id="q3">
+    <h2>3. What purpose did you set for reading? What did you learn?</h2>
+    <textarea placeholder="I wanted to learn... I learned..."></textarea><br>
+    <button onclick="showHint(this)">Gợi ý</button>
+    <button onclick="speakText(this)">🔊 Phát âm</button>
+    <button onclick="checkPronunciation(this)">🎤 Kiểm tra phát âm</button>
+    <button onclick="recordAudio(this)">⏺️ Ghi âm</button>
+    <button onclick="playRecording(this)">▶️ Nghe lại</button>
+    <div class="hint">I wanted to learn about families. I learned how they celebrate and help each other.</div>
+    <div class="status"></div>
+  </div>
+
+  <div class="question" data-id="q4">
+    <h2>4. How does your family help you?</h2>
+    <textarea placeholder="My family helps me..."></textarea><br>
+    <button onclick="showHint(this)">Gợi ý</button>
+    <button onclick="speakText(this)">🔊 Phát âm</button>
+    <button onclick="checkPronunciation(this)">🎤 Kiểm tra phát âm</button>
+    <button onclick="recordAudio(this)">⏺️ Ghi âm</button>
+    <button onclick="playRecording(this)">▶️ Nghe lại</button>
+    <div class="hint">My family helps me with homework and supports me every day.</div>
+    <div class="status"></div>
+  </div>
+
+  <script>
+    const recordings = {};
+    let voices = [];
+     // Load danh sách giọng khi có sẵn
+  window.speechSynthesis.onvoiceschanged = () => {
+    voices = speechSynthesis.getVoices();
+    console.log("Loaded voices:", voices.map((v, i) => `${i}: ${v.name} (${v.lang})`).join('\n'));
+  };
+    function showHint(btn) {
+      const hint = btn.parentElement.querySelector('.hint');
+      hint.style.display = hint.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function speakText(btn) {
+    const text = btn.parentElement.querySelector('textarea').value;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    utterance.rate = 0.75;
+    utterance.pitch = 0.75;
+
+    // 🟡 Chọn voice theo thứ tự (ví dụ: voice thứ 113)
+    const index = 113;
+    if (voices.length > index) {
+      utterance.voice = voices[index];
+    } else {
+      utterance.voice = voices[0]; // fallback nếu chưa có đủ voice
+    }
+
+    speechSynthesis.cancel();
+    speechSynthesis.speak(utterance);
+  }
+
+
+    function checkPronunciation(btn) {
+      const expected = btn.parentElement.querySelector('textarea').value.toLowerCase();
+      const status = btn.parentElement.querySelector('.status');
+
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.start();
+      status.innerHTML = '<span class="recording">🎤 Đang ghi nhận...</span>';
+
+      recognition.onresult = (event) => {
+        const spoken = event.results[0][0].transcript.toLowerCase().trim();
+        if (spoken === expected) {
+          status.innerHTML = "✅ Phát âm đúng!";
+        } else {
+          status.innerHTML = `❌ Bạn nói: "${spoken}"<br>Đúng là: "${expected}"`;
+        }
+      };
+
+      recognition.onerror = () => {
+        status.innerHTML = "⚠️ Lỗi nhận dạng giọng nói.";
+      };
+    }
+
+    function recordAudio(btn) {
+      const status = btn.parentElement.querySelector('.status');
+      const id = btn.parentElement.dataset.id;
+
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+        const mediaRecorder = new MediaRecorder(stream);
+        const chunks = [];
+
+        status.innerHTML = '<span class="recording">⏺️ Đang ghi âm...</span>';
+        mediaRecorder.start();
+
+        mediaRecorder.ondataavailable = e => chunks.push(e.data);
+
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(chunks, { type: 'audio/webm' });
+          recordings[id] = URL.createObjectURL(blob);
+          status.innerHTML = "🎧 Ghi âm xong. Bạn có thể nghe lại.";
+        };
+
+        setTimeout(() => {
+          mediaRecorder.stop();
+        }, 4000); // ghi âm 4 giây
+      }).catch(err => {
+        status.innerHTML = "⚠️ Không thể ghi âm: " + err.message;
+      });
+    }
+
+    function playRecording(btn) {
+      const id = btn.parentElement.dataset.id;
+      const url = recordings[id];
+      if (url) {
+        const audio = new Audio(url);
+        audio.play();
+      } else {
+        alert("⚠️ Chưa có ghi âm nào.");
+      }
+    }
+  </script>
+</body>
+</html>

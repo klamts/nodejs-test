@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .quiz-container {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            display: none; /* Hidden by default, shown when quiz starts */
+        }
+        .start-screen {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .question-header {
+            margin-bottom: 20px;
+        }
+        #question-number {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        #question-text {
+            font-size: 1.5em;
+            color: #333;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            word-wrap: break-word; /* Ensure long text wraps */
+            text-align: center;
+        }
+        .options-container button {
+            display: block;
+            width: 90%;
+            padding: 12px 15px;
+            margin: 10px auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+            text-align: left; /* Align text to the left for better readability */
+            word-wrap: break-word; /* Ensure long options wrap */
+        }
+        .options-container button:hover {
+            background-color: #e9e9e9;
+            border-color: #c9c9c9;
+        }
+        .options-container button.selected {
+            background-color: #d1e7dd; /* Light green for selected */
+            border-color: #28a745;
+        }
+        #text-input-container {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #text-input {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1.1em;
+            box-sizing: border-box; /* Include padding in width */
+        }
+        .navigation-buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+        }
+        .navigation-buttons button, .start-screen button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            flex: 1; /* Allow buttons to grow */
+            max-width: 150px; /* Max width for consistency */
+        }
+        #submit-answer-btn {
+            background-color: #007bff;
+            color: white;
+        }
+        #submit-answer-btn:hover {
+            background-color: #0056b3;
+        }
+        #next-question-btn, #start-quiz-btn {
+            background-color: #28a745;
+            color: white;
+        }
+        #next-question-btn:hover, #start-quiz-btn:hover {
+            background-color: #218838;
+        }
+        .feedback {
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 1.1em;
+            min-height: 25px; /* Reserve space for feedback */
+        }
+        .feedback.correct {
+            color: #28a745;
+        }
+        .feedback.incorrect {
+            color: #dc3545;
+        }
+        .quiz-end-screen {
+            display: none;
+            text-align: center;
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+        .quiz-end-screen h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .quiz-end-screen p {
+            font-size: 1.2em;
+            color: #555;
+            margin-bottom: 20px;
+        }
+        .score {
+            font-size: 1.5em;
+            color: #007bff;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        #restart-quiz-btn {
+            background-color: #6c757d;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #restart-quiz-btn:hover {
+            background-color: #5a6268;
+        }
+        .difficulty-selector {
+            margin-bottom: 20px;
+        }
+        .difficulty-selector label {
+            margin-right: 10px;
+            font-size: 1.1em;
+        }
+        .difficulty-selector select {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 1em;
+        }
+        .word-info {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: left;
+            display: none; /* Hidden by default */
+        }
+        .word-info h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .word-info p {
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .word-info strong {
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="start-screen" id="start-screen">
+        <h1>Welcome to the English Quiz!</h1>
+        <div class="difficulty-selector">
+            <label for="difficulty">Select Difficulty:</label>
+            <select id="difficulty">
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+        </div>
+        <button id="start-quiz-btn">Start Quiz</button>
+    </div>
+
+    <div class="quiz-container" id="quiz-container">
+        <div class="question-header">
+            <p id="question-number">Question 1 of N</p>
+            <div id="word-details" style="font-style: italic; color: #777; margin-bottom: 10px;"></div>
+            <p id="question-text"></p>
+        </div>
+        <div class="options-container" id="options-container">
+            </div>
+        <div id="text-input-container" style="display: none;">
+            <input type="text" id="text-input" placeholder="Type your answer here">
+        </div>
+        <div class="feedback" id="feedback"></div>
+        <div class="navigation-buttons">
+            <button id="submit-answer-btn">Submit Answer</button>
+            <button id="next-question-btn" style="display: none;">Next Question</button>
+        </div>
+        <div class="word-info" id="word-info">
+            <h3>Word Information: <span id="info-word"></span></h3>
+            <p><strong>Part of Speech:</strong> <span id="info-part-of-speech"></span></p>
+            <div id="info-definitions"></div>
+            <div id="info-examples"></div>
+        </div>
+    </div>
+
+    <div class="quiz-end-screen" id="quiz-end-screen">
+        <h2>Quiz Completed!</h2>
+        <p>You answered <span id="final-score"></span> questions correctly out of <span id="total-questions"></span>.</p>
+        <button id="restart-quiz-btn">Restart Quiz</button>
+    </div>
+
+    <script>
+        let quizData = <%- JSON.stringify(questionQuiz) %>;
+        let quizQuestions = []; // This will store the filtered and shuffled questions
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOption = null;
+        let currentWordDefinition = null; // To store word details for display
+
+        const startScreen = document.getElementById('start-screen');
+        const quizContainer = document.getElementById('quiz-container');
+        const quizEndScreen = document.getElementById('quiz-end-screen');
+        const questionNumberElem = document.getElementById('question-number');
+        const wordDetailsElem = document.getElementById('word-details');
+        const questionTextElem = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const textInputContainer = document.getElementById('text-input-container');
+        const textInput = document.getElementById('text-input');
+        const submitAnswerBtn = document.getElementById('submit-answer-btn');
+        const nextQuestionBtn = document.getElementById('next-question-btn');
+        const feedbackElem = document.getElementById('feedback');
+        const finalScoreElem = document.getElementById('final-score');
+        const totalQuestionsElem = document.getElementById('total-questions');
+        const restartQuizBtn = document.getElementById('restart-quiz-btn');
+        const startQuizBtn = document.getElementById('start-quiz-btn');
+        const difficultySelect = document.getElementById('difficulty');
+        const wordInfoContainer = document.getElementById('word-info');
+        const infoWord = document.getElementById('info-word');
+        const infoPartOfSpeech = document.getElementById('info-part-of-speech');
+        const infoDefinitions = document.getElementById('info-definitions');
+        const infoExamples = document.getElementById('info-examples');
+
+        // Helper to normalize strings for comparison (case-insensitive, diacritic-insensitive, trim spaces)
+        function normalizeString(str) {
+            if (!str) return '';
+            // Remove Vietnamese diacritics and convert to lowercase
+            str = str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+            // Replace multiple spaces with a single space and trim
+            return str.replace(/\s+/g, ' ').trim();
+        }
+
+        // Function to shuffle an array (Fisher-Yates algorithm)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function filterAndPrepareQuestions(difficulty) {
+            let filteredQuestions = [];
+            let questionCounts = {
+                easy: 0,
+                medium: 0,
+                hard: 0
+            };
+
+            quizData.forEach(wordEntry => {
+                wordEntry.quiz_questions.forEach(q => {
+                    let questionDifficulty;
+                    switch(q.type) {
+                        case 'multiple_choice_meaning_vn':
+                            questionDifficulty = 'easy'; // Typically easy
+                            break;
+                        case 'copy_word':
+                            questionDifficulty = 'easy';
+                            break;
+                        case 'part_of_speech_vn':
+                            questionDifficulty = 'easy';
+                            break;
+                        case 'example_vn_fill_blank':
+                            questionDifficulty = 'medium'; // Requires understanding example
+                            break;
+                        case 'translate_sentence_en_to_vn':
+                            questionDifficulty = 'hard'; // Full sentence translation is harder
+                            break;
+                        default:
+                            questionDifficulty = 'medium'; // Default for any new types
+                    }
+
+                    if (questionDifficulty === difficulty || difficulty === 'all') { // 'all' for debugging or if we want all difficulties
+                        filteredQuestions.push({
+                            ...q,
+                            word_details: { // Attach word details for easy lookup later
+                                word: wordEntry.word,
+                                part_of_speech_vn: wordEntry.part_of_speech_vn,
+                                definitions: wordEntry.definitions,
+                                examples: wordEntry.examples
+                            }
+                        });
+                        questionCounts[questionDifficulty]++;
+                    }
+                });
+            });
+
+            // For simplicity, let's just pick all questions for now.
+            // A more sophisticated system would balance question types per difficulty.
+            return shuffleArray(filteredQuestions);
+        }
+
+
+        function showQuestion(question) {
+            questionNumberElem.textContent = `Question ${currentQuestionIndex + 1} of ${quizQuestions.length}`;
+            feedbackElem.textContent = ''; // Clear previous feedback
+            feedbackElem.className = 'feedback'; // Reset feedback styling
+            submitAnswerBtn.style.display = 'block';
+            nextQuestionBtn.style.display = 'none';
+            optionsContainer.innerHTML = ''; // Clear previous options
+            textInputContainer.style.display = 'none'; // Hide text input by default
+            textInput.value = ''; // Clear text input
+
+            // Store current word details for potential display
+            currentWordDefinition = question.word_details;
+            if (currentWordDefinition) {
+                wordDetailsElem.textContent = `Word: ${currentWordDefinition.word} (${currentWordDefinition.part_of_speech_vn})`;
+            } else {
+                wordDetailsElem.textContent = '';
+            }
+
+            // Populate question text, handling placeholders
+            let qText = question.question_template;
+            if (question.english_sentence) {
+                qText = qText.replace('{english_sentence}', question.english_sentence);
+            }
+            if (question.word) {
+                qText = qText.replace('{word}', question.word);
+            }
+            questionTextElem.innerHTML = qText;
+
+
+            if (question.type === 'multiple_choice_meaning_vn' || question.type === 'translate_sentence_en_to_vn') {
+                optionsContainer.style.display = 'block';
+                // Shuffle options for multiple choice questions
+                const shuffledOptions = shuffleArray([...question.options]);
+                shuffledOptions.forEach(option => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.setAttribute('data-answer', option); // Store the option text as data-answer
+                    button.onclick = () => selectOption(button);
+                    optionsContainer.appendChild(button);
+                });
+            } else if (question.type === 'copy_word' || question.type === 'example_vn_fill_blank' || question.type === 'part_of_speech_vn') {
+                optionsContainer.style.display = 'none';
+                textInputContainer.style.display = 'flex';
+                textInput.focus();
+            }
+
+            // Hide word info initially or when new question loads
+            wordInfoContainer.style.display = 'none';
+        }
+
+        function selectOption(button) {
+            // Remove 'selected' class from all options
+            document.querySelectorAll('.options-container button').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            // Add 'selected' class to the clicked button
+            button.classList.add('selected');
+            selectedOption = button.getAttribute('data-answer'); // Get the text from data-answer
+        }
+
+        function checkAnswer() {
+            const currentQuestion = quizQuestions[currentQuestionIndex];
+            let isCorrect = false;
+            let userAnswer = '';
+            let correctAnswerDisplay = '';
+
+            if (currentQuestion.type === 'multiple_choice_meaning_vn' || currentQuestion.type === 'translate_sentence_en_to_vn') {
+                userAnswer = selectedOption; // This is already the text of the selected option
+                if (userAnswer) {
+                    isCorrect = normalizeString(userAnswer) === normalizeString(currentQuestion.correct_answer_text);
+                    correctAnswerDisplay = currentQuestion.correct_answer_text;
+                }
+                // Disable all option buttons after submission
+                document.querySelectorAll('.options-container button').forEach(btn => {
+                    btn.disabled = true;
+                    if (normalizeString(btn.getAttribute('data-answer')) === normalizeString(currentQuestion.correct_answer_text)) {
+                        btn.style.backgroundColor = '#d4edda'; // Highlight correct answer
+                        btn.style.borderColor = '#28a745';
+                    } else if (normalizeString(btn.getAttribute('data-answer')) === normalizeString(userAnswer) && !isCorrect) {
+                        btn.style.backgroundColor = '#f8d7da'; // Highlight incorrect selected answer
+                        btn.style.borderColor = '#dc3545';
+                    }
+                });
+            } else if (currentQuestion.type === 'copy_word' || currentQuestion.type === 'example_vn_fill_blank' || currentQuestion.type === 'part_of_speech_vn') {
+                userAnswer = textInput.value;
+                const normalizedUserAnswer = normalizeString(userAnswer);
+                const normalizedCorrectAnswer = normalizeString(currentQuestion.answer_source_field ? currentQuestion.word_details[currentQuestion.answer_source_field.split('.')[0]][currentQuestion.answer_source_field.split('.')[1]] : currentQuestion.correct_answer_text);
+                
+                isCorrect = normalizedUserAnswer === normalizedCorrectAnswer;
+                correctAnswerDisplay = currentQuestion.answer_source_field ? (currentQuestion.word_details[currentQuestion.answer_source_field.split('.')[0]][currentQuestion.answer_source_field.split('.')[1]]) : currentQuestion.correct_answer_text;
+            }
+
+
+            if (isCorrect) {
+                feedbackElem.textContent = 'Correct!';
+                feedbackElem.classList.add('correct');
+                score++;
+            } else {
+                feedbackElem.textContent = `Incorrect. The correct answer was: ${correctAnswerDisplay}`;
+                feedbackElem.classList.add('incorrect');
+            }
+
+            submitAnswerBtn.style.display = 'none';
+            nextQuestionBtn.style.display = 'block';
+
+            // Show word info
+            displayWordInfo(currentWordDefinition);
+            // Gửi kết quả về server
+            fetch('/save-quiz-result', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                question_text: questionTextElem.textContent,
+                correct_answer: correctAnswerDisplay,
+                user_answer: userAnswer,
+                is_correct: isCorrect
+            })
+            })
+            .then(res => res.json())
+            .then(data => {
+            if (!data.success) {
+                console.error("❌ Lỗi khi gửi kết quả quiz.");
+            }
+            });
+
+        }
+
+        function displayWordInfo(wordDetails) {
+            if (!wordDetails) {
+                wordInfoContainer.style.display = 'none';
+                return;
+            }
+
+            infoWord.textContent = wordDetails.word;
+            infoPartOfSpeech.textContent = wordDetails.part_of_speech_vn;
+
+            infoDefinitions.innerHTML = '';
+            wordDetails.definitions.forEach(def => {
+                const p = document.createElement('p');
+                p.innerHTML = `<strong>English:</strong> ${def.english}<br><strong>Vietnamese:</strong> ${def.vietnamese}`;
+                infoDefinitions.appendChild(p);
+            });
+
+            infoExamples.innerHTML = '';
+            if (wordDetails.examples && wordDetails.examples.length > 0) {
+                const h4 = document.createElement('h4');
+                h4.textContent = 'Examples:';
+                infoExamples.appendChild(h4);
+                wordDetails.examples.forEach(ex => {
+                    const p = document.createElement('p');
+                    p.innerHTML = `<strong>English:</strong> ${ex.english}<br><strong>Vietnamese:</strong> ${ex.vietnamese}`;
+                    infoExamples.appendChild(p);
+                });
+            }
+
+            wordInfoContainer.style.display = 'block';
+        }
+
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            selectedOption = null; // Reset selected option
+            if (currentQuestionIndex < quizQuestions.length) {
+                showQuestion(quizQuestions[currentQuestionIndex]);
+            } else {
+                endQuiz();
+            }
+        }
+
+        function startQuiz() {
+            const selectedDifficulty = difficultySelect.value;
+            quizQuestions = filterAndPrepareQuestions(selectedDifficulty);
+
+            if (quizQuestions.length === 0) {
+                alert('No questions found for the selected difficulty. Please try another difficulty or add more questions.');
+                return;
+            }
+
+            currentQuestionIndex = 0;
+            score = 0;
+            startScreen.style.display = 'none';
+            quizContainer.style.display = 'block';
+            quizEndScreen.style.display = 'none';
+            showQuestion(quizQuestions[currentQuestionIndex]);
+        }
+
+        function endQuiz() {
+            quizContainer.style.display = 'none';
+            quizEndScreen.style.display = 'block';
+            finalScoreElem.textContent = score;
+            totalQuestionsElem.textContent = quizQuestions.length;
+        }
+
+        function restartQuiz() {
+            quizEndScreen.style.display = 'none';
+            startScreen.style.display = 'block';
+            // Reset for a fresh start including difficulty selection
+        }
+
+        // Event Listeners
+        startQuizBtn.addEventListener('click', startQuiz);
+        submitAnswerBtn.addEventListener('click', checkAnswer);
+        nextQuestionBtn.addEventListener('click', nextQuestion);
+        restartQuizBtn.addEventListener('click', restartQuiz);
+
+        // Initial setup
+        // No need to call showQuestion initially, as it's handled by startQuiz
+    
+    </script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<h2>🎤 Question Practice – George’s Robot</h2>
+
+<div id="question-box" style="max-width: 800px; margin: auto;">
+  <div id="progress" style="margin-bottom: 10px; color: blue;"></div>
+  
+  <p id="question-text" style="font-size: 1.2em; font-weight: bold;"></p>
+
+  <button onclick="speak()">🔊 Nghe lại câu hỏi</button>
+  <button onclick="startRecording()">🎙️ Ghi âm câu trả lời</button>
+  <button onclick="stopRecording()">⏹ Dừng & Gửi</button>
+
+  <p id="loading" style="color: orange; font-weight: bold;"></p>
+
+  <p id="result" style="margin-top: 15px;"></p>
+
+  <div id="answer-stick" style="margin-top: 10px; font-style: italic; color: #888;"></div>
+
+  <div style="margin-top: 20px;">
+    <button onclick="nextQuestion()" id="nextBtn" style="display:none; background: #28a745; color: white; padding: 8px 16px; border: none; border-radius: 6px;">▶️ Câu tiếp</button>
+  </div>
+</div>
+
+<script>
+  const questions = <%- JSON.stringify(words) %>;
+  let currentIndex = 0;
+  let mediaRecorder, audioChunks = [];
+
+  function speak() {
+    const utter = new SpeechSynthesisUtterance(questions[currentIndex].question);
+    utter.lang = 'en-US';
+    speechSynthesis.speak(utter);
+  }
+
+  function showQuestion() {
+    document.getElementById('question-text').innerText = questions[currentIndex].question;
+    document.getElementById('result').innerText = '';
+    document.getElementById('answer-stick').innerText = '';
+    document.getElementById('nextBtn').style.display = 'none';
+    document.getElementById('progress').innerText = `Câu ${currentIndex + 1} / ${questions.length}`;
+  }
+
+  async function startRecording() {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder = new MediaRecorder(stream);
+    audioChunks = [];
+    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+    mediaRecorder.onstop = uploadAudio;
+    mediaRecorder.start();
+    document.getElementById('loading').innerText = "⏳ Đang ghi âm...";
+  }
+
+  function stopRecording() {
+    document.getElementById('loading').innerText = "⏳ Đang gửi và chấm điểm...";
+    mediaRecorder.stop();
+  }
+
+  function uploadAudio() {
+    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+    const formData = new FormData();
+    formData.append('audio', audioBlob);
+    formData.append('expected', questions[currentIndex].answer);
+
+    fetch('/questionanswer/upload', {
+      method: 'POST',
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('loading').innerText = '';
+      document.getElementById('result').innerText = `🗣️ Bạn nói: ${data.userSaid} — ${data.isCorrect ? '✅ Đúng' : '❌ Sai'}`;
+      document.getElementById('answer-stick').innerText = `📌 Đáp án đúng: ${questions[currentIndex].answer}`;
+      document.getElementById('nextBtn').style.display = 'inline-block';
+    });
+  }
+
+  function nextQuestion() {
+    if (currentIndex < questions.length - 1) {
+      currentIndex++;
+      showQuestion();
+    } else {
+      document.getElementById('question-box').innerHTML = "<h3>🎉 Bạn đã hoàn thành tất cả các câu hỏi!</h3>";
+    }
+  }
+
+  // Khởi động câu đầu tiên
+  showQuestion();
+</script>

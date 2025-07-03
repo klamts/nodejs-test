@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Context Clue Game</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    .feedback { display: none; }
+    .feedback.show { display: block; }
+  </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+  <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
+    <h1 class="text-2xl font-bold mb-4 text-center">Context Clue Game</h1>
+    <p class="text-lg mb-4">Điền từ đúng vào chỗ trống trong câu sau:</p>
+    <p class="text-lg font-semibold mb-4">"<%= question %>"</p>
+    <div class="space-y-2">
+      <% options.forEach(option => { %>
+        <button class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 answer-btn" data-answer="<%= option %>"><%= option %></button>
+      <% }); %>
+    </div>
+    <div id="feedback" class="feedback mt-4 p-4 bg-gray-200 rounded">
+      <p id="feedback-text" class="text-lg"></p>
+      <p id="definition" class="mt-2"></p>
+      <button id="tts-btn" class="mt-2 bg-green-500 text-white py-1 px-4 rounded">Nghe phát âm</button>
+    </div>
+    <button id="next-btn" class="mt-4 w-full bg-gray-500 text-white py-2 rounded hover:bg-gray-600" style="display: none;">Câu tiếp theo</button>
+  </div>
+
+  <script>
+    const correctAnswer = "<%= correctAnswer %>";
+    const definition = "<%= definition %>";
+    const question = "<%= question %>";
+
+    document.querySelectorAll('.answer-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const userAnswer = btn.dataset.answer;
+        const isCorrect = userAnswer === correctAnswer;
+        const feedback = document.getElementById('feedback');
+        const feedbackText = document.getElementById('feedback-text');
+        const definitionText = document.getElementById('definition');
+        const nextBtn = document.getElementById('next-btn');
+
+        feedbackText.textContent = isCorrect ? '✅ Đúng rồi!' : `❌ Sai! Đáp án đúng là: ${correctAnswer}`;
+        definitionText.textContent = `Định nghĩa: ${definition}`;
+        feedback.classList.add('show');
+        nextBtn.style.display = 'block';
+
+        // Gửi kết quả đến server
+        fetch('/game/context-clue/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            question,
+            correct_answer: correctAnswer,
+            user_answer: userAnswer,
+            is_correct: isCorrect
+          })
+        }).then(res => res.json()).then(data => {
+          if (!data.success) console.error('Lỗi lưu kết quả:', data.message);
+        }).catch(err => console.error('Lỗi khi gửi kết quả:', err));
+
+        // Vô hiệu hóa các nút sau khi chọn
+        document.querySelectorAll('.answer-btn').forEach(b => b.disabled = true);
+      });
+    });
+
+    // Text-to-Speech using SpeechSynthesis
+    document.getElementById('tts-btn').addEventListener('click', () => {
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(correctAnswer);
+        // Try to select an English voice (preferably American English)
+        const voices = window.speechSynthesis.getVoices();
+        const enVoice = voices.find(voice => voice.lang.includes('en-US')) || voices.find(voice => voice.lang.includes('en'));
+        if (enVoice) {
+          utterance.voice = enVoice;
+        }
+        utterance.lang = 'en-US';
+        utterance.rate = 1; // Normal speed
+        utterance.pitch = 1; // Normal pitch
+        window.speechSynthesis.speak(utterance);
+      } else {
+        alert('Trình duyệt của bạn không hỗ trợ phát âm tự động. Vui lòng sử dụng trình duyệt hiện đại như Chrome hoặc Edge.');
+      }
+    });
+
+    // Ensure voices are loaded (some browsers load voices asynchronously)
+    window.speechSynthesis.onvoiceschanged = () => {
+      // Voices are now available
+    };
+
+    document.getElementById('next-btn').addEventListener('click', () => {
+      window.location.reload();
+    });
+  </script>
+</body>
+</html>

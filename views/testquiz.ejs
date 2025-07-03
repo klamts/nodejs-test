@@ -1,0 +1,195 @@
+<%- include('header') %>
+<style>
+  .sticky-question {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
+    z-index: 1000;
+    display: none;
+  }
+  .sticky-question.show {
+    display: block;
+  }
+  .record-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 8px;
+  }
+  .record-btn.recording {
+    background: #dc3545;
+  }
+  .skip-btn {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .feedback {
+    margin-top: 10px;
+    font-size: 0.9em;
+  }
+</style>
+
+<div class="container mt-4">
+  <h2><%= video.title %> – Video tương tác</h2>
+  <div class="row">
+    <div class="col-md-8">
+      <video id="videoPlayer" controls>
+        <source src="<%= videoPath %>" type="video/mp4">
+        Trình duyệt của bạn không hỗ trợ video.
+      </video>
+      <div id="currentTime">Thời gian hiện tại: 0:00</div>
+    </div>
+    <div class="col-md-4">
+      <h4>Lịch sử trả lời</h4>
+      <ul id="answerHistory" class="list-group"></ul>
+    </div>
+  </div>
+
+  <!-- Sticky Question -->
+  <div id="stickyQuestion" class="sticky-question">
+    <h5>Câu hỏi: Đọc câu sau</h5>
+    <p id="sentenceText"></p>
+    <input type="hidden" id="expectedSentence">
+    <button id="recordBtn" class="record-btn">Ghi âm</button>
+    <button id="skipBtn" class="skip-btn">Bỏ qua</button>
+    <div id="feedback" class="feedback"></div>
+  </div>
+</div>
+
+<script>
+ 
+  const video = document.getElementById('videoPlayer');
+  const currentTimeDisplay = document.getElementById('currentTime');
+  const stickyQuestion = document.getElementById('stickyQuestion');
+  const sentenceText = document.getElementById('sentenceText');
+  const expectedSentence = document.getElementById('expectedSentence');
+  const recordBtn = document.getElementById('recordBtn');
+  const skipBtn = document.getElementById('skipBtn');
+  const feedback = document.getElementById('feedback');
+  const answerHistory = document.getElementById('answerHistory');
+
+  // Load sentences from server-side
+  const sentences = <%- JSON.stringify(quizSentenceData || []) %>;
+
+  let mediaRecorder;
+  let audioChunks = [];
+  let isRecording = false;
+  let lastSentenceId = null;
+
+  // Hiển thị thời gian
+  video.addEventListener('timeupdate', () => {
+    const currentTime = video.currentTime;
+    const minutes = Math.floor(currentTime / 60);
+    const seconds = Math.floor(currentTime % 60).toString().padStart(2, '0');
+    currentTimeDisplay.textContent = `Thời gian hiện tại: ${minutes}:${seconds}`;
+  });
+
+  // ✅ Di chuyển setInterval ra ngoài sự kiện
+  const shownEndTimes = new Set();
+
+setInterval(() => {
+  const currentTime = video.currentTime;
+
+  const currentSentence = sentences.find((s) =>
+    Math.abs(s.end_time - currentTime) < 0.3 &&
+    !shownEndTimes.has(s.end_time)
+  );
+
+  if (currentSentence) {
+    sentenceText.textContent = currentSentence.sentence || 'Không có câu';
+    expectedSentence.value = (currentSentence.sentence || '').toLowerCase().trim();
+    stickyQuestion.classList.add('show');
+    video.pause();
+
+    // ✅ Đánh dấu end_time này đã được xử lý
+    shownEndTimes.add(currentSentence.end_time);
+  }
+}, 100);
+
+  // Handle recording
+  recordBtn.addEventListener('click', async () => {
+    if (!isRecording) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+
+        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+        mediaRecorder.onstop = async () => {
+          const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+          const formData = new FormData();
+          formData.append('audio', audioBlob, 'user_audio.wav');
+          formData.append('expected', expectedSentence.value);
+
+          try {
+            // Send audio to server
+            const response = await fetch('/pronounce/upload', {
+              method: 'POST',
+              body: formData
+            });
+            const result = await response.json();
+
+            // Display feedback
+            feedback.textContent = result.feedback || `Độ chính xác: ${result.score || 0}%`;
+            feedback.style.color = result.isCorrect ? 'green' : 'red';
+
+            // Add to history
+            const historyItem = document.createElement('li');
+            historyItem.className = 'list-group-item';
+            historyItem.textContent = `Câu: "${result.expected}" | Bạn nói: "${result.userSaid || 'Không nhận diện'}" | ${result.feedback || 'Độ chính xác: ' + (result.score || 0) + '%'}`;
+            answerHistory.prepend(historyItem);
+
+            // Resume video after answering
+            setTimeout(() => {
+              stickyQuestion.classList.remove('show');
+              video.play();
+            }, 2000);
+          } catch (err) {
+            feedback.textContent = 'Lỗi gửi âm thanh đến server';
+            feedback.style.color = 'red';
+          }
+        };
+
+        mediaRecorder.start();
+        recordBtn.textContent = 'Dừng ghi âm';
+        recordBtn.classList.add('recording');
+        isRecording = true;
+      } catch (err) {
+        feedback.textContent = 'Lỗi truy cập micro';
+        feedback.style.color = 'red';
+      }
+    } else {
+      mediaRecorder.stop();
+      recordBtn.textContent = 'Ghi âm';
+      recordBtn.classList.remove('recording');
+      isRecording = false;
+    }
+  });
+
+  // Handle skip button
+  skipBtn.addEventListener('click', () => {
+    // Add to history
+    const historyItem = document.createElement('li');
+    historyItem.className = 'list-group-item';
+    historyItem.textContent = `Câu: "${sentenceText.textContent}" | Bỏ qua`;
+    answerHistory.prepend(historyItem);
+
+    // Hide question and resume video
+    stickyQuestion.classList.remove('show');
+    video.play();
+  });
+</script>
+<%- include('footer') %>

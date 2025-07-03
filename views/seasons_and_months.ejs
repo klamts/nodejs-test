@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🌤️ Seasons and Months</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; }
+    h2 { margin-top: 40px; }
+    .word {
+      display: inline-block;
+      width: 150px;
+      margin: 15px;
+      vertical-align: top;
+    }
+    .word img {
+      width: 100%;
+      border-radius: 8px;
+    }
+    .word-name { font-weight: bold; margin-top: 8px; }
+    .word-meaning { font-style: italic; color: gray; }
+  </style>
+</head>
+<body>
+    <audio id="audioPlayer" controls style="margin-top: 10px;"></audio>
+<p id="nowPlaying"></p>
+  <h1>🌸 Từ vựng về Mùa và Tháng</h1>
+
+  <h2>🌱 Seasons</h2>
+  <div>
+    <% data.unit0.forEach(word => { 
+         const w = word.word_text.toLowerCase();
+         if (['spring', 'summer', 'fall', 'autumn', 'winter'].includes(w)) { %>
+      <div class="word">
+        <img src="/<%= word.image_url.replace(/^\/?/, '') %>" alt="<%= word.word_text %>">
+        <div class="word-name"><%= word.word_text %></div>
+        <div class="word-meaning"><%= word.meaning_vi %></div>
+      </div>
+    <% } }); %>
+  </div>
+
+  <h2>📅 Months</h2>
+  <div>
+    <% data.unit0.forEach(word => {
+         const w = word.word_text.toLowerCase();
+         if ([
+           'january', 'february', 'march', 'april', 'may', 'june',
+           'july', 'august', 'september', 'october', 'november', 'december'
+         ].includes(w)) { %>
+      <div class="word">
+        <img src="/<%= word.image_url.replace(/^\/?/, '') %>" alt="<%= word.word_text %>">
+        <div class="word-name"><%= word.word_text %></div>
+        <div class="word-meaning"><%= word.meaning_vi %></div>
+      </div>
+    <% } }); %>
+  </div>
+<h2>🔊 Audio – Seasons & Months</h2>
+<div id="audio-buttons">
+  <% audioList.forEach(audio => { %>
+    <button onclick="playAudio('<%= audio.name %>', '<%= audio.label %>')">
+      🎵 <%= audio.label %>
+    </button>
+  <% }) %>
+</div>
+
+</body>
+<script>
+  function playAudio(filename, label) {
+    const audio = document.getElementById('audioPlayer');
+    const now = document.getElementById('nowPlaying');
+    audio.src = '/audio/' + filename;
+    audio.play();
+    now.textContent = '🎵 Đang phát: ' + label;
+  }
+</script>
+</html>

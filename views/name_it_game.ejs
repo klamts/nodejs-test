@@ -1,0 +1,133 @@
+<div style="max-width: 800px; margin: 30px auto; background: #eef7fa; padding: 20px; border-left: 5px solid #2196f3; border-radius: 10px;">
+  <h3 style="color: #1976d2;">📘 Grammar Rules: Plural Nouns</h3>
+  <ul style="line-height: 1.6;">
+    <li>Add <strong>“-s”</strong> to most nouns to show more than one.<br>
+      <em>Example: meal → meals</em>
+    </li>
+    <li>Add <strong>“-es”</strong> to nouns that end in <strong>-s, -x, -ch, -sh</strong>.<br>
+      <em>Example: lunch → lunches</em><br>
+      <em>Example: dish → dishes</em>
+    </li>
+    <li>Some irregular nouns change differently (just FYI).<br>
+      <em>Example: child → children</em>
+    </li>
+  </ul>
+</div>
+
+<h2 style="text-align: center;">🎲 Name It! – Practice Plural Nouns</h2>
+
+<div id="gameBoard" style="display: flex; flex-wrap: wrap; width: 600px; margin: auto; border: 2px solid #ccc; padding: 20px; border-radius: 15px; justify-content: center; background: #f9f9f9;">
+  <% const gameWords = ["meal", "glass", "sandwich", "teacher", "mother", "lunch", "park", "box", "bowl", "class", "dish", "brother"]; %>
+  <% gameWords.forEach((word, index) => { %>
+    <div style="width: 120px; height: 80px; border: 1px solid #666; margin: 5px; display: flex; align-items: center; justify-content: center; background-color: <%= index === position ? '#b3e5fc' : '#fff' %>;">
+      <strong><%= word %></strong>
+    </div>
+  <% }) %>
+</div>
+
+<br>
+
+<div style="text-align: center;">
+  <button onclick="flipCoin()">🪙 Flip Coin</button>
+  <p>Bạn đang ở ô: <span id="currentPos"><%= position %></span></p>
+
+  <div style="margin-top: 20px;">
+    <label for="voiceSelect">🔊 Chọn giọng đọc:</label>
+    <select id="voiceSelect"></select>
+  </div>
+
+  <div id="questionArea" style="margin-top: 20px; display: none;">
+    <p>Hãy gõ danh từ số nhiều của từ: <strong id="wordSingular"></strong></p>
+    <input type="text" id="userAnswer" placeholder="Nhập dạng số nhiều...">
+    <button onclick="checkAnswer()">✅ Trả lời</button>
+    <p id="feedback" style="margin-top: 10px;"></p>
+  </div>
+</div>
+
+<script>
+  let position = <%= position %>;
+  const words = <%- JSON.stringify(gameWords) %>;
+  let selectedVoice = 114;
+
+  function flipCoin() {
+    const move = Math.random() < 0.5 ? 1 : 2;
+    position += move;
+    if (position >= words.length) {
+      alert("🎉 Chúc mừng! Bạn đã tới END!");
+      position = words.length - 1;
+    }
+    document.getElementById("currentPos").innerText = position;
+    showQuestion();
+  }
+
+  function showQuestion() {
+    const word = words[position];
+    document.getElementById("wordSingular").innerText = word;
+    document.getElementById("questionArea").style.display = 'block';
+    document.getElementById("feedback").innerText = '';
+    document.getElementById("userAnswer").value = '';
+  }
+
+  function toPlural(word) {
+    if (word.endsWith('ch') || word.endsWith('sh') || word.endsWith('x') || word.endsWith('s')) {
+      return word + "es";
+    } else {
+      return word + "s";
+    }
+  }
+
+  function checkAnswer() {
+    const word = words[position];
+    const userAns = document.getElementById("userAnswer").value.trim().toLowerCase();
+    const correct = toPlural(word).toLowerCase();
+
+    if (userAns === correct) {
+      document.getElementById("feedback").innerText = "✅ Đúng rồi!";
+      speak(correct);
+    } else {
+      document.getElementById("feedback").innerText = `❌ Sai. Đáp án đúng là: ${correct}`;
+    }
+  }
+
+  
+
+  function loadVoices() {
+    const voiceSelect = document.getElementById('voiceSelect');
+    const voices = window.speechSynthesis.getVoices();
+
+    // Xóa lựa chọn cũ (nếu có)
+    voiceSelect.innerHTML = '';
+
+    voices.forEach((voice, index) => {
+      const option = document.createElement('option');
+      option.value = index;
+      option.textContent = `${index + 1}. ${voice.name} (${voice.lang})`;
+      voiceSelect.appendChild(option);
+    });
+
+    // Mặc định chọn giọng đầu tiên
+    selectedVoice = voices[114];
+    voiceSelect.selectedIndex = 114;
+
+    voiceSelect.addEventListener('change', () => {
+      selectedVoice = voices[voiceSelect.value];
+    });
+  }
+
+  // Gọi sau khi danh sách voice được cập nhật
+  window.speechSynthesis.onvoiceschanged = loadVoices;
+  function speak(text) {
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.rate = 1.14;
+  utterance.lang = 'en-US';
+
+  if (selectedVoice) {
+    utterance.voice = selectedVoice;
+    console.log("Using voice:", selectedVoice.name);
+  } else {
+    console.warn("⚠️ No voice selected.");
+  }
+
+  window.speechSynthesis.speak(utterance);
+}
+</script>

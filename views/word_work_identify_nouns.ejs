@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Identify Nouns - Family</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 20px;
+      background-color: #f9f9f9;
+    }
+    .section {
+      margin-bottom: 30px;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .image-section img {
+      width: 100%;
+      max-width: 400px;
+    }
+    .quiz input[type="text"] {
+      padding: 5px;
+      width: 200px;
+    }
+    .quiz button {
+      margin-left: 10px;
+    }
+    .draggable {
+      display: inline-block;
+      padding: 5px 10px;
+      margin: 5px;
+      background-color: #d0ebff;
+      border: 1px solid #90caf9;
+      border-radius: 5px;
+      cursor: grab;
+    }
+    .drop-zone {
+      min-height: 100px;
+      border: 2px dashed #ccc;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    .audio-btn {
+      padding: 5px 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Identify Nouns</h1>
+
+  <div class="section image-section">
+    <h2>Example</h2>
+    <img src="/mnt/data/2025-06-21T09-17-01.829Z.jpg" alt="Mother with daughters">
+    <p><strong>The mother has two daughters.</strong></p>
+    <button class="audio-btn" onclick="speak('The mother has two daughters.')">🔊 Listen</button>
+  </div>
+
+  <div class="section">
+    <h2>Definition</h2>
+    <p><strong>A noun</strong> names a person or people.</p>
+  </div>
+
+  <div class="section quiz">
+    <h2>Quiz: Which word is a noun?</h2>
+    <p>Type the nouns from this list: <em>mom, blue, run, dad, sister</em></p>
+    <input type="text" id="nounInput" placeholder="Your answer here">
+    <button onclick="checkNouns()">Check</button>
+    <p id="nounResult"></p>
+  </div>
+
+  <div class="section">
+    <h2>Drag & Drop: Nouns vs Others</h2>
+    <div>
+      <span class="draggable" draggable="true">mom</span>
+      <span class="draggable" draggable="true">blue</span>
+      <span class="draggable" draggable="true">sister</span>
+      <span class="draggable" draggable="true">fast</span>
+      <span class="draggable" draggable="true">grandmother</span>
+    </div>
+    <div>
+      <h4>Nouns</h4>
+      <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" id="nounsZone"></div>
+    </div>
+    <div>
+      <h4>Others</h4>
+      <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" id="othersZone"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Pronunciation Practice</h2>
+    <p>Click play and repeat this sentence:</p>
+    <blockquote>The mother has two daughters.</blockquote>
+    <button class="audio-btn" onclick="speak('The mother has two daughters.')">🔊 Play</button>
+  </div>
+
+  <div class="section">
+    <h2>Draw or Choose</h2>
+    <p>Select a noun to describe or draw:</p>
+    <select onchange="showNounDesc(this.value)">
+      <option value="">Choose one</option>
+      <option value="mom">Mom</option>
+      <option value="dad">Dad</option>
+      <option value="sister">Sister</option>
+      <option value="grandmother">Grandmother</option>
+    </select>
+    <p id="nounDesc"></p>
+  </div>
+
+  <script>
+    function speak(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.8;
+      utterance.pitch = 1;
+      speechSynthesis.cancel();
+      speechSynthesis.speak(utterance);
+    }
+
+    function checkNouns() {
+      const input = document.getElementById('nounInput').value.toLowerCase().split(/,\s*/);
+      const correctNouns = ['mom', 'dad', 'sister'];
+      const result = input.filter(word => correctNouns.includes(word));
+      document.getElementById('nounResult').innerText =
+        result.length ? `✅ Correct nouns: ${result.join(', ')}` : '❌ Try again. Only enter nouns.';
+    }
+
+    function allowDrop(ev) {
+      ev.preventDefault();
+    }
+
+    function drop(ev) {
+      ev.preventDefault();
+      const data = ev.dataTransfer.getData("text");
+      const node = document.querySelector(`[data-id="${data}"]`);
+      ev.target.appendChild(node);
+    }
+
+    document.querySelectorAll('.draggable').forEach((el, i) => {
+      const id = 'drag-' + i;
+      el.setAttribute('data-id', id);
+      el.id = id;
+      el.addEventListener('dragstart', function(ev) {
+        ev.dataTransfer.setData("text", id);
+      });
+    });
+
+    function showNounDesc(noun) {
+      const desc = {
+        mom: "This is my mom. She is very nice!",
+        dad: "This is my dad. He is strong and helpful.",
+        sister: "This is my sister. She loves to play.",
+        grandmother: "This is my grandmother. She tells great stories."
+      };
+      document.getElementById('nounDesc').innerText = desc[noun] || '';
+    }
+  </script>
+
+</body>
+</html>

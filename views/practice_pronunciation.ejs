@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🖙️ Luyện phát âm từ vựng</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      padding: 20px;
+      background: #f0f2f5;
+      color: #333;
+      line-height: 1.6;
+    }
+    h1 {
+      text-align: center;
+      color: #0056b3;
+      margin-bottom: 30px;
+    }
+    .controls-container {
+      text-align: center;
+      margin: 0 auto 25px auto;
+      padding: 15px;
+      background-color: #e9f7ff;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      max-width: 600px;
+    }
+    .controls-container label {
+      margin-right: 10px;
+      font-weight: bold;
+      color: #333;
+    }
+    .controls-container select {
+      padding: 8px 12px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+      background-color: white;
+      min-width: 150px;
+    }
+    .word-card {
+      background: white;
+      padding: 25px;
+      margin: 20px auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 600px;
+    }
+    .word-card h2 {
+      margin: 0 0 5px 0;
+      color: #007bff;
+      font-size: 2.2em;
+      text-align: center;
+    }
+    .word-details {
+      text-align: center;
+      margin-bottom: 15px;
+      color: #666;
+      font-size: 0.95em;
+    }
+    .word-details .part-of-speech {
+      font-weight: bold;
+      color: #555;
+    }
+    .word-details .phonetic {
+      font-style: italic;
+      color: #444;
+      font-size: 1em;
+      margin-left: 5px;
+    }
+    .word-card p {
+      color: #555;
+      font-size: 1.1em;
+      text-align: center;
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+    .buttons-container {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    button {
+      padding: 10px 18px;
+      border-radius: 25px;
+      border: none;
+      background-color: #28a745;
+      color: white;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    button:hover {
+      background-color: #218838;
+      transform: translateY(-1px);
+    }
+    button:active {
+      transform: translateY(0);
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    .result {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 1.1em;
+      text-align: center;
+      min-height: 25px;
+    }
+    .correct { color: #28a745; }
+    .incorrect { color: #dc3545; }
+    .listening { color: #007bff; }
+  </style>
+</head>
+<body>
+  <h1>🖙️ Luyện phát âm từ vựng</h1>
+  <div class="controls-container">
+    <label for="voice-select">Chọn giọng đọc:</label>
+    <select id="voice-select"></select>
+  </div>
+  <div id="word-container">
+    <!-- Nội dung từ sẽ được render ở đây bằng JavaScript hoặc server-side EJS -->
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const synth = window.speechSynthesis;
+      const voiceSelect = document.getElementById('voice-select');
+      let voices = [];
+      let selectedVoice = null;
+
+      function normalizeString(str) {
+        return (str || '')
+          .normalize('NFD') // tách dấu tiếng Việt
+          .replace(/\p{Diacritic}/gu, '')
+          .replace(/[^\p{L}\p{N}\s]/gu, '')
+          .replace(/\s+/g, ' ')
+          .toLowerCase()
+          .trim();
+      }
+
+      function populateVoiceList() {
+        voices = synth.getVoices().sort((a, b) => a.name.localeCompare(b.name));
+        voiceSelect.innerHTML = '';
+        const defaultOption = document.createElement('option');
+        defaultOption.textContent = 'Mặc định (Trình duyệt)';
+        defaultOption.value = '';
+        voiceSelect.appendChild(defaultOption);
+
+        for (let voice of voices) {
+          if (voice.lang.startsWith('en')) {
+            const option = document.createElement('option');
+            option.textContent = `${voice.name} (${voice.lang})`;
+            option.value = voice.name;
+            voiceSelect.appendChild(option);
+          }
+        }
+
+        selectedVoice = voices.find(v => v.name === voiceSelect.value) || voices.find(v => v.lang.startsWith('en'));
+      }
+
+      if (synth.onvoiceschanged !== undefined) {
+        synth.onvoiceschanged = populateVoiceList;
+      } else {
+        populateVoiceList();
+      }
+
+      voiceSelect.addEventListener('change', () => {
+        selectedVoice = voices.find(v => v.name === voiceSelect.value) || null;
+      });
+    });
+  </script>
+</body>
+</html>

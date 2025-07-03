@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🗣️ Hội thoại tương tác A1</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; }
+    #image { width: 200px; margin: 10px auto; }
+    #question { font-size: 20px; margin-top: 20px; }
+    #transcript { font-style: italic; margin-top: 10px; color: gray; }
+    #feedback { font-weight: bold; font-size: 18px; margin-top: 15px; }
+    button { padding: 10px 20px; margin: 10px; font-size: 16px; }
+    .correct { color: green; }
+    .incorrect { color: red; }
+    .blinking {animation: blinker 1s linear infinite;}
+    @keyframes blinker {50% { opacity: 0; }}
+  </style>
+</head>
+<body>
+
+
+
+  <h2>🗨️ Hội thoại tương tác bằng giọng nói</h2>
+
+  <label for="voiceSelect">🔊 Chọn giọng đọc: </label>
+  <select id="voiceSelect"></select><br>
+
+  <div id="image"><img id="wordImage" src="" alt="" width="200"></div>
+  <div id="question">Loading...</div>
+  <button onclick="speakQuestion()">📢 Đọc câu hỏi</button>
+  <button onclick="startListening()">🎤 Trả lời</button>
+  <button onclick="playBack()">🔁 Nghe câu trả lời</button>
+  <button onclick="playUserRecording()">🔁 Nghe lại bạn đọc</button>
+  <audio id="userAudio" controls style="display:none;"></audio>
+  <div id="transcript"></div>
+  <div id="feedback"></div>
+  <button onclick="nextDialogue()">⏭ Từ tiếp theo</button>
+  <audio id="soundCorrect" src="/sounds/correct.mp3"></audio>
+  <audio id="soundWrong" src="/sounds/wrong.mp3"></audio>
+  <div id="recordingStatus" style="margin-top: 10px; font-weight: bold; color: red;"></div>
+  <script>
+    const audio = document.getElementById("introAudio");
+  const title = document.getElementById("audioTitle");
+  const list = document.getElementById("trackList");
+
+  fetch('/list-audio')
+    .then(res => res.json())
+    .then(files => {
+      files.forEach(file => {
+        const li = document.createElement("li");
+        const btn = document.createElement("button");
+        btn.textContent = file.label;
+        btn.onclick = () => {
+          audio.src = "/audio/" + file.name;
+          audio.play();
+          title.textContent = "🎵 Đang phát: " + file.label;
+        };
+        li.appendChild(btn);
+        list.appendChild(li);
+      });
+    })
+    .catch(err => {
+      list.innerHTML = "<li>Không tải được danh sách audio.</li>";
+      console.error(err);
+    });
+    let dialogues = [];
+    let current = 0;
+    let voices = [];
+    let lastSpoken = ''; // lưu lời học sinh nói để phát lại
+    let userAudioBlob = null; // lưu âm thanh người dùng
+    // Load voices khi có sẵn
+    function loadVoices() {
+      voices = speechSynthesis.getVoices();
+      const voiceSelect = document.getElementById('voiceSelect');
+      voiceSelect.innerHTML = '';
+      voices.forEach((voice, i) => {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = `${voice.name} (${voice.lang})`;
+        voiceSelect.appendChild(option);
+      });
+      voiceSelect.selectedIndex = 114;
+    }
+
+    // Có browsers cần đợi
+    speechSynthesis.onvoiceschanged = loadVoices;
+
+    fetch('/data/dialoguesourworld3_unit0.json')
+      .then(res => res.json())
+      .then(data => {
+        dialogues = data;
+        showDialogue();
+      })
+      .catch(err => {
+        document.getElementById("question").textContent = "❌ Không tải được dữ liệu.";
+        console.error(err);
+      });
+
+    function showDialogue() {
+      const d = dialogues[current];
+      document.getElementById("question").textContent = d.question;
+      document.getElementById("wordImage").src = "/" + d.image_url.replace(/^\/?/, '');
+      document.getElementById("transcript").textContent = "";
+      document.getElementById("feedback").textContent = "";
+    }
+
+    function nextDialogue() {
+      current = (current + 1) % dialogues.length;
+      showDialogue();
+    }
+
+    function speakQuestion() {
+      const d = dialogues[current];
+      const utterance = new SpeechSynthesisUtterance(d.question);
+      utterance.lang = "en-US";
+
+      const selectedIndex = parseInt(document.getElementById("voiceSelect").value);
+      if (voices[selectedIndex]) {
+        utterance.voice = voices[selectedIndex];
+      }
+
+      speechSynthesis.speak(utterance);
+    }
+
+    function playBack() {
+        
+      const expected = dialogues[current].expected_answer.toLowerCase();
+      
+      const utterance = new SpeechSynthesisUtterance(expected);
+      utterance.lang = "en-US";
+
+      const selectedIndex = parseInt(document.getElementById("voiceSelect").value);
+      if (voices[selectedIndex]) {
+        utterance.voice = voices[selectedIndex];
+      }
+
+      speechSynthesis.speak(utterance);
+    }
+
+    function startListening() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("Trình duyệt của bạn không hỗ trợ Speech Recognition.");
+        return;
+      }
+
+      const recognition = new SpeechRecognition();
+      recognition.lang = "en-US";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.start();
+
+      recognition.onresult = (event) => {
+        const spoken = event.results[0][0].transcript.trim();
+        lastSpoken = spoken; // lưu lại để phát lại
+        document.getElementById("transcript").textContent = `🗣️ Bạn nói: "${spoken}"`;
+
+        const expected = dialogues[current].expected_answer.toLowerCase();
+        const said = spoken.toLowerCase();
+
+        if (said === expected) {
+          document.getElementById("feedback").textContent = "✅ Đúng rồi!";
+          document.getElementById("feedback").className = "correct";
+          document.getElementById("soundCorrect").play(); // ✅ phát âm đúng
+        } else {
+          document.getElementById("feedback").textContent = `❌ Sai. Đáp án đúng: "${dialogues[current].expected_answer}"`;
+          document.getElementById("feedback").className = "incorrect";
+          document.getElementById("soundWrong").play();   // ❌ phát âm sai
+        }
+      };
+
+      recognition.onerror = () => {
+        document.getElementById("feedback").textContent = "❌ Lỗi nhận diện giọng nói.";
+        document.getElementById("feedback").className = "incorrect";
+      };
+            // === GHI ÂM GIỌNG NGƯỜI DÙNG ===
+        navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+            const mediaRecorder = new MediaRecorder(stream);
+            const chunks = [];
+
+            mediaRecorder.ondataavailable = e => chunks.push(e.data);
+            mediaRecorder.onstop = () => {
+            userAudioBlob = new Blob(chunks, { type: 'audio/webm' });
+            const audioURL = URL.createObjectURL(userAudioBlob);
+            const audio = document.getElementById("userAudio");
+            audio.src = audioURL;
+            audio.style.display = "block";
+            };
+
+            mediaRecorder.start();
+
+            // Dừng ghi sau 4 giây (hoặc tuỳ)
+            setTimeout(() => {
+            mediaRecorder.stop();
+            }, 4000);
+        });
+                // Hiển thị trạng thái ghi âm
+        const statusElem = document.getElementById("recordingStatus");
+        statusElem.textContent = "🔴 Đang ghi âm...";
+        statusElem.classList.add("blinking");
+
+        // Sau khi ghi âm xong thì ẩn đi (sau 4 giây)
+        setTimeout(() => {
+        statusElem.textContent = "";
+        statusElem.classList.remove("blinking");
+        }, 4000);
+
+    }
+    function playUserRecording() {
+  const audio = document.getElementById("userAudio");
+  if (userAudioBlob) {
+    audio.play();
+  } else {
+    alert("Chưa có bản ghi âm nào!");
+  }
+}
+  </script>
+</body>
+</html>

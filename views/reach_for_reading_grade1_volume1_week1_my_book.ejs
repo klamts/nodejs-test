@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My <%= letter %> Book</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      padding: 0;
+      margin: 0;
+      background: linear-gradient(135deg, #e0f7fa, #f0f8ff);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: linear-gradient(90deg, #4CAF50, #45a049);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      margin: 0;
+      font-size: 2.5em;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    .instructions {
+      text-align: center;
+      color: #333;
+      font-size: 1.1em;
+      margin: 15px 0;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 5px;
+    }
+    .book {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 25px;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      flex-grow: 1;
+    }
+    .drop-zone {
+      border: 2px dashed #999;
+      border-radius: 10px;
+      padding: 20px;
+      min-height: 180px;
+      text-align: center;
+      background: #fff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    .drop-zone:hover {
+      border-color: #4CAF50;
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    }
+    .drop-zone .image-container {
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .drop-zone .image-container img {
+      width: 100px; /* Fixed width for dropped images */
+      height: 100px; /* Fixed height for dropped images */
+      object-fit: cover; /* Ensures the image fits within the dimensions */
+      border-radius: 8px;
+      transition: transform 0.2s;
+    }
+    .drop-zone .image-container img:hover {
+      transform: scale(1.05);
+    }
+    .images img, .image-container img {
+      width: 120px; /* Default size in image bank */
+      height: 120px; /* Default size in image bank */
+      object-fit: cover;
+      border-radius: 10px;
+      cursor: grab;
+    }
+    .word-input {
+      margin-top: 10px;
+      padding: 8px;
+      font-size: 16px;
+      width: 80%;
+      max-width: 150px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      transition: border-color 0.3s;
+    }
+    .word-input:focus {
+      border-color: #2196F3;
+      outline: none;
+    }
+    .ipa-transcription {
+      margin-top: 5px;
+      font-size: 14px;
+      color: #666;
+      font-style: italic;
+    }
+    .check-pronunciation, .record-button, .playback-button {
+      margin-top: 10px;
+      padding: 8px 15px;
+      font-size: 14px;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .check-pronunciation {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .check-pronunciation:hover {
+      background-color: #45a049;
+      transform: translateY(-2px);
+    }
+    .record-button {
+      background-color: #2196F3;
+      color: white;
+    }
+    .record-button:hover {
+      background-color: #1976D2;
+      transform: translateY(-2px);
+    }
+    .playback-button {
+      background-color: #9C27B0;
+      color: white;
+    }
+    .playback-button:hover {
+      background-color: #7B1FA2;
+      transform: translateY(-2px);
+    }
+    .playback-button:disabled {
+      background-color: #B0BEC5;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+    .compare-result {
+      margin-top: 10px;
+      padding: 8px;
+      background-color: #FFEB3B;
+      color: #333;
+      border-radius: 4px;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .images {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .images .image-wrapper {
+      text-align: center;
+      background: #fff;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+    .images .image-wrapper:hover {
+      transform: translateY(-5px);
+    }
+    .word-label {
+      font-size: 14px;
+      margin-top: 8px;
+      color: #333;
+      display: none;
+    }
+    #toggle-labels {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    #toggle-labels label {
+      font-size: 1em;
+      color: #333;
+      cursor: pointer;
+    }
+    footer {
+      background: #4CAF50;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>My <%= letter %> Book</h1>
+  </header>
+  <div class="instructions">Drag the images into the boxes below and type the word. Click an image to remove it permanently.</div>
+
+  <div id="toggle-labels">
+    <input type="checkbox" id="showLabels" onchange="toggleLabels()">
+    <label for="showLabels">Stick: Show word labels under images</label>
+  </div>
+
+  <div class="book" id="book-drop-zones">
+    <% for (let i = 0; i < 5; i++) { %>
+      <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <div class="image-container"></div>
+        <input type="text" class="word-input" placeholder="Enter word" oninput="updateLabel(this)">
+        <div class="ipa-transcription" style="display:none;"></div>
+        <button class="check-pronunciation" onclick="checkPronunciation(this)" style="display:none;">Check Pronunciation</button>
+        <button class="record-button" onclick="startRecording(this)" style="display:none;">🎤 Record</button>
+        <button class="playback-button" onclick="playRecording(this)" disabled style="display:none;">🔊 Play</button>
+        <div class="compare-result" style="display:none;"></div>
+      </div>
+    <% } %>
+  </div>
+  <div class="images" id="image-bank">
+    <% words.forEach(word => { %>
+      <div class="image-wrapper" id="<%= word.id %>-wrapper">
+        <img src="<%= word.src %>" alt="<%= word.label %>" draggable="true" ondragstart="drag(event)" id="<%= word.id %>">
+        <div class="word-label"><%= word.label %></div>
+      </div>
+    <% }); %>
+  </div>
+  <footer>
+    <p>© 2025 My <%= letter %> Book. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // IPA map will be populated from server-rendered data
+    let ipaMap = <%- JSON.stringify(words.reduce((map, word) => ({ ...map, [word.id]: word.ipa }), {})) %>;
+
+    // Map to store media recorders and audio data per drop zone
+    const recorders = new WeakMap();
+    const audioData = new WeakMap();
+
+    function allowDrop(ev) {
+      ev.preventDefault();
+    }
+
+    function drag(ev) {
+      ev.dataTransfer.setData("text", ev.target.id);
+    }
+
+    function drop(ev) {
+      ev.preventDefault();
+      const data = ev.dataTransfer.getData("text");
+      const img = document.getElementById(data);
+      const dropZone = ev.target.closest('.drop-zone');
+      const imgContainer = dropZone.querySelector('.image-container');
+      const ipaElement = dropZone.querySelector('.ipa-transcription');
+      const checkButton = dropZone.querySelector('.check-pronunciation');
+      const recordButton = dropZone.querySelector('.record-button');
+      const playbackButton = dropZone.querySelector('.playback-button');
+      const compareResult = dropZone.querySelector('.compare-result');
+
+      // Return previous image to image-bank if exists
+      if (imgContainer.firstChild) {
+        const oldImg = imgContainer.firstChild;
+        const id = oldImg.id;
+        const originalWrapper = document.getElementById(id + "-wrapper");
+        originalWrapper.appendChild(oldImg);
+        // Clear and reset associated elements
+        const input = dropZone.querySelector('.word-input');
+        input.value = '';
+        ipaElement.style.display = 'none';
+        checkButton.style.display = 'none';
+        recordButton.style.display = 'none';
+        playbackButton.style.display = 'none';
+        playbackButton.disabled = true;
+        compareResult.style.display = 'none';
+        if (recorders.has(recordButton)) {
+          recorders.get(recordButton).stream.getTracks().forEach(track => track.stop());
+          recorders.delete(recordButton);
+        }
+        audioData.delete(recordButton);
+      }
+
+      // Clone new image and place it in drop-zone with controlled size
+      const clone = img.cloneNode(true);
+      clone.setAttribute("draggable", false);
+      clone.style.width = "100px"; // Enforce width
+      clone.style.height = "100px"; // Enforce height
+      clone.onclick = removeImage;
+      imgContainer.innerHTML = '';
+      imgContainer.appendChild(clone);
+
+      // Display IPA, show buttons
+      const word = data;
+      ipaElement.textContent = ipaMap[word] || "IPA not available";
+      ipaElement.style.display = 'block';
+      checkButton.style.display = 'inline-block';
+      recordButton.style.display = 'inline-block';
+      playbackButton.style.display = 'inline-block';
+      compareResult.style.display = 'none'; // Reset comparison result
+
+      // Focus input for user to type word
+      const input = dropZone.querySelector('.word-input');
+      if (input) {
+        input.value = '';
+        input.focus();
+      }
+
+      // Text-to-Speech for the default word
+      const utterance = new SpeechSynthesisUtterance(word);
+      const voices = speechSynthesis.getVoices();
+      utterance.voice = voices[114] || voices.find(v => v.lang.startsWith('en-US'));
+      utterance.lang = 'en-US';
+      utterance.rate = 0.9;
+      utterance.pitch = 1.0;
+      speechSynthesis.speak(utterance);
+    }
+
+    function removeImage(ev) {
+      const img = ev.target;
+      const dropZone = img.closest('.drop-zone');
+      const imgContainer = dropZone.querySelector('.image-container');
+      imgContainer.innerHTML = '';
+      const input = dropZone.querySelector('.word-input');
+      input.value = '';
+      const ipaElement = dropZone.querySelector('.ipa-transcription');
+      ipaElement.style.display = 'none';
+      const checkButton = dropZone.querySelector('.check-pronunciation');
+      checkButton.style.display = 'none';
+      const recordButton = dropZone.querySelector('.record-button');
+      recordButton.style.display = 'none';
+      const playbackButton = dropZone.querySelector('.playback-button');
+      playbackButton.style.display = 'none';
+      playbackButton.disabled = true;
+      const compareResult = dropZone.querySelector('.compare-result');
+      compareResult.style.display = 'none';
+      if (recorders.has(recordButton)) {
+        recorders.get(recordButton).stream.getTracks().forEach(track => track.stop());
+        recorders.delete(recordButton);
+      }
+      audioData.delete(recordButton);
+    }
+
+    function checkPronunciation(button) {
+      const dropZone = button.closest('.drop-zone');
+      const imgContainer = dropZone.querySelector('.image-container');
+      if (imgContainer.firstChild) {
+        const id = imgContainer.firstChild.id;
+        const word = id;
+        const utterance = new SpeechSynthesisUtterance(word);
+        const voices = speechSynthesis.getVoices();
+        utterance.voice = voices[114] || voices.find(v => v.lang.startsWith('en-US'));
+        utterance.lang = 'en-US';
+        utterance.rate = 0.9;
+        utterance.pitch = 1.0;
+        speechSynthesis.speak(utterance);
+      }
+    }
+
+    function updateLabel(input) {
+      const dropZone = input.closest('.drop-zone');
+      const imgContainer = dropZone.querySelector('.image-container');
+      const ipaElement = dropZone.querySelector('.ipa-transcription');
+      if (imgContainer.firstChild) {
+        const word = input.value.trim().toLowerCase();
+        if (word && ipaMap.hasOwnProperty(word)) {
+          ipaElement.textContent = ipaMap[word];
+          ipaElement.style.display = 'block';
+          const utterance = new SpeechSynthesisUtterance(word);
+          const voices = speechSynthesis.getVoices();
+          const defaultVoice = voices.find(v => v.lang.startsWith('en-US'));
+          utterance.voice = defaultVoice || voices[0];
+          utterance.lang = 'en-US';
+          utterance.rate = 0.9;
+          utterance.pitch = 1.0;
+          speechSynthesis.speak(utterance);
+        } else {
+          ipaElement.style.display = 'none';
+        }
+      }
+    }
+
+    function toggleLabels() {
+      const show = document.getElementById("showLabels").checked;
+      const labels = document.querySelectorAll(".word-label");
+      labels.forEach(label => {
+        label.style.display = show ? "block" : "none";
+      });
+    }
+
+    async function startRecording(button) {
+      const dropZone = button.closest('.drop-zone');
+      const playbackButton = button.nextElementSibling;
+      const compareResult = dropZone.querySelector('.compare-result');
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert("Microphone access is not supported in this browser.");
+        return;
+      }
+
+      // Stop any existing recording
+      if (recorders.has(button)) {
+        recorders.get(button).stream.getTracks().forEach(track => track.stop());
+        recorders.delete(button);
+      }
+      compareResult.style.display = 'none'; // Reset comparison result
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const mediaRecorder = new MediaRecorder(stream);
+        let chunks = [];
+
+        mediaRecorder.ondataavailable = event => chunks.push(event.data);
+        mediaRecorder.onstop = () => {
+          const audioBlob = new Blob(chunks, { type: 'audio/webm' });
+          const audioURL = URL.createObjectURL(audioBlob);
+          audioData.set(button, audioURL);
+          playbackButton.disabled = false;
+
+          // Start speech recognition after recording
+          recognizeSpeech(button, compareResult);
+        };
+
+        recorders.set(button, { stream, mediaRecorder });
+        mediaRecorder.start();
+        button.textContent = "⏹ Stop";
+        button.onclick = () => stopRecording(button, playbackButton);
+      } catch (err) {
+        console.error("Recording error:", err);
+        alert("Failed to access microphone.");
+      }
+    }
+
+    function stopRecording(button, playbackButton) {
+      const recorder = recorders.get(button);
+      if (recorder && recorder.mediaRecorder.state === "recording") {
+        recorder.mediaRecorder.stop();
+        recorder.stream.getTracks().forEach(track => track.stop());
+        recorders.delete(button);
+      }
+      button.textContent = "🎤 Record";
+      button.onclick = () => startRecording(button);
+    }
+
+    function playRecording(button) {
+      const audioURL = audioData.get(button.previousElementSibling);
+      if (audioURL) {
+        const audio = new Audio(audioURL);
+        audio.play();
+      }
+    }
+
+    async function recognizeSpeech(button, compareResult) {
+      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        compareResult.textContent = "Speech recognition not supported in this browser.";
+        compareResult.style.display = 'block';
+        return;
+      }
+
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      const dropZone = button.closest('.drop-zone');
+      const imgContainer = dropZone.querySelector('.image-container');
+      const expectedWord = imgContainer.firstChild ? imgContainer.firstChild.id : '';
+
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript.toLowerCase().trim();
+        compareResult.style.display = 'block';
+        if (transcript === expectedWord) {
+          compareResult.textContent = "Correct pronunciation!";
+          compareResult.style.backgroundColor = "#4CAF50";
+          compareResult.style.color = "white";
+        } else {
+          compareResult.textContent = `Try again. Expected: ${expectedWord}, Got: ${transcript}`;
+          compareResult.style.backgroundColor = "#FF4444";
+          compareResult.style.color = "white";
+        }
+      };
+
+      recognition.onerror = (event) => {
+        compareResult.textContent = "Error during speech recognition.";
+        compareResult.style.display = 'block';
+        compareResult.style.backgroundColor = "#FFEB3B";
+        compareResult.style.color = "#333";
+      };
+
+      recognition.start();
+    }
+
+    // Populate voice list when voices are loaded
+    speechSynthesis.onvoiceschanged = function() {
+      toggleLabels();
+    };
+  </script>
+</body>
+</html>

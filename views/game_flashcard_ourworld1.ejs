@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>🎮 Ôn tập từ vựng - <%= unit %></title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      padding: 30px;
+      background: #f9f9f9;
+    }
+    h1 { text-align: center; color: #2c3e50; }
+    .question-box {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 600px;
+      margin: 20px auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .flashcard-options button {
+      margin: 10px;
+      padding: 12px 25px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+    .flashcard-options button:hover {
+      background: #0056b3;
+    }
+    .result {
+      font-weight: bold;
+      margin-top: 15px;
+    }
+    #card-image{ margin: 20px auto; width: 250px; border: 1px solid #ccc; padding: 10px; border-radius: 10px; }
+
+    
+  </style>
+</head>
+<body>
+   
+  <label for="voiceSelect">🔊 Chọn giọng đọc:</label>
+  <select id="voiceSelect"></select>
+  <h1>🧠 Game Ôn Tập Từ Vựng - <%= unit %></h1>
+  <div class="question-box">
+    <div id="flashcard-game">Đang tải...</div>
+    <button onclick="generateFlashcard()">🔄 Câu tiếp theo</button>
+    <div id="flashcard-result" class="result"></div>
+    <img id="card-image" src="" width="200"><br>
+  </div>
+
+  <script>
+    
+    const allWords = <%- JSON.stringify(words) %>;
+     let voices = [];
+
+  // Load danh sách voice
+  function loadVoices() {
+    voices = speechSynthesis.getVoices();
+
+    const voiceSelect = document.getElementById("voiceSelect");
+    voiceSelect.innerHTML = ''; // reset
+
+    voices.forEach((voice, index) => {
+      const option = document.createElement('option');
+      option.value = index;
+      option.textContent = `${voice.name} (${voice.lang})`;
+      voiceSelect.appendChild(option);
+    });
+    voiceSelect.selectedIndex = 114;
+  }
+
+  // Một số trình duyệt cần đợi event này mới có danh sách voice
+  speechSynthesis.onvoiceschanged = loadVoices;
+
+  // Đọc từ với giọng chọn
+  function speak(text) {
+    const voiceIndex = document.getElementById("voiceSelect").value;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.voice = voices[voiceIndex];
+    utterance.lang = "en-US";
+    speechSynthesis.speak(utterance);
+  }
+    function generateFlashcard() {
+      const container = document.getElementById("flashcard-game");
+      const resultBox = document.getElementById("flashcard-result");
+      resultBox.innerText = "";
+      const imageElem = document.getElementById("card-image");
+      const correct = allWords[Math.floor(Math.random() * allWords.length)];
+      const others = allWords.filter(w => w.word_text !== correct.word_text);
+      const wrongChoices = others.sort(() => 0.5 - Math.random()).slice(0, 3);
+      const choices = [correct, ...wrongChoices].sort(() => 0.5 - Math.random());
+      imageElem.src = "/"+ correct.image_url;
+      imageElem.style.display="none"
+      container.innerHTML = `
+        <p><strong>👉 Nghĩa tiếng Việt:</strong> ${correct.meaning_vi}</p>
+        <div class="flashcard-options">
+          ${choices.map(w => `<button onclick="checkAnswer('${w.word_text}', '${correct.word_text}'); speak('${w.word_text}')">
+  ${w.word_text} 🔊
+</button>`).join('')}
+        </div>
+      `;
+    }
+
+    function checkAnswer(selected, correct) {
+      
+      const imageElem = document.getElementById("card-image");
+      const resultBox = document.getElementById("flashcard-result");
+      if (selected === correct) {
+        
+        resultBox.innerHTML = "✅ Chính xác! Giỏi lắm 🎉";
+        resultBox.style.color = "green";
+        imageElem.style.display="block"
+      } else {
+        resultBox.innerHTML = `❌ Sai rồi! Thử lại nhé`;
+        resultBox.style.color = "red";
+      }
+    }
+
+    generateFlashcard();
+  </script>
+</body>
+</html>

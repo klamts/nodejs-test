@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Common or Proper Nouns</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: auto; }
+    h1 { color: #2c3e50; }
+    .grammar-rule { margin-bottom: 10px; }
+    button { margin: 5px; padding: 5px 10px; }
+    input { width: 150px; margin: 5px; }
+    .result { font-weight: bold; }
+    .correct { color: green; }
+    .wrong { color: red; }
+    audio { display: block; margin-top: 5px; }
+  </style>
+</head>
+<body>
+  <h1>📚 Common or Proper?</h1>
+
+  <h2>📖 Grammar Rules</h2>
+  <div class="grammar-rule">
+    1. A <strong>common noun</strong> names any person, place, or thing. It does <strong>not</strong> start with a capital letter.<br> <em> The <u>girl</u> goes to <u>school</u>. </em>  
+    <button onclick="speakText('A common noun names any person, place, or thing. It does not start with a capital letter. The girl goes to school')">🔊</button>
+  </div>
+  <div class="grammar-rule">
+    2. A <strong>proper noun</strong> names a specific person, place, or thing. It <strong>starts</strong> with a capital letter.<br> <em> <u>Maria</u> goes to <u>Franklin </u><u>Elementary</u><u> School</u>. </em>   
+    <button onclick="speakText('A proper noun names a specific person, place, or thing. It starts with a capital letter. Maria goes to Franklin Elementary School.')">🔊</button>
+  </div>
+
+  <h2>📝 Practice</h2>
+  <div id="questions"></div>
+  <button onclick="checkAnswers()">✅ Kiểm tra</button>
+
+  <script>
+    const data = [
+      { sentence: "Nan is my sister.", proper: "Nan", common: "sister" },
+      { sentence: "We live in a state called Texas.", proper: "Texas", common: "state" },
+      { sentence: "Max is my dog.", proper: "Max", common: "dog" },
+      { sentence: "My father lives in Dallas.", proper: "Dallas", common: "father" },
+      { sentence: "My sister and I always have fun with Papa.", proper: "Papa", common: "sister" },
+      { sentence: "We go to Elm Park to play ball.", proper: "Elm Park", common: "ball" }
+    ];
+
+    const container = document.getElementById("questions");
+    const recordings = {};
+
+    data.forEach((item, index) => {
+      const div = document.createElement("div");
+      div.className = "question";
+      div.innerHTML = `
+        <p><strong>${index + 1}.</strong> ${item.sentence}</p>
+        <button onclick="speakText('${item.sentence}')">🔊 Nghe câu</button>
+        <button onclick="recordSpeech(${index})">🎙️ Ghi âm</button>
+        <button onclick="playRecording(${index})">▶️ Nghe lại</button><br>
+        Proper Noun: <input id="proper-${index}"> 
+        Common Noun: <input id="common-${index}">
+        <audio id="audio-${index}" controls style="display:none;"></audio>
+        <div id="result-${index}" class="result"></div>
+      `;
+      container.appendChild(div);
+    });
+
+    function speakText(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "en-US";
+      const voices = speechSynthesis.getVoices();
+      const ana = voices.find(v => v.name.includes("Ana Online"));
+      if (ana) utterance.voice = ana;
+      
+      speechSynthesis.cancel();
+      speechSynthesis.speak(utterance);
+    }
+
+    window.speechSynthesis.onvoiceschanged = () => {};
+
+    function checkAnswers() {
+      data.forEach((item, index) => {
+        const proper = document.getElementById(`proper-${index}`).value.trim().toLowerCase();
+        const common = document.getElementById(`common-${index}`).value.trim().toLowerCase();
+        const result = document.getElementById(`result-${index}`);
+        if (proper === item.proper.toLowerCase() && common === item.common.toLowerCase()) {
+          result.textContent = "✔️ Chính xác!";
+          result.className = "result correct";
+        } else {
+          result.textContent = `❌ Sai. Đáp án: Proper = ${item.proper}, Common = ${item.common}`;
+          result.className = "result wrong";
+        }
+      });
+    }
+
+    function recordSpeech(index) {
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+        const audio = document.getElementById(`audio-${index}`);
+        const mediaRecorder = new MediaRecorder(stream);
+        const chunks = [];
+
+        mediaRecorder.ondataavailable = e => chunks.push(e.data);
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(chunks, { type: 'audio/webm' });
+          recordings[index] = blob;
+          audio.src = URL.createObjectURL(blob);
+          audio.style.display = 'block';
+        };
+
+        mediaRecorder.start();
+        setTimeout(() => {
+          mediaRecorder.stop();
+          stream.getTracks().forEach(track => track.stop());
+        }, 4000);
+      }).catch(() => {
+        alert("❌ Không thể truy cập micro.");
+      });
+    }
+
+    function playRecording(index) {
+      const audio = document.getElementById(`audio-${index}`);
+      if (recordings[index]) {
+        audio.play();
+      } else {
+        alert("Chưa có bản ghi âm nào.");
+      }
+    }
+  </script>
+</body>
+</html>

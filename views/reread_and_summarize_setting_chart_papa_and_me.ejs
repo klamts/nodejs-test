@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Papá and Me - Interactive Chart</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+    }
+    h1 {
+      text-align: center;
+    }
+    table {
+      width: 80%;
+      margin: auto;
+      border-collapse: collapse;
+    }
+    td, th {
+      border: 2px solid #444;
+      padding: 12px;
+      text-align: left;
+      font-size: 18px;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    input[type="text"] {
+      width: 90%;
+      padding: 6px;
+      font-size: 16px;
+    }
+    button {
+      padding: 6px 12px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .note {
+      margin-top: 20px;
+      font-style: italic;
+      text-align: center;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1>Papá and Me</h1>
+  <p style="text-align: center;">
+    List the places that Papá and his son went. Then list words that tell what the places are like.
+  </p>
+
+  <table>
+    <tr>
+      <th>Places</th>
+      <th>What the Places are Like</th>
+    </tr>
+    <!-- Row 1 -->
+    <tr>
+      <td>
+        <input type="text" id="place1" placeholder="Enter a place">
+        <button onclick="speak('place1')">🔊</button>
+      </td>
+      <td>
+        <input type="text" id="desc1" placeholder="What is it like?">
+        <button onclick="speak('desc1')">🔊</button>
+      </td>
+    </tr>
+    <!-- Row 2 -->
+    <tr>
+      <td>
+        <input type="text" id="place2" placeholder="Enter a place">
+        <button onclick="speak('place2')">🔊</button>
+      </td>
+      <td>
+        <input type="text" id="desc2" placeholder="What is it like?">
+        <button onclick="speak('desc2')">🔊</button>
+      </td>
+    </tr>
+    <!-- Row 3 -->
+    <tr>
+      <td>
+        <input type="text" id="place3" placeholder="Enter a place">
+        <button onclick="speak('place3')">🔊</button>
+      </td>
+      <td>
+        <input type="text" id="desc3" placeholder="What is it like?">
+        <button onclick="speak('desc3')">🔊</button>
+      </td>
+    </tr>
+  </table>
+
+  <p class="note">Take turns with a partner. Use your chart to share about the story.</p>
+
+  <script>
+    function speak(id) {
+      const text = document.getElementById(id).value;
+      if (!text) return;
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      const voices = speechSynthesis.getVoices();
+      const enVoice = voices.find(v => v.lang === 'en-US' && v.name.includes('Microsoft') || v.lang.startsWith('en'));
+      if (enVoice) utterance.voice = enVoice;
+      speechSynthesis.speak(utterance);
+    }
+
+    // Fix for Chrome: load voices first
+    window.speechSynthesis.onvoiceschanged = () => {};
+  </script>
+</body>
+</html>

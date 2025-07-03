@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Compare Genres - Realistic Fiction vs Postcard</title>
+  <style>
+    body {
+      font-family: Georgia, serif;
+      background-color: #fefefe;
+      margin: 40px;
+    }
+    h1, .instruction {
+      text-align: center;
+    }
+    table {
+      width: 80%;
+      margin: auto;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+    }
+    th, td {
+      border: 2px solid #333;
+      padding: 12px;
+      font-size: 18px;
+      text-align: left;
+    }
+    input[type="text"] {
+      width: 95%;
+      padding: 6px;
+      font-size: 16px;
+    }
+    button {
+      margin: 5px;
+      padding: 8px 14px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #3e8e41;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Compare Genres</h1>
+  <p class="instruction">Compare a story and a postcard.</p>
+
+  <table>
+    <tr>
+      <th>Realistic Fiction</th>
+      <th>Postcard</th>
+    </tr>
+    <tr>
+      <td>
+        <input type="text" id="fiction" value="is a made-up story that seems real">
+        <button onclick="speak('fiction')">🔊</button>
+      </td>
+      <td>
+        <input type="text" id="postcard" value="is a message sent to a real person">
+        <button onclick="speak('postcard')">🔊</button>
+      </td>
+    </tr>
+  </table>
+
+  <p class="instruction"><strong>Try it!</strong> Tell a partner how a story and a postcard are different.</p>
+
+  <script>
+    function speak(id) {
+      const text = document.getElementById(id).value;
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.95;
+      const voices = speechSynthesis.getVoices();
+      const enVoice = voices.find(v => v.lang === 'en-US' && v.name.includes('Microsoft')) || voices.find(v => v.lang.startsWith('en'));
+      if (enVoice) utterance.voice = enVoice;
+      speechSynthesis.cancel();
+      speechSynthesis.speak(utterance);
+    }
+
+    // Force voice list to load
+    window.speechSynthesis.onvoiceschanged = () => {};
+  </script>
+
+</body>
+</html>

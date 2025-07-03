@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>📘 Read and Write</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    h2 {
+      text-align: center;
+    }
+    .question {
+      margin: 20px 0;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+    input {
+      width: 120px;
+      padding: 5px;
+      font-size: 16px;
+      margin: 0 5px;
+    }
+    button {
+      margin: 6px 5px;
+      padding: 6px 12px;
+      font-size: 14px;
+    }
+    .feedback {
+      margin-top: 5px;
+      font-weight: bold;
+    }
+    audio {
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+<div style="text-align: center; margin-bottom: 20px;">
+  <label for="voiceSelect">🔊 Chọn giọng đọc: </label>
+  <select id="voiceSelect"></select>
+</div>
+  <h2>✍️ Read and Write (Personal Pronouns)</h2>
+
+  <% const questions = [
+    { prefix: "John! Jenny! I have some lunch for ", suffix: "", answer: "you" },
+    { prefix: "Hey, Dad. Can I help ", suffix: "?", answer: "you" },
+    { prefix: "Thanks, Jenny. Where’s your brother? I can’t see ", suffix: ".", answer: "him" },
+    { prefix: "Mom is over there. Maybe he’s with ", suffix: ".", answer: "her" },
+    { prefix: "Go get ", suffix: ". It’s time to eat!", answer: "it" },
+    { prefix: "I love chicken sandwiches! Give ", suffix: " that big one!", answer: "me" },
+    { prefix: "Let’s play soccer. Do you want to come with ", suffix: "?", answer: "us" },
+    { prefix: "OK, where’s the ball? Oh, I see ", suffix: "!", answer: "it" }
+  ]; %>
+
+  <form id="exerciseForm">
+    <% questions.forEach((q, index) => { %>
+      <div class="question" id="qbox<%= index %>">
+        <label>
+          <%= index + 1 %>. <%= q.prefix %>
+          <input type="text" name="q<%= index %>" id="input<%= index %>" required />
+          <%= q.suffix %>
+        </label><br />
+
+        <button type="button" onclick="speak(<%= index %>)">📢 Đọc mẫu</button>
+        <button type="button" onclick="recordAndCheck(<%= index %>)">🎤 Ghi âm & kiểm tra</button>
+        <button type="button" onclick="playRecording(<%= index %>)">🔁 Nghe lại</button>
+
+        <audio id="audioPlayback<%= index %>" controls style="display:none;"></audio>
+        <div class="feedback" id="feedback<%= index %>"></div>
+      </div>
+    <% }); %>
+
+    <button type="submit">📝 Chấm điểm phần điền từ</button>
+  </form>
+
+  <div class="feedback" id="result"></div>
+
+  <script>
+    let voices = [];
+
+    function loadVoices() {
+  voices = speechSynthesis.getVoices();
+  const voiceSelect = document.getElementById("voiceSelect");
+  voiceSelect.innerHTML = '';
+
+  let defaultIndex = 0;
+
+    voices.forEach((voice, i) => {
+        const option = document.createElement("option");
+        option.value = i;
+        option.textContent = `${voice.name} (${voice.lang})`;
+        voiceSelect.appendChild(option);
+
+        // Gán chỉ số nếu trùng với Microsoft Ana
+        if (
+          voice.name === "Microsoft Ana Online (Natural)" &&
+          voice.lang === "en-US"
+        ) {
+          defaultIndex = i;
+        }
+      });
+
+      voiceSelect.selectedIndex = 114;
+    }
+
+    // Đảm bảo chạy khi danh sách voice có sẵn
+    if (speechSynthesis.getVoices().length === 0) {
+      speechSynthesis.onvoiceschanged = loadVoices;
+    } else {
+      loadVoices();
+    }
+
+    // Có browsers cần đợi
+    speechSynthesis.onvoiceschanged = loadVoices;
+    const correctAnswers = <%- JSON.stringify(questions.map(q => q.answer)) %>;
+    const fullSentences = <%- JSON.stringify(questions.map(q => q.prefix + q.answer + q.suffix)) %>;
+    const recordings = {}; // lưu blob theo câu
+
+    // 📢 Đọc mẫu câu
+    function speak(index) {
+      const sentence = fullSentences[index];
+      const utterance = new SpeechSynthesisUtterance(sentence);
+      utterance.lang = "en-US";
+      const selectedIndex = parseInt(document.getElementById("voiceSelect")?.value);
+      if (voices[selectedIndex]) {
+        utterance.voice = voices[selectedIndex];
+      }
+      speechSynthesis.speak(utterance);
+    }
+
+    // 🎤 Ghi âm và kiểm tra phát âm
+    function recordAndCheck(index) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("Trình duyệt không hỗ trợ Speech Recognition");
+        return;
+      }
+
+      const feedback = document.getElementById("feedback" + index);
+      feedback.textContent = "🟡 Đang ghi âm và nhận diện...";
+
+      // 1. Ghi âm audio
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+        const mediaRecorder = new MediaRecorder(stream);
+        const chunks = [];
+
+        mediaRecorder.ondataavailable = e => chunks.push(e.data);
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(chunks, { type: 'audio/webm' });
+          const audioURL = URL.createObjectURL(blob);
+          recordings[index] = audioURL;
+
+          const audioElem = document.getElementById("audioPlayback" + index);
+          audioElem.src = audioURL;
+          audioElem.style.display = "block";
+        };
+
+        mediaRecorder.start();
+        setTimeout(() => mediaRecorder.stop(), 4000); // ghi 4 giây
+      });
+
+      // 2. Nhận diện giọng
+      const recognition = new SpeechRecognition();
+      recognition.lang = "en-US";
+      recognition.interimResults = false;
+
+      recognition.start();
+      recognition.onresult = (event) => {
+        const spoken = event.results[0][0].transcript.trim().toLowerCase();
+        const expected = fullSentences[index].toLowerCase();
+        const feedback = document.getElementById("feedback" + index);
+
+        if (spoken === expected) {
+          feedback.textContent = "✅ Bạn đọc đúng!";
+          feedback.style.color = "green";
+        } else {
+          feedback.textContent = `❌ Bạn nói: "${spoken}"`;
+          feedback.style.color = "red";
+        }
+      };
+
+      recognition.onerror = (e) => {
+        feedback.textContent = "❌ Lỗi nhận diện: " + e.error;
+        feedback.style.color = "red";
+      };
+    }
+
+    // 🔁 Nghe lại bản ghi
+    function playRecording(index) {
+      const audioElem = document.getElementById("audioPlayback" + index);
+      if (recordings[index]) {
+        audioElem.play();
+      } else {
+        alert("❗ Bạn chưa ghi âm câu này.");
+      }
+    }
+
+    // 📝 Chấm điểm phần điền từ
+    document.getElementById("exerciseForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      let correct = 0;
+
+      correctAnswers.forEach((ans, idx) => {
+        const userAns = formData.get("q" + idx).trim().toLowerCase();
+        if (userAns === ans) correct++;
+      });
+
+      document.getElementById("result").textContent =
+        `✅ Bạn làm đúng ${correct}/${correctAnswers.length} câu (${Math.round(correct / correctAnswers.length * 100)}%)`;
+    });
+  
+  </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "letter": "H h",
+  "words": [
+    {"id": "hammer", "src": "/images/hammer.jpg", "label": "hammer", "ipa": "/ˈhæmər/"},
+    {"id": "fence", "src": "/images/fence.jpg", "label": "fence", "ipa": "/fens/"},
+    {"id": "moon", "src": "/images/moon.jpg", "label": "moon", "ipa": "/muːn/"},
+    {"id": "hand", "src": "/images/hand.jpg", "label": "hand", "ipa": "/hænd/"},
+    {"id": "foot", "src": "/images/foot.jpg", "label": "foot", "ipa": "/fʊt/"},
+    {"id": "horse", "src": "/images/horse.jpg", "label": "horse", "ipa": "/hɔːrs/"},
+    {"id": "heart", "src": "/images/heart.jpg", "label": "heart", "ipa": "/hɑːrt/"},
+    {"id": "house", "src": "/images/house.jpg", "label": "house", "ipa": "/haʊs/"}
+  ]
+}
+  

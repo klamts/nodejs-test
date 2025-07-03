@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Plural Nouns - Interactive Lesson</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f9f9f9; padding: 20px; line-height: 1.6; }
+    h1, h2 { color: #3a3a3a; }
+    .box { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    .example { font-weight: bold; color: #005b99; }
+    button { padding: 10px; margin-top: 5px; border: none; border-radius: 5px; background: #007bff; color: white; cursor: pointer; }
+    textarea, input[type="text"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; }
+    audio { margin-top: 10px; display: block; }
+  </style>
+</head>
+<body>
+
+  <h1>📘 Learn About Plural Nouns</h1>
+
+  <div class="box">
+    <h2>📖 Grammar Explanation</h2>
+    <p>A <strong>singular noun</strong> names one person, place, or thing. <span class="example">Example: box, home</span></p>
+    <p>A <strong>plural noun</strong> names more than one. <span class="example">Example: boxes, homes</span></p>
+    <p><strong>Rule:</strong> Add <strong>s</strong> to most nouns. Add <strong>es</strong> to nouns ending in <strong><em style="color: red;">ss, x, ch, sh</em></strong></p>
+  </div>
+
+  <div class="box">
+    <h2>📢 Example Sentence</h2>
+    <p>We had <span class="example">sandwiches</span> for our <span class="example">meals</span>.</p>
+    <button onclick="speak('We had sandwiches for our meals.')">🔊 Listen</button>
+  </div>
+
+  <div class="box">
+    <h2>📝 Write Your Sentence</h2>
+    <p>Write a sentence about one of your family’s meals. Use a plural noun.</p>
+    <input type="text" id="userSentence" placeholder="e.g. We ate noodles and vegetables." />
+    <button onclick="speakInput()">🔊 Listen to Your Sentence</button>
+  </div>
+  <div class="hint-box">
+      💡 <strong>Tips:</strong><br/>
+        "We ate noodles and vegetables for dinner."<br/>
+
+        "Our breakfasts usually have eggs and fruits."
+    </div>
+
+  <div class="box">
+    <h2>🎤 Practice Speaking</h2>
+    <p>Click below to record your pronunciation of your sentence:</p>
+    <button onclick="startRecording()">🎙️ Start Recording</button>
+    <button onclick="stopRecording()">⏹️ Stop</button>
+    <audio id="audioPlayback" controls></audio>
+  </div>
+
+  <script>
+    function speak(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      speechSynthesis.speak(utterance);
+    }
+
+    function speakInput() {
+      const text = document.getElementById('userSentence').value;
+      if (text.trim()) speak(text);
+    }
+
+    let mediaRecorder;
+    let audioChunks = [];
+
+    async function startRecording() {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.start();
+      audioChunks = [];
+
+      mediaRecorder.addEventListener("dataavailable", event => {
+        audioChunks.push(event.data);
+      });
+
+      mediaRecorder.addEventListener("stop", () => {
+        const audioBlob = new Blob(audioChunks);
+        const audioUrl = URL.createObjectURL(audioBlob);
+        document.getElementById("audioPlayback").src = audioUrl;
+      });
+    }
+
+    function stopRecording() {
+      if (mediaRecorder) mediaRecorder.stop();
+    }
+  </script>
+
+</body>
+</html>

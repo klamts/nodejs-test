@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học Đọc và Kiểm Tra Phát Âm</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #sentence, #inputArea, #result, #suggestions {
+            margin: 10px 0;
+            font-size: 18px;
+        }
+        #inputArea {
+            width: 80%;
+            height: 50px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        #suggestions {
+            display: none;
+            text-align: left;
+            margin-left: 10%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Học Đọc và Kiểm Tra Phát Âm</h1>
+        <p id="sentence">What is each family member doing? Tell your partner.</p>
+        <button onclick="speak()">Phát Âm Câu</button>
+        <button onclick="startRecognition()">Kiểm Tra Phát Âm</button>
+        <button onclick="speakUserInput()">Đọc Lại Câu Trả Lời</button>
+        <button onclick="toggleSuggestions()">Hiển Thị Gợi Ý</button>
+        <textarea id="inputArea" placeholder="Nhập câu trả lời của bạn..."></textarea>
+        <p id="result"></p>
+        <div id="suggestions">
+            <h3>Gợi Ý Trả Lời:</h3>
+            <p><strong>1. Đơn giản:</strong> Name: "My family members are my mom, my dad, my sister, and me." Actions: "My mom is eating. My dad is drinking. My sister is talking. I am sitting."</p>
+            <p><strong>2. Chi tiết:</strong> Name: "In my family, I have my mother, my father, my older brother, and my little sister." Actions: "My mother is eating rice and smiling. My father is cutting the chicken. My older brother is passing the plate. My little sister is drinking water."</p>
+            <p><strong>3. Sáng tạo:</strong> Name: "My family includes my mom, my dad, my funny uncle, and my baby cousin." Actions: "My mom is serving soup and singing a song. My dad is telling a joke. My funny uncle is making faces to make us laugh. My baby cousin is playing with a spoon."</p>
+            <p><strong>4. Văn hóa:</strong> Name: "My family has my grandmother, my grandfather, my mom, and my brother." Actions: "My grandmother is cooking pho for the meal. My grandfather is pouring tea. My mom is serving rice. My brother is eating spring rolls."</p>
+            <p><strong>5. Tương tác:</strong> Name: "My family members are my dad, my mom, and my two sisters." Actions: "My dad is eating. What is your dad doing? My mom is talking. What about your mom? My sisters are laughing. Do your sisters laugh too?"</p>
+            <p><strong>6. Vai trò:</strong> Name: "I have my mom, my dad, and my older brother." Actions: "My mom is the cook, so she is preparing the food. My dad is the helper, so he is passing the bowls. My older brother is the eater, so he is enjoying the meal."</p>
+            <p><strong>7. Ngắn gọn:</strong> Name: "My mom, my dad, my sister." Actions: "Mom eats. Dad drinks. Sister plays."</p>
+            <p><strong>8. Mở rộng:</strong> Name: "My family is my mom, my dad, and my little brother." Actions: "My mom is eating, and she looks happy. My dad is drinking tea, and he says it’s delicious. My little brother is playing with food, and I think it’s funny."</p>
+        </div>
+    </div>
+
+    <script>
+        const synth = window.speechSynthesis;
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        const sentence = "What is each family member doing? Tell your partner.";
+        document.getElementById('sentence').innerText = sentence;
+
+        function speak() {
+            const utterance = new SpeechSynthesisUtterance(sentence);
+            utterance.lang = 'en-US';
+            synth.speak(utterance);
+        }
+
+        function startRecognition() {
+            recognition.start();
+            recognition.onresult = (event) => {
+                const spokenText = event.results[0][0].transcript.toLowerCase();
+                const userInput = document.getElementById('inputArea').value.toLowerCase();
+                if (spokenText.includes("family") && spokenText.includes("doing")) {
+                    document.getElementById('result').innerText = "Đúng! Bạn đã trả lời đúng chủ đề.";
+                } else {
+                    document.getElementById('result').innerText = "Chưa đúng. Hãy thử lại hoặc xem gợi ý.";
+                }
+            };
+            recognition.onerror = () => {
+                document.getElementById('result').innerText = "Lỗi nhận diện. Vui lòng thử lại.";
+            };
+        }
+
+        function speakUserInput() {
+            const userInput = document.getElementById('inputArea').value;
+            if (userInput) {
+                const utterance = new SpeechSynthesisUtterance(userInput);
+                utterance.lang = 'en-US';
+                synth.speak(utterance);
+            } else {
+                document.getElementById('result').innerText = "Vui lòng nhập câu trả lời trước.";
+            }
+        }
+
+        function toggleSuggestions() {
+            const suggestions = document.getElementById('suggestions');
+            if (suggestions.style.display === "none") {
+                suggestions.style.display = "block";
+            } else {
+                suggestions.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

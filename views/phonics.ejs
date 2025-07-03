@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit <%= unit.toUpperCase() %> - Phonics Lessons</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border: 5px solid #28a745;
+        }
+        h1, h2, h3 {
+            color: #004085;
+            font-weight: bold;
+        }
+        h1 {
+            background: #ffc107;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .target-sounds {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+        .word-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .word-card {
+            background: #e6f3fa;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .word-card img {
+            max-width: 100px;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .word-card p {
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+        .audio-player {
+            margin: 10px 0;
+            text-align: center;
+        }
+        .activity {
+            background: #f8f9fa;
+            border: 2px dashed #6c757d;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .activity label {
+            margin-right: 15px;
+            font-size: 1em;
+        }
+        .lesson-list {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .lesson-list li a {
+            display: block;
+            background: #28a745;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            text-align: center;
+        }
+        .lesson-list li a:hover {
+            background: #218838;
+        }
+        .story-section {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        button {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <% if (lesson === 'index') { %>
+            <!-- Trang danh sách bài học -->
+            <h1>Unit <%= unit.toUpperCase() %>: Phonics Lessons</h1>
+            <div class="target-sounds">
+                <h3>Target Sounds: <%= targetSounds.join(', ') %></h3>
+            </div>
+            <ul class="lesson-list">
+                <li><a href="/phonics/<%= unit %>/1">Lesson 1: /p/</a></li>
+                <li><a href="/phonics/<%= unit %>/2">Lesson 2: /b/</a></li>
+                <li><a href="/phonics/<%= unit %>/3">Lesson 3: /t/</a></li>
+                <li><a href="/phonics/<%= unit %>/4">Lesson 4: /d/</a></li>
+                <li><a href="/phonics/<%= unit %>/5">Lesson 5: Game and Chant</a></li>
+                <li><a href="/phonics/<%= unit %>/story">Lesson 6: Bella's First Day of School</a></li>
+            </ul>
+        <% } else if (lesson === 'story') { %>
+            <!-- Trang câu chuyện -->
+            <h1>Lesson 6: <%= lessonData.title %></h1>
+            <div class="story-section">
+                <h3>Summary</h3>
+                <p><%= lessonData.summary %></p>
+            </div>
+            <h3>Story Audio Tracks</h3>
+            <% lessonData.tr.forEach(track => { %>
+                <div class="audio-player">
+                    <audio controls>
+                        <source src="/audio/<%= track %>.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                    <p>Track: <%= track.toUpperCase() %></p>
+                </div>
+            <% }) %>
+            <h2>Key Words in Story</h2>
+            <div class="word-grid">
+                <% lessonData.keyWords.forEach(word => { %>
+                    <% const wordData = words.find(w => w.word_text === word); %>
+                    <div class="word-card">
+                        <img src="/<%= wordData.image_url %>" alt="<%= wordData.word_text %>" onclick="speakWord('<%= wordData.word_text %>')">
+                        <p><strong><%= wordData.word_text %></strong></p>
+                        <p>IPA: <%= wordData.ipa %></p>
+                        <p><%= wordData.meaning_en %> (<%= wordData.meaning_vi %>)</p>
+                    </div>
+                <% }) %>
+            </div>
+            <div class="activity">
+                <h3>Activities</h3>
+                <ul>
+                    <% lessonData.activities.forEach(activity => { %>
+                        <li><%= activity %></li>
+                    <% }) %>
+                </ul>
+            </div>
+            <div class="activity">
+                <h3>Wrap Up</h3>
+                <p><%= lessonData.wrapUp %></p>
+            </div>
+            <a href="/phonics/<%= unit %>">Back to Lessons</a>
+        <% } else { %>
+            <!-- Trang bài học -->
+            <h1>Unit <%= unit.toUpperCase() %> - Lesson <%= lessonData.letter %>: <%= lessonData.sound %></h1>
+            <div class="target-sounds">
+                <h3>Target Sound: <%= lessonData.sound %></h3>
+            </div>
+            <h3>Lesson Audio Tracks</h3>
+            <% lessonData.tr.forEach(track => { %>
+                <div class="audio-player">
+                    <audio controls>
+                        <source src="/audio/<%= track %>.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                    <p>Track: <%= track.toUpperCase() %></p>
+                </div>
+            <% }) %>
+            <div class="activity">
+                <h3>Warm Up</h3>
+                <p><%= lessonData.warmUp %></p>
+            </div>
+            <h2>Key Words</h2>
+            <div class="word-grid">
+                <% lessonData.keyWords.forEach(word => { %>
+                    <% const wordData = words.find(w => w.word_text === word); %>
+                    <div class="word-card">
+                        <img src="/<%= wordData.image_url %>" alt="<%= wordData.word_text %>" onclick="speakWord('<%= wordData.word_text %>')">
+                        <p><strong><%= wordData.word_text %></strong></p>
+                        <p>IPA: <%= wordData.ipa %></p>
+                        <p><%= wordData.meaning_en %> (<%= wordData.meaning_vi %>)</p>
+                    </div>
+                <% }) %>
+            </div>
+            <h2>Additional Words</h2>
+            <div class="word-grid">
+                <% lessonData.additionalWords.forEach(word => { %>
+                    <% const wordData = words.find(w => w.word_text === word); %>
+                    <div class="word-card">
+                        <img src="/<%= wordData.image_url %>" alt="<%= wordData.word_text %>" onclick="speakWord('<%= wordData.word_text %>')">
+                        <p><strong><%= wordData.word_text %></strong></p>
+                        <p>IPA: <%= wordData.ipa %></p>
+                        <p><%= wordData.meaning_en %> (<%= wordData.meaning_vi %>)</p>
+                    </div>
+                <% }) %>
+            </div>
+            <div class="activity">
+                <h3>Activities</h3>
+                <ul>
+                    <% lessonData.activities.forEach(activity => { %>
+                        <% if (typeof activity === 'string') { %>
+                            <li><%= activity %></li>
+                        <% } else if (activity.name === 'Identify b position') { %>
+                            <li>
+                                <h4><%= activity.description %></h4>
+                                <div class="audio-player">
+                                    <audio controls>
+                                        <source src="/audio/<%= activity.track %>.mp3" type="audio/mpeg">
+                                        Your browser does not support the audio element.
+                                    </audio>
+                                    <p>Track: <%= activity.track.toUpperCase() %></p>
+                                </div>
+                                <% activity.words.forEach((item, index) => { %>
+                                    <div>
+                                        <strong><%= item.word %></strong>
+                                        <label><input type="radio" name="b_position_<%= index %>" value="beginning"> Beginning</label>
+                                        <label><input type="radio" name="b_position_<%= index %>" value="middle"> Middle</label>
+                                        <label><input type="radio" name="b_position_<%= index %>" value="end"> End</label>
+                                    </div>
+                                <% }) %>
+                                <button onclick="checkBPosition()">Check Answers</button>
+                                <p id="b_position_feedback"></p>
+                            </li>
+                        <% } else if (activity.name === 'Distinguish p or b') { %>
+                            <li>
+                                <h4><%= activity.description %></h4>
+                                <div class="audio-player">
+                                    <audio controls>
+                                        <source src="/audio/<%= activity.track %>.mp3" type="audio/mpeg">
+                                        Your browser does not support the audio element.
+                                    </audio>
+                                    <p>Track: <%= activity.track.toUpperCase() %></p>
+                                </div>
+                                <% activity.words.forEach((item, index) => { %>
+                                    <div>
+                                        <strong>Word <%= index + 1 %> (<%= item.word %>)</strong>
+                                        <label><input type="radio" name="pb_<%= index %>" value="p"> p</label>
+                                        <label><input type="radio" name="pb_<%= index %>" value="b"> b</label>
+                                    </div>
+                                <% }) %>
+                                <button onclick="checkPB()">Check Answers</button>
+                                <p id="pb_feedback"></p>
+                            </li>
+                        <% } %>
+                    <% }) %>
+                </ul>
+                <% if (lessonData.sound !== '/p/, /b/, /t/, /d/') { %>
+                    <h4>Identify Sound Position</h4>
+                    <p>Listen to the words and check where the <%= lessonData.sound %> sound appears.</p>
+                    <% lessonData.additionalWords.forEach(word => { %>
+                        <div>
+                            <strong><%= word %></strong>
+                            <button onclick="speakWord('<%= word %>')">Play <%= word %></button>
+                            <label><input type="radio" name="<%= word %>_position" value="beginning"> Beginning</label>
+                            <label><input type="radio" name="<%= word %>_position" value="middle"> Middle</label>
+                            <label><input type="radio" name="<%= word %>_position" value="end"> End</label>
+                        </div>
+                    <% }) %>
+                <% } %>
+            </div>
+            <div class="activity">
+                <h3>Extend</h3>
+                <p>Do you hear p? Listen and  circle  Yes or No</p>
+                <p><%= lessonData.extend %></p>
+            </div>
+            <div class="activity">
+                <h3>Wrap Up</h3>
+                <p><%= lessonData.wrapUp %></p>
+            </div>
+            <a href="/phonics/<%= unit %>">Back to Lessons</a>
+        <% } %>
+    </div>
+
+    <script>
+        function speakWord(word) {
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.8;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function checkBPosition() {
+            const answers = <%- JSON.stringify(lessonData.activities?.find(a => a.name === 'Identify b position')?.words?.map(item => item.answer) || []) %>;
+            let feedback = '';
+            answers.forEach((correct, index) => {
+                const selected = document.querySelector(`input[name="b_position_${index}"]:checked`);
+                if (selected && selected.value === correct) {
+                    feedback += `Word ${index + 1} (${document.querySelector(`input[name="b_position_${index}"]`).parentElement.previousElementSibling.textContent}): Correct!<br>`;
+                } else {
+                    feedback += `Word ${index + 1} (${document.querySelector(`input[name="b_position_${index}"]`).parentElement.previousElementSibling.textContent}): Incorrect. Correct answer is ${correct}.<br>`;
+                }
+            });
+            document.getElementById('b_position_feedback').innerHTML = feedback;
+        }
+
+        function checkPB() {
+            const answers = <%- JSON.stringify(lessonData.activities?.find(a => a.name === 'Distinguish p or b')?.words?.map(item => item.answer) || []) %>;
+            let feedback = '';
+            answers.forEach((correct, index) => {
+                const selected = document.querySelector(`input[name="pb_${index}"]:checked`);
+                if (selected && selected.value === correct) {
+                    feedback += `Word ${index + 1}: Correct!<br>`;
+                } else {
+                    feedback += `Word ${index + 1}: Incorrect. Correct answer is ${correct}.<br>`;
+                }
+            });
+            document.getElementById('pb_feedback').innerHTML = feedback;
+        }
+    </script>
+</body>
+</html>

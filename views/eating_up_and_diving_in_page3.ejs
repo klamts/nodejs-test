@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>A Fun Flea Place</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      padding: 2rem;
+      background: #f0f2f5;
+      color: #333;
+      max-width: 800px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      margin-top: 1rem;
+      color: #444;
+    }
+    .image-container {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .image-container img {
+      max-width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    }
+    .sentence {
+      margin: 1rem 0;
+      font-size: 1.2rem;
+      line-height: 1.6;
+      background: #fff;
+      padding: 0.8rem 1rem;
+      border-radius: 6px;
+      box-shadow: 0 0 3px rgba(0,0,0,0.1);
+    }
+    .word {
+      cursor: pointer;
+      color: #007acc;
+      text-decoration: underline;
+      transition: all 0.3s ease;
+    }
+    .word:hover {
+      background-color: #e0f0ff;
+      border-radius: 4px;
+    }
+    .word.active {
+      background-color: #ffe082;
+      border-radius: 4px;
+      color: #000;
+      animation: highlightPulse 0.8s;
+    }
+    @keyframes highlightPulse {
+      0% { background-color: #fff59d; }
+      100% { background-color: #ffe082; }
+    }
+    .popup {
+      display: none;
+      position: fixed;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%) scale(0.9);
+      background: white;
+      padding: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+      max-width: 320px;
+      z-index: 100;
+      font-size: 0.95rem;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+    .popup.show {
+      display: block;
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+    }
+    .popup button {
+      margin-top: 0.5rem;
+      padding: 0.3rem 0.6rem;
+      cursor: pointer;
+    }
+    .vocab-table {
+      display: flex;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .vocab-column {
+      background: #fff;
+      padding: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      flex: 1;
+      min-width: 180px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .vocab-column h3 {
+      margin-top: 0;
+      font-size: 1.1rem;
+      color: #444;
+    }
+    .vocab-column ul {
+      list-style: disc;
+      padding-left: 1.2rem;
+      margin: 0;
+    }
+    .vocab-column li {
+      margin: 0.4rem 0;
+    }
+  </style>
+</head>
+<body>
+
+<a href="/game_pronounce_sentences"> game đọc câu </a><br>
+  <h1>A Fun Flea Place</h1>
+
+  <div class="image-container">
+    <img src="/images/flea_circus.jpg" alt="Flea Circus">
+  </div>
+
+  <div class="sentence">
+    <strong>1.</strong>
+    This <span class="word" data-word="fun place">fun place</span> <span class="word" data-word="fits into">fits into</span> a <span class="word" data-word="case">case</span>.
+  </div>
+  <div class="sentence">
+    <strong>2.</strong>
+    <span class="word" data-word="lots of">Lots of</span> <span class="word" data-word="fleas">fleas</span> <span class="word" data-word="once">once</span> <span class="word" data-word="played">played</span> here.
+  </div>
+  <div class="sentence">
+    <strong>3.</strong>
+    Just <span class="word" data-word="a few of these">a few of these</span> <span class="word" data-word="cases">cases</span> <span class="word" data-word="are left">are left</span>.
+  </div>
+  <div class="sentence">
+    <strong>4.</strong>
+    Just <span class="word" data-word="hold" data-group="hold something to make">hold</span> a <span class="word" data-word="len">lens</span> <span class="word" data-word="make" data-group="hold something to make">to make</span> the fleas <span class="word" data-word="look big">look big</span>.
+  </div>
+  <div class="sentence">
+    <strong>5.</strong>
+    But <span class="word" data-word="keep" data-group="keep something away">keep</span> your head and hands <span class="word" data-word="away" data-group="keep something away">away</span>.
+  </div>
+  <div class="sentence">
+    <strong>6.</strong>
+    You <span class="word" data-word="do not want to be">do not want to be</span> flea <span class="word" data-word="food">food!</span>.
+  </div>
+
+  <h2 style="margin-top:2rem;">Vocabulary Table</h2>
+  <div class="vocab-table">
+    <div class="vocab-column">
+      <h3>High-Frequency Words</h3>
+      <ul>
+        <li>few</li>
+        <li>food</li>
+        <li>head</li>
+        <li>hold</li>
+        <li>into</li>
+        <li>once</li>
+      </ul>
+    </div>
+    <div class="vocab-column">
+      <h3>Key Words</h3>
+      <ul>
+        <li>look at the picture</li>
+        <li>read the sentences</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="popup" class="popup"></div>
+  <audio id="audioPlayer"></audio>
+
+<script>
+const words = [
+  { word_text: "fun place", meaning_en: "an enjoyable location", meaning_vi: "nơi vui vẻ" },
+  { word_text: "fits into", meaning_en: "to go inside", meaning_vi: "lồng vào" },
+  { word_text: "case", meaning_en: "a box or container", meaning_vi: "cái hộp" },
+  { word_text: "lots of", meaning_en: "many", meaning_vi: "rất nhiều" },
+  { word_text: "fleas", meaning_en: "small insects", meaning_vi: "bọ chét" },
+  { word_text: "once", meaning_en: "one time", meaning_vi: "một lần" },
+  { word_text: "played", meaning_en: "engaged in activity", meaning_vi: "đã chơi" },
+  { word_text: "a few of these", meaning_en: "some of these", meaning_vi: "một vài trong số này" },
+  { word_text: "cases", meaning_en: "boxes", meaning_vi: "những cái hộp" },
+  { word_text: "are left", meaning_en: "remain", meaning_vi: "còn lại" },
+  { word_text: "hold something to make", meaning_en: "to use your hands to create something", meaning_vi: "giữ để tạo ra" },
+  { word_text: "len", meaning_en: "lens", meaning_vi: "thấu kính" },
+  { word_text: "look big", meaning_en: "appear large", meaning_vi: "trông to" },
+  { word_text: "keep something away", meaning_en: "prevent from coming close", meaning_vi: "giữ tránh xa" },
+  { word_text: "do not want to be", meaning_en: "not desire to be", meaning_vi: "không muốn trở thành" },
+  { word_text: "food", meaning_en: "something to eat", meaning_vi: "thức ăn" },
+];
+
+const popup = document.getElementById('popup');
+
+document.querySelectorAll('.word').forEach(el => {
+  el.addEventListener('click', e => {
+    document.querySelectorAll('.word').forEach(w => w.classList.remove('active'));
+
+    const group = e.target.dataset.group;
+    const wordText = e.target.dataset.word;
+
+    if (group) {
+      document.querySelectorAll(`.word[data-group="${group}"]`).forEach(w => w.classList.add('active'));
+    } else {
+      e.target.classList.add('active');
+    }
+
+    let data;
+    if (group) {
+      data = words.find(w => w.word_text.toLowerCase() === group.replace(/-/g, " ").toLowerCase());
+    } else {
+      data = words.find(w => w.word_text.toLowerCase() === wordText.toLowerCase());
+    }
+
+    if (!data) {
+      popup.innerHTML = `<strong>Không có dữ liệu từ này.</strong><br><button id="closePopup">Đóng</button>`;
+      popup.classList.add('show');
+      document.getElementById('closePopup').onclick = () => {
+        popup.classList.remove('show');
+        document.querySelectorAll('.word').forEach(w => w.classList.remove('active'));
+      };
+      return;
+    }
+
+    popup.innerHTML = `
+      <strong>${data.word_text}</strong><br>
+      <em>${data.meaning_en || "(Chưa có dữ liệu)"} (${data.meaning_vi || ""})</em><br>
+      <button id="playTTS">🔊 Phát âm</button>
+      <button id="closePopup">Đóng</button>
+    `;
+    popup.classList.add('show');
+
+    document.getElementById('playTTS').onclick = () => {
+      const utterance = new SpeechSynthesisUtterance(data.word_text);
+      const voices = speechSynthesis.getVoices();
+      utterance.voice = voices.find(v => v.lang.startsWith('en')) || voices[0];
+      utterance.lang = 'en-US';
+      speechSynthesis.speak(utterance);
+    };
+
+    document.getElementById('closePopup').onclick = () => {
+      popup.classList.remove('show');
+      document.querySelectorAll('.word').forEach(w => w.classList.remove('active'));
+    };
+  });
+});
+</script>
+</body>
+</html>

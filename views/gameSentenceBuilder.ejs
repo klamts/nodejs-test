@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Xếp câu ví dụ</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; background: #f9f9f9; text-align: center; }
+    .word-buttons, .selected-words { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-top: 1rem; }
+    button { padding: 0.5rem 1rem; border-radius: 6px; border: none; background: #007bff; color: #fff; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    button.used {background: #cccccc;olor: #666;cursor: default;pointer-events: none;opacity: 0.6;
+        .container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.game-column {
+  flex: 2;
+}
+
+.history-column {
+  flex: 1;
+  background: #ffffffcc;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px #bbb;
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+}
+    .hint { margin-top: 1rem; font-size: 1rem; color: #555; }
+    .result { margin-top: 1rem; font-weight: bold; font-size: 1.2rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="game-column">
+      <h2>🧩 Sắp xếp câu tiếng Anh</h2>
+      <div id="hint" class="hint"></div>
+      <div id="word-buttons" class="word-buttons fade-in"></div>
+      <h4>Your answer:</h4>
+      <div id="selected-words" class="selected-words fade-in"></div>
+
+      <div class="nav-buttons">
+        <button onclick="prevRound()">⬅ Trước</button>
+        <button onclick="resetRound()">🔁 Làm lại</button>
+        <button onclick="checkAnswer()">✅ Kiểm tra</button>
+        <button onclick="nextRound()">➡ Tiếp</button>
+      </div>
+      <div id="result" class="result"></div>
+      <div><em id="progress"></em></div>
+    </div>
+
+    <div class="history-column">
+      <div id="history">
+        <h3>📜 Lịch sử</h3>
+        <ul id="history-list"></ul>
+      </div>
+    </div>
+  </div>
+</body>
+  <script>
+    let gameData = [];
+    let currentIndex = 0;
+    let selectedWords = [];
+    let historyData = []; // ⬅ danh sách lịch sử
+
+    function startRound() {
+      selectedWords = [];
+      document.getElementById("result").textContent = "";
+      const item = gameData[currentIndex];
+
+      document.getElementById("hint").innerHTML =
+        `<p><strong>📘 Nghĩa:</strong> ${item.meaning_vi}</p>
+         <p><strong>📝 Ví dụ (VI):</strong> ${item.example_vi}</p>`;
+
+      const btnContainer = document.getElementById("word-buttons");
+      btnContainer.innerHTML = "";
+      item.shuffled.forEach(word => {
+        const btn = document.createElement("button");
+        btn.textContent = word;
+        btn.onclick = () => {
+          selectedWords.push(word);
+          updateSelected();
+          btn.classList.add("used"); // ✅ dùng class thay vì disable
+          speak(word); // 🔊 đọc từ
+        };
+        btnContainer.appendChild(btn);
+      });
+
+      updateSelected();
+    }
+
+    function updateSelected() {
+      const container = document.getElementById("selected-words");
+      container.innerHTML = "";
+      selectedWords.forEach((word, i) => {
+        const span = document.createElement("button");
+        span.textContent = word;
+        span.onclick = () => {
+          selectedWords.splice(i, 1);
+          updateSelected();
+          const buttons = document.querySelectorAll("#word-buttons button");
+          buttons.forEach(btn => {
+            if (btn.textContent === word) btn.classList.remove("used"); // ✅ bỏ class
+          });
+        };
+        container.appendChild(span);
+      });
+    }
+
+    function checkAnswer() {
+      const item = gameData[currentIndex];
+      const isCorrect = JSON.stringify(selectedWords) === JSON.stringify(item.correctOrder);
+      // Lưu lại lịch sử
+historyData.push({
+  index: currentIndex + 1,
+  vi: item.meaning_vi,
+  en: item.example_en,
+  isCorrect,
+  userAnswer: selectedWords.join(" ")
+});
+updateHistory();
+      document.getElementById("result").textContent = isCorrect ? "✅ Chính xác!" : "❌ Sai rồi.";
+      if (isCorrect) {
+  speak(item.correctOrder.join(" ")); // 🔊 đọc cả câu đúng
+}
+      currentIndex++;
+      if (currentIndex < gameData.length) {
+        setTimeout(startRound, 2000);
+      } else {
+        document.getElementById("result").textContent += " 🎉 Bạn đã hoàn thành!";
+      }
+    }
+
+    fetch("/api/game/rebuild-sentence")
+      .then(res => res.json())
+      .then(json => {
+        gameData = json.data;
+        if (gameData.length > 0) startRound();
+        else document.getElementById("result").textContent = "⚠ Không có dữ liệu.";
+      });
+    function speak(text) {
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "en-US";
+  speechSynthesis.speak(utterance);
+}  
+function resetRound() {
+  selectedWords = [];
+  updateSelected();
+
+  // bật lại các nút từ
+  const buttons = document.querySelectorAll("#word-buttons button");
+  buttons.forEach(btn => btn.classList.remove("used"));
+}
+
+function nextRound() {
+  currentIndex++;
+  if (currentIndex < gameData.length) {
+    startRound();
+  } else {
+    document.getElementById("result").textContent = "🎉 Bạn đã hoàn thành!";
+  }
+}
+function prevRound() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    startRound();
+  } else {
+    document.getElementById("result").textContent = "⚠ Đây là câu đầu tiên.";
+  }
+}
+function updateHistory() {
+  const ul = document.getElementById("history-list");
+  ul.innerHTML = "";
+
+  historyData.forEach((entry, i) => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <strong>Câu ${entry.index}:</strong> ${entry.vi} -
+      ${entry.isCorrect ? "✅ Đúng" : "❌ Sai"}<br>
+      <em>Your answer:</em> ${entry.userAnswer}<br>
+      <button onclick="replayHistory(${i})">🔁 Làm lại</button>
+    `;
+    li.style.marginBottom = "1rem";
+    ul.appendChild(li);
+  });
+}
+  </script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Nối từ với nghĩa</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(120deg, #e0f7fa, #e3f2fd);
+      margin: 0;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    h2 {
+      color: #01579b;
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #333;
+      font-size: 1.1rem;
+    }
+
+    .game-container {
+      display: flex;
+      justify-content: space-between;
+      width: 90%;
+      max-width: 900px;
+      margin-top: 30px;
+      position: relative;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      padding: 30px;
+    }
+
+    .column {
+      width: 45%;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .word, .definition {
+      background-color: #f9f9f9;
+      border: 2px solid transparent;
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .word:hover, .definition:hover {
+      background-color: #e3f2fd;
+      border-color: #42a5f5;
+    }
+
+    .matched {
+      background-color: #c8e6c9 !important;
+      border-color: #2e7d32 !important;
+    }
+
+    .wrong {
+      background-color: #ffcdd2 !important;
+      border-color: #c62828 !important;
+    }
+
+    .selected {
+      background-color: #bbdefb !important;
+      border-color: #1e88e5 !important;
+    }
+
+    svg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    line {
+      stroke: #42a5f5;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+      animation: draw 0.6s ease forwards;
+    }
+
+    @keyframes draw {
+      to { stroke-dashoffset: 0; }
+    }
+
+    .play-again {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      background: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .play-again:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h2>Nối từ tiếng Anh với nghĩa tiếng Việt</h2>
+  <p>Nhấp vào từ tiếng Anh để nghe và chọn nghĩa đúng đối xứng bên phải.</p>
+  <div class="game-container">
+    <svg id="connections"></svg>
+    <div class="column" id="words">
+      <% words.forEach((word, index) => { %>
+        <div class="word" data-index="<%= index %>"><%= word.word %></div>
+      <% }) %>
+    </div>
+    <div class="column" id="definitions">
+      <% definitions.forEach((def, index) => { %>
+        <div class="definition" data-original-index="<%= def.originalIndex %>"><%= def.text %></div>
+      <% }) %>
+    </div>
+  </div>
+  <script>
+    let selectedWordIndex = null;
+    const matchedPairs = new Set();
+
+    const wordEls = document.querySelectorAll('.word');
+    const defEls = document.querySelectorAll('.definition');
+    const svg = document.getElementById('connections');
+
+    wordEls.forEach(word => {
+      word.addEventListener('click', () => {
+        if (word.classList.contains('matched')) return;
+        wordEls.forEach(w => w.classList.remove('selected'));
+        selectedWordIndex = word.dataset.index;
+        word.classList.add('selected');
+
+        // Text-to-speech
+        const utterance = new SpeechSynthesisUtterance(word.textContent.trim());
+        utterance.lang = 'en-US';
+        speechSynthesis.cancel();
+        speechSynthesis.speak(utterance);
+      });
+    });
+
+    defEls.forEach(def => {
+      def.addEventListener('click', () => {
+        if (selectedWordIndex === null || def.classList.contains('matched')) return;
+        const wordEl = document.querySelector(`.word[data-index="${selectedWordIndex}"]`);
+        const defIndex = def.dataset.originalIndex;
+        const isCorrect = selectedWordIndex === defIndex;
+
+        if (isCorrect) {
+          wordEl.classList.add('matched');
+          def.classList.add('matched');
+          drawLineBetween(wordEl, def);
+          matchedPairs.add(selectedWordIndex);
+
+          if (matchedPairs.size === 4) {
+            setTimeout(() => {
+              if (confirm("🎉 Bạn đã hoàn thành! Chơi tiếp?")) {
+                window.location.reload();
+              }
+            }, 500);
+          }
+        } else {
+          def.classList.add('wrong');
+          setTimeout(() => def.classList.remove('wrong'), 1000);
+        }
+
+        wordEls.forEach(w => w.classList.remove('selected'));
+        selectedWordIndex = null;
+      });
+    });
+
+    function drawLineBetween(wordEl, defEl) {
+      const wordRect = wordEl.getBoundingClientRect();
+      const defRect = defEl.getBoundingClientRect();
+      const containerRect = document.querySelector('.game-container').getBoundingClientRect();
+
+      const x1 = wordRect.right - containerRect.left;
+      const y1 = wordRect.top + wordRect.height / 2 - containerRect.top;
+      const x2 = defRect.left - containerRect.left;
+      const y2 = defRect.top + defRect.height / 2 - containerRect.top;
+
+      const line = document.createElementNS("http://www.w3.org/2000/svg", 'line');
+      line.setAttribute('x1', x1);
+      line.setAttribute('y1', y1);
+      line.setAttribute('x2', x2);
+      line.setAttribute('y2', y2);
+      svg.appendChild(line);
+    }
+  </script>
+</body>
+</html>

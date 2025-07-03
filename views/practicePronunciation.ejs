@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🗣️ Luyện phát âm từ vựng</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      padding: 20px;
+      background: #f0f2f5; /* Light grey background */
+      color: #333;
+      line-height: 1.6;
+    }
+    h1 {
+      text-align: center;
+      color: #0056b3; /* Darker blue for headings */
+      margin-bottom: 30px;
+    }
+    .controls-container {
+      text-align: center;
+      margin-bottom: 25px;
+      padding: 15px;
+      background-color: #e9f7ff; /* Light blue background for controls */
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .controls-container label {
+      margin-right: 10px;
+      font-weight: bold;
+      color: #333;
+    }
+    .controls-container select {
+      padding: 8px 12px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+      background-color: white;
+      min-width: 150px;
+    }
+    .word-card {
+      background: white;
+      padding: 25px;
+      margin: 20px auto; /* Centered with auto margins */
+      border-radius: 10px;
+  	  box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Softer shadow */
+  	  max-width: 600px; /* Max width for readability */
+  	}
+  	.word-card h2 {
+  	  margin: 0 0 5px 0;
+  	  color: #007bff;
+  	  font-size: 2.2em; /* Larger word */
+  	  text-align: center;
+  	}
+    .word-details {
+        text-align: center;
+        margin-bottom: 15px;
+        color: #666;
+        font-size: 0.95em;
+    }
+    .word-details span {
+        margin: 0 5px;
+    }
+    .word-details .part-of-speech {
+        font-weight: bold;
+        color: #555;
+    }
+    .word-details .phonetic {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Font for IPA */
+        font-weight: normal;
+        color: #777;
+        font-size: 0.9em;
+    }
+  	.word-card p {
+  	  color: #555;
+  	  font-size: 1.1em;
+  	  text-align: center;
+  	  margin-bottom: 20px;
+  	  font-style: italic;
+  	}
+  	.buttons-container {
+  	  display: flex;
+  	  justify-content: center;
+  	  gap: 15px; /* Space between buttons */
+  	  margin-bottom: 15px;
+  	}
+  	button {
+  	  padding: 10px 18px;
+  	  border-radius: 25px; /* Pill-shaped buttons */
+  	  border: none;
+  	  background-color: #28a745; /* Green for action buttons */
+  	  color: white;
+  	  font-size: 1em;
+  	  cursor: pointer;
+  	  transition: background-color 0.3s ease, transform 0.2s ease;
+  	  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  	}
+  	button:hover {
+  	  background-color: #218838;
+  	  transform: translateY(-1px);
+  	}
+  	button:active {
+  	  transform: translateY(0);
+  	}
+  	button:disabled {
+  	  background-color: #ccc;
+  	  cursor: not-allowed;
+  	}
+  	.result {
+  	  display: block;
+  	  margin-top: 15px;
+  	  font-weight: bold;
+  	  font-size: 1.1em;
+  	  text-align: center;
+  	  min-height: 25px; /* Reserve space for feedback */
+  	}
+  	.correct {
+  	  color: #28a745; /* Green for correct */
+  	}
+  	.incorrect {
+  	  color: #dc3545; /* Red for incorrect */
+  	}
+  	.listening {
+  	  color: #007bff; /* Blue for listening state */
+  	}
+  </style>
+</head>
+<body>
+  <h1>🗣️ Luyện phát âm từ vựng</h1>
+
+  <div class="controls-container">
+    <label for="voice-select">Chọn giọng đọc:</label>
+    <select id="voice-select"></select>
+  </div>
+
+  <% words.forEach((entry, index) => { %>
+    <div class="word-card" data-word="<%= entry.word.toLowerCase() %>" data-english-word-original="<%= entry.word %>">
+      <h2><%= entry.word %></h2>
+        <div class="word-details">
+            <% if (entry.part_of_speech_vn) { %>
+                <span class="part-of-speech">(<%= entry.part_of_speech_vn %>)</span>
+            <% } %>
+            <% if (entry.phonetic_us) { %>
+                <span class="phonetic"><%= entry.phonetic_us %></span>
+            <% } %>
+        </div>
+      <p><%= entry.definitions[0].vietnamese %></p>
+      <div class="buttons-container">
+        <input type="hidden" class="expected-word" value="<%= entry.word %>">
+        <button class="speak-button" onclick="speakWord('<%= entry.word %>')">🔊 Nghe phát âm</button>
+        <button class="record-button" onclick="recordAndSend(this)">🎙️ Nói thử</button>
+      </div>
+      <span class="result"></span>
+    </div>
+  <% }) %>
+
+  <script>
+    const synth = window.speechSynthesis;
+    let voices = [];
+    let selectedVoice = null;
+    const voiceSelect = document.getElementById('voice-select');
+
+    // Hàm chuẩn hóa chuỗi để so sánh: loại bỏ dấu câu, chuyển về chữ thường, bỏ khoảng trắng thừa
+    function normalizeString(str) {
+      if (typeof str !== 'string') return '';
+      return str
+        .replace(/[^\p{L}\p{N}\s]/gu, '') // Loại bỏ tất cả ký tự không phải chữ cái (Unicode), số, và khoảng trắng
+        .replace(/\s+/g, ' ') // Thay thế nhiều khoảng trắng thành một
+        .toLowerCase()
+        .trim();
+    }
+
+/*     // Populate voice dropdown
+    function populateVoiceList() {
+      voices = synth.getVoices().sort((a, b) => a.name.localeCompare(b.name));
+      voiceSelect.innerHTML = ''; // Clear existing options
+
+      const defaultOption = document.createElement('option');
+      defaultOption.textContent = 'Mặc định (Trình duyệt)';
+      defaultOption.value = '';
+      voiceSelect.appendChild(defaultOption);
+
+      let foundPreferredVoice = false;
+      for (let i = 0; i < voices.length; i++) {
+        // Chỉ thêm các giọng tiếng Anh
+        if (voices[i].lang.startsWith('en')) {
+          const option = document.createElement('option');
+          option.textContent = voices[i].name + ' (' + voices[i].lang + ')';
+          option.value = voices[i].name;
+
+          // Ưu tiên chọn giọng Google US English
+          if (voices[i].name.includes('Google US English') && (voices[i].name.includes('Female') || voices[i].name.includes('Male'))) {
+            if (!foundPreferredVoice) {
+              option.selected = true;
+              selectedVoice = voices[i];
+              foundPreferredVoice = true;
+            }
+          }
+          voiceSelect.appendChild(option);
+        }
+      }
+      // Nếu không tìm thấy giọng ưu tiên, cố gắng chọn bất kỳ giọng tiếng Anh nào làm mặc định
+      if (!selectedVoice && voices.length > 0) {
+        selectedVoice = voices.find(voice => voice.lang.startsWith('en'));
+        if (selectedVoice) {
+          voiceSelect.value = selectedVoice.name;
+        }
+      }
+    } */
+
+function populateVoiceList() {
+  voices = synth.getVoices();
+  voiceSelect.innerHTML = '';
+
+  const defaultOption = document.createElement('option');
+  defaultOption.textContent = 'Mặc định (Trình duyệt)';
+  defaultOption.value = '';
+  voiceSelect.appendChild(defaultOption);
+
+  voices.forEach(voice => {
+    // ⚠️ Kiểm tra xem voice thực sự có thể sử dụng
+    if (voice.lang.startsWith('en') && voice.default || voice.localService) {
+      const option = document.createElement('option');
+      option.textContent = `${voice.name} (${voice.lang})`;
+      option.value = voice.name;
+      voiceSelect.appendChild(option);
+    }
+  });
+
+  selectedVoice = voices.find(v => v.name === voiceSelect.value);
+}
+    // Load voices when they change (some browsers load them asynchronously)
+    if (synth.getVoices().length === 0) {
+      synth.onvoiceschanged = populateVoiceList;
+    } else {
+      populateVoiceList();
+    }
+
+
+    // Update selected voice when user changes dropdown
+    voiceSelect.addEventListener('change', () => {
+  const selectedVoiceName = voiceSelect.value;
+  selectedVoice = voices.find(voice => voice.name === selectedVoiceName) || null;
+});
+
+    // Function to speak the word
+/*     function speakWord(text) {
+      if (synth.speaking) { // If already speaking, stop current speech
+        synth.cancel();
+      }
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US'; // Always try to speak in US English
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      } else {
+        // Fallback if no specific voice is selected or found
+        utterance.voice = voices.find(voice => voice.lang === 'en-US') || null;
+      }
+      synth.speak(utterance);
+    } */
+    /* async function speakWord(word) {
+        const response = await fetch('/tts/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ word })
+        });
+        const data = await response.json();
+        if (data.url) {
+            const audio = new Audio(data.url);
+            audio.play();
+        } else {
+            alert('Không phát được âm thanh: ' + data.error);
+        }
+        }
+     */
+
+    async function speakWord(word) {
+    const selectedVoiceName = voiceSelect.value || 'en-US-AriaNeural';
+
+    const response = await fetch('/tts/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ word, voice: selectedVoiceName })
+    });
+
+    const data = await response.json();
+    if (data.url) {
+        const audio = new Audio(data.url);
+        audio.play();
+    } else {
+        alert('Không phát được âm thanh: ' + (data.error || 'Không rõ lỗi.'));
+    }
+}
+
+                // Function to start speech recognition
+    function startRecognition(button) {
+      if (!('webkitSpeechRecognition' in window)) {
+        alert('Trình duyệt của bạn không hỗ trợ Speech Recognition. Vui lòng sử dụng Chrome hoặc trình duyệt hỗ trợ khác.');
+        return;
+      }
+
+      const recognition = new webkitSpeechRecognition();
+      recognition.lang = 'en-US'; // Set recognition language to English
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      const card = button.closest('.word-card');
+      // Lấy từ tiếng Anh gốc và chuẩn hóa nó
+      const originalEnglishWord = card.getAttribute('data-english-word-original');
+      const normalizedCorrectWord = normalizeString(originalEnglishWord);
+
+  	  const resultElem = card.querySelector('.result');
+  	  const recordButton = card.querySelector('.record-button');
+  	  const speakButton = card.querySelector('.speak-button');
+
+  	  // Disable buttons during recognition
+  	  recordButton.disabled = true;
+  	  speakButton.disabled = true;
+  	  resultElem.textContent = 'Đang lắng nghe...';
+  	  resultElem.className = 'result listening';
+
+  	  recognition.onresult = (event) => {
+  	    const spokenRaw = event.results[0][0].transcript; // Giữ nguyên bản gốc để hiển thị
+  	    const spokenNormalized = normalizeString(spokenRaw); // Bản chuẩn hóa để so sánh
+  	    const confidence = event.results[0][0].confidence;
+
+  	    // Check if the normalized spoken word matches the normalized correct word
+  	    if (spokenNormalized === normalizedCorrectWord) {
+  	      resultElem.textContent = `✅ Chính xác! Bạn nói: "${spokenRaw}" (Độ tin cậy: ${Math.round(confidence * 100)}%)`;
+  	      resultElem.className = 'result correct';
+  	    } else {
+  	      resultElem.textContent = `❌ Chưa đúng. Bạn nói: "${spokenRaw}" (Độ tin cậy: ${Math.round(confidence * 100)}%). Từ đúng là: "${originalEnglishWord}"`;
+  	      resultElem.className = 'result incorrect';
+  	    }
+  	    // Re-enable buttons after result
+  	    recordButton.disabled = false;
+  	    speakButton.disabled = false;
+  	  };
+
+  	  recognition.onerror = (event) => {
+  	    let errorMessage = 'Lỗi ghi âm không xác định.';
+  	    if (event.error === 'not-allowed') {
+  	      errorMessage = 'Lỗi: Bạn đã từ chối quyền truy cập microphone. Vui lòng cấp quyền trong cài đặt trình duyệt và tải lại trang.';
+  	    } else if (event.error === 'no-speech') {
+  	      errorMessage = 'Không nghe thấy giọng nói. Vui lòng nói rõ hơn.';
+  	    } else if (event.error === 'aborted') {
+  	      errorMessage = 'Ghi âm bị hủy.';
+  	    } else if (event.error === 'audio-capture') {
+  	      errorMessage = 'Lỗi thu âm thanh. Kiểm tra microphone của bạn.';
+  	    } else if (event.error === 'network') {
+  	      errorMessage = 'Lỗi mạng khi ghi âm. Kiểm tra kết nối internet.';
+  	    } else if (event.error === 'service-not-allowed') {
+  	      errorMessage = 'Dịch vụ ghi âm không được phép (có thể do HTTPS).';
+  	    } else {
+  	      errorMessage = `Lỗi ghi âm: ${event.error}. Vui lòng thử lại.`;
+  	    }
+  	    resultElem.textContent = errorMessage;
+  	    resultElem.className = 'result incorrect';
+  	    // Re-enable buttons on error
+  	    recordButton.disabled = false;
+  	    speakButton.disabled = false;
+  	  };
+
+  	  recognition.onend = () => {
+  	    // Ensure buttons are re-enabled even if onresult/onerror didn't fire for some reason
+  	    recordButton.disabled = false;
+  	    speakButton.disabled = false;
+  	  };
+
+  	  recognition.start();
+  	}
+    async function recordAndSend(button) {
+    try {
+      const card = button.closest(".word-card");
+      const expectedWord = card.querySelector(".expected-word").value;
+      const resultElem = card.querySelector(".result");
+      const recordButton = card.querySelector(".record-button");
+      const speakButton = card.querySelector(".speak-button");
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert("Trình duyệt không hỗ trợ ghi âm.");
+        return;
+      }
+
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      const audioChunks = [];
+
+      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+        const formData = new FormData();
+        formData.append('audio', audioBlob, 'voice.wav');
+        formData.append('expected', expectedWord);
+
+        resultElem.textContent = "⏳ Đang gửi và xử lý...";
+        resultElem.className = "result listening";
+        recordButton.disabled = true;
+        speakButton.disabled = true;
+
+        try {
+          const res = await fetch('/pronounce/upload', {
+            method: 'POST',
+            body: formData
+          });
+
+          const data = await res.json();
+          if (data.error) {
+            resultElem.textContent = `❌ Lỗi: ${data.error}`;
+            resultElem.className = "result incorrect";
+          } else {
+            const correct = data.isCorrect;
+const feedback = data.feedback || (correct ? "✅ Chính xác!" : "❌ Chưa đúng.");
+resultElem.textContent =
+  `${feedback}\n(Điểm: ${data.score}/100)\nBạn nói: "${data.userSaid}"\nTừ đúng là: "${data.expected}"`;
+resultElem.className = "result " + (correct ? "correct" : "incorrect");
+
+
+
+            resultElem.className = "result " + (correct ? "correct" : "incorrect");
+          }
+        } catch (err) {
+          resultElem.textContent = "❌ Gửi thất bại: " + err.message;
+          resultElem.className = "result incorrect";
+        }
+
+        recordButton.disabled = false;
+        speakButton.disabled = false;
+      };
+
+      mediaRecorder.start();
+      resultElem.textContent = "🎤 Đang ghi âm trong 4 giây...";
+      setTimeout(() => mediaRecorder.stop(), 4000);
+
+    } catch (err) {
+      alert("Lỗi ghi âm: " + err.message);
+    }
+  }
+  </script>
+</body>
+</html>

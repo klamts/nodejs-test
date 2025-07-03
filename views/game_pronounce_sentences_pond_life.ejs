@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Game Phát Âm Câu</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  .success { color: green; }
+  .error { color: red; }
+</style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4">
+<div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-3xl text-center">
+  <h1 class="text-2xl font-bold text-indigo-600 mb-4">🎤 Game Phát Âm Câu</h1>
+  <div id="sentence" class="text-xl font-semibold text-gray-800 mb-4"></div>
+  <div class="space-x-2 mb-4">
+    <button onclick="startRecognition()" class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600">🎙 Bắt đầu nói</button>
+    <button onclick="checkPronunciation()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">✅ Kiểm tra</button>
+    <button onclick="playUserAudio()" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">🔊 Nghe lại</button>
+    <button onclick="playSampleSentence()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">🔈 Nghe câu mẫu</button>
+    <button onclick="prevSentence()" class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">⏮️ Quay lại</button>
+    <button onclick="nextSentence()" class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">⏭️ Tiếp</button>
+  </div>
+  <div id="status" class="mb-2"></div>
+  <div id="progress" class="text-sm text-gray-500"></div>
+</div>
+
+<script>
+const sentences = <%- JSON.stringify(sentences) %>;
+let currentIndex = 0;
+let recognition;
+let recordedTranscript = "";
+  let voices = [];
+
+    function loadVoices() {
+  voices = speechSynthesis.getVoices();
+  const voiceSelect = document.getElementById("voiceSelect");
+  voiceSelect.innerHTML = '';
+
+ let defaultIndex = 129;
+
+voices.forEach((voice, i) => {
+  const option = document.createElement("option");
+  option.value = i;
+  option.textContent = `${voice.name} (${voice.lang})`;
+  voiceSelect.appendChild(option);
+
+  // Gán chỉ số nếu trùng với Microsoft Ana
+  if (
+    voice.name === "Microsoft Ana Online (Natural)" &&
+    voice.lang === "en-US"
+  ) {
+    defaultIndex = i;
+  }
+});
+
+voiceSelect.selectedIndex = defaultIndex;
+} 
+
+    // Đảm bảo chạy khi danh sách voice có sẵn
+    if (speechSynthesis.getVoices().length === 0) {
+      speechSynthesis.onvoiceschanged = loadVoices;
+    } else {
+      loadVoices();
+    }
+
+    // Có browsers cần đợi
+    speechSynthesis.onvoiceschanged = loadVoices;
+function loadSentence() {
+  if (currentIndex < 0) currentIndex = 0;
+  if (currentIndex >= sentences.length) {
+    document.querySelector("#sentence").textContent = "🎉 Hoàn thành tất cả câu!";
+    document.querySelector("#status").textContent = "";
+    document.querySelector("#progress").textContent = "";
+    return;
+  }
+  document.querySelector("#sentence").textContent = sentences[currentIndex].source_phrase;
+  document.querySelector("#status").textContent = "Nhấn Bắt đầu nói.";
+  document.querySelector("#progress").textContent = `Câu ${currentIndex + 1}/${sentences.length}`;
+}
+
+function startRecognition() {
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    alert('Trình duyệt không hỗ trợ Speech Recognition API.');
+    return;
+  }
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SpeechRecognition();
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+  recognition.start();
+  document.querySelector("#status").textContent = "🎤 Đang nghe...";
+
+  recognition.onresult = (event) => {
+    recordedTranscript = event.results[0][0].transcript.trim();
+    document.querySelector("#status").textContent = `Bạn nói: "${recordedTranscript}"`;
+  };
+
+  recognition.onerror = (event) => {
+    document.querySelector("#status").textContent = "❌ Lỗi nhận dạng. Thử lại.";
+  };
+}
+
+function checkPronunciation() {
+  const target = sentences[currentIndex].source_phrase.toLowerCase().replace(/[.,!?]/g, "");
+  const spoken = recordedTranscript.toLowerCase().replace(/[.,!?]/g, "");
+  if (!spoken) {
+    document.querySelector("#status").innerHTML = '<span class="error">Bạn chưa nói câu.</span>';
+    return;
+  }
+  if (spoken === target) {
+    document.querySelector("#status").innerHTML = '<span class="success">✅ Đúng rồi!</span>';
+  } else {
+    document.querySelector("#status").innerHTML = `<span class="error">❌ Chưa chính xác.<br>Bạn nói: "${recordedTranscript}"</span>`;
+  }
+}
+
+function nextSentence() {
+  currentIndex++;
+  loadSentence();
+}
+
+function prevSentence() {
+  currentIndex--;
+  loadSentence();
+}
+
+function playUserAudio() {
+  if (!recordedTranscript) {
+    document.querySelector("#status").textContent = "Bạn chưa nói câu.";
+    return;
+  }
+  const utter = new SpeechSynthesisUtterance(recordedTranscript);
+  utter.lang = 'en-US';
+  window.speechSynthesis.speak(utter);
+}
+
+function playSampleSentence() {
+  const text = sentences[currentIndex].source_phrase;
+  // Thay thế dấu nháy ' bằng ký tự Unicode để TTS đọc tốt hơn
+  const cleanText = text.replace(/'/g, "’"); // thay ' bằng ’
+   const utterance = new SpeechSynthesisUtterance(cleanText);
+  utterance.lang = "en-US";
+
+  const selectedIndex = parseInt(document.getElementById("voiceSelect")?.value);
+  if (voices[130]) {
+    utterance.voice = voices[130];
+  }
+
+  speechSynthesis.speak(utterance);
+}
+
+
+window.onload = loadSentence;
+</script>
+</body>
+</html>

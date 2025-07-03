@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Học Tập Gia Đình Tương Tác</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+      background: #f0f4f8;
+      color: #333;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #ffffff;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .web {
+      margin: 20px 0;
+      padding: 15px;
+      background: #f9f9f9;
+      border-radius: 10px;
+    }
+    .idea-web {
+      position: relative;
+      height: 400px;
+      background: #fff;
+    }
+    .center-square {
+      width: 150px;
+      height: 150px;
+      background: #81c784;
+      border: 3px solid #4CAF50;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      line-height: 150px;
+      color: white;
+      font-size: 18px;
+      border-radius: 10px;
+      z-index: 2;
+      contenteditable="true";
+    }
+    .circle {
+      width: 120px;
+      height: 120px;
+      border: 3px solid #4CAF50;
+      border-radius: 50%;
+      position: absolute;
+      background: #e8f5e9;
+      line-height: 120px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .circle.selected {
+      border-color: #ff9800;
+      background: #fff3e0;
+      transform: scale(1.1);
+    }
+    .switch-label {
+      margin-top: 10px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    #result {
+      margin-top: 10px;
+      font-size: 16px;
+      color: #d32f2f;
+    }
+    h1 { color: #2e7d32; }
+    h2 { color: #6d4c41; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Học Tập Gia Đình Tương Tác</h1>
+    <div class="web">
+      <h2>Sơ đồ Ý Tưởng</h2>
+      <p>Tell your partner what your family does. Make a new idea web. Write in the circles.</p>
+      <div class="idea-web">
+        <div class="center-square" contenteditable="true">What Families Do</div>
+
+        <!-- Vòng tròn ý tưởng -->
+        <div class="circle" contenteditable="true" onclick="selectCircle(this)">Play</div>
+        <div class="circle" contenteditable="true" onclick="selectCircle(this)">Care</div>
+        <div class="circle" contenteditable="true" onclick="selectCircle(this)">Eat</div>
+        <div class="circle" contenteditable="true" onclick="selectCircle(this)">Plant flowers</div>
+        <div class="circle" contenteditable="true" onclick="selectCircle(this)">Play games</div>
+        <div class="circle" contenteditable="true" onclick="selectCircle(this)">Care for pets</div>
+        <div class="circle" contenteditable="true" onclick="selectCircle(this)">Plant magic tree</div>
+        <div class="circle" contenteditable="true" onclick="selectCircle(this)">Play with dog</div>
+      </div>
+
+      <div class="switch-label">
+        <input type="checkbox" id="autoSpeak" checked />
+        <label for="autoSpeak">Bật tự động đọc khi nhấp</label>
+      </div>
+      <button onclick="addCircle()">Thêm Vòng</button>
+      <p id="result"></p>
+    </div>
+  </div>
+
+  <script>
+    const synth = window.speechSynthesis;
+    let selectedCircle = null;
+    let autoSpeakEnabled = true;
+
+    // Phát âm khi chọn vòng
+    function selectCircle(circle) {
+      if (selectedCircle) selectedCircle.classList.remove('selected');
+      selectedCircle = circle;
+      selectedCircle.classList.add('selected');
+      const text = circle.innerText.trim();
+      if (text) {
+        if (autoSpeakEnabled) {
+          const utter = new SpeechSynthesisUtterance(text);
+          utter.lang = 'en-US';
+          synth.speak(utter);
+          document.getElementById('result').innerText = `Đã chọn và phát âm: ${text}`;
+        } else {
+          document.getElementById('result').innerText = `Đã chọn: ${text}`;
+        }
+      } else {
+        document.getElementById('result').innerText = "Vòng tròn trống! Vui lòng nhập nội dung.";
+      }
+    }
+
+    // Thêm vòng tròn mới
+    function addCircle() {
+      const web = document.querySelector('.idea-web');
+      const circle = document.createElement('div');
+      circle.className = 'circle';
+      circle.contentEditable = true;
+      circle.innerText = '';
+      circle.onclick = () => selectCircle(circle);
+      web.appendChild(circle);
+      arrangeCircles();
+      selectCircle(circle);
+      document.getElementById('result').innerText = "Vòng mới được thêm!";
+    }
+
+    // Xếp vòng tròn quanh hình vuông trung tâm
+    function arrangeCircles() {
+      const web = document.querySelector('.idea-web');
+      const centerX = web.offsetWidth / 2;
+      const centerY = web.offsetHeight / 2;
+      const radius = 150;
+      const circles = document.querySelectorAll('.circle');
+
+      circles.forEach((circle, i) => {
+        const angle = (2 * Math.PI / circles.length) * i;
+        const x = centerX + radius * Math.cos(angle) - circle.offsetWidth / 2;
+        const y = centerY + radius * Math.sin(angle) - circle.offsetHeight / 2;
+        circle.style.left = `${x}px`;
+        circle.style.top = `${y}px`;
+      });
+    }
+
+    // Bắt đầu
+    window.addEventListener('load', arrangeCircles);
+    window.addEventListener('resize', arrangeCircles);
+
+    document.getElementById('autoSpeak').addEventListener('change', function () {
+      autoSpeakEnabled = this.checked;
+      document.getElementById('result').innerText = `Tự động đọc ${autoSpeakEnabled ? 'bật' : 'tắt'}.`;
+    });
+  </script>
+</body>
+</html>

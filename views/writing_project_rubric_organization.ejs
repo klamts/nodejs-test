@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Photo Essay Rubric – Organization</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      background: #f8f8f8;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 12px;
+      vertical-align: top;
+    }
+    th {
+      background: #004080;
+      color: white;
+    }
+    .level {
+      font-weight: bold;
+      font-size: 1.2em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    button {
+      cursor: pointer;
+      padding: 4px 8px;
+      font-size: 1em;
+    }
+  </style>
+</head>
+<body>
+  <h1>Photo Essay Rubric – Organization</h1>
+
+  <table>
+    <tr>
+      <th>Level</th>
+      <th>Does the writing have all the right parts?</th>
+      <th>Do the parts match and make sense together?</th>
+    </tr>
+
+    <tr>
+      <td class="level">4 – Wow! <button onclick="speak('Wow')">🔊</button></td>
+      <td>
+        • The photo essay has all the parts.<br>
+        • All the parts fit the topic.
+      </td>
+      <td>
+        • All pictures make sense in this order.<br>
+        • All captions match the pictures.
+      </td>
+    </tr>
+
+    <tr>
+      <td class="level">3 – Ahh… <button onclick="speak('Ahh')">🔊</button></td>
+      <td>
+        • The photo essay has most of the parts.<br>
+        • Most of the parts fit the topic.
+      </td>
+      <td>
+        • Most pictures make sense in this order.<br>
+        • Most captions match the pictures.
+      </td>
+    </tr>
+
+    <tr>
+      <td class="level">2 – Hmm… <button onclick="speak('Hmm')">🔊</button></td>
+      <td>
+        • The photo essay has some of the parts.<br>
+        • Some of the parts fit the topic.
+      </td>
+      <td>
+        • Some pictures make sense in this order.<br>
+        • Some captions match the pictures.
+      </td>
+    </tr>
+
+    <tr>
+      <td class="level">1 – Huh? <button onclick="speak('Huh')">🔊</button></td>
+      <td>
+        • The photo essay does not have any of the parts.
+      </td>
+      <td>
+        • The pictures do not make sense in this order.<br>
+        • The captions do not match the pictures.
+      </td>
+    </tr>
+  </table>
+
+  <script>
+    function speak(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      speechSynthesis.speak(utterance);
+    }
+  </script>
+</body>
+</html>

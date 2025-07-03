@@ -1,0 +1,46 @@
+[
+  {
+    "question": "What do you think the story is about?",
+    "answer": "A toy robot"
+  },
+  {
+    "question": "Who are the main characters in the story?",
+    "answer": "Jenny and George"
+  },
+  {
+    "question": "What toy does Jenny have?",
+    "answer": "A jet"
+  },
+  {
+    "question": "What toy is on the floor?",
+    "answer": "A robot"
+  },
+  {
+    "question": "Does Jenny break the robot?",
+    "answer": "Yes"
+  },
+  {
+    "question": "What is the robot missing after it's broken?",
+    "answer": "Its head and hand"
+  },
+  {
+    "question": "Can Jenny fix the robot?",
+    "answer": "Yes"
+  },
+  {
+    "question": "How does George feel when he sees the broken robot?",
+    "answer": "He is sad"
+  },
+  {
+    "question": "Is George happy at the end of the story?",
+    "answer": "Yes"
+  },
+  {
+    "question": "Why is George happy at the end?",
+    "answer": "Because the robot is fixed"
+  },
+  {
+    "question": "What lesson can we learn from this story?",
+    "answer": "We should fix what we break and help each other"
+  }
+]

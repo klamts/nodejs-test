@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Singular vs Plural Practice</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f9fbff;
+      color: #2c3e50;
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    .rules {
+      background: #e8f4fd;
+      border-left: 6px solid #3498db;
+      padding: 15px 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+
+    .rules h3 {
+      margin-top: 0;
+      color: #2980b9;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-top: 30px;
+    }
+
+    .column {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .column h3 {
+      text-align: center;
+      color: #2980b9;
+    }
+
+    .item {
+      margin-bottom: 15px;
+    }
+
+    input {
+      padding: 5px;
+      font-size: 16px;
+      width: 100px;
+    }
+
+    button {
+      margin-left: 5px;
+      padding: 4px 8px;
+      cursor: pointer;
+    }
+
+    .correct {
+      color: green;
+      margin-left: 8px;
+    }
+
+    .wrong {
+      color: red;
+      margin-left: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Singular and Plural Noun Practice</h2>
+
+  <div class="rules">
+    <h3>📘 Grammar Rules</h3>
+    <ul>
+      <li><strong>Singular Noun</strong> names <u>one</u> person, place, or thing. Example: <em>one book</em></li>
+      <li><strong>Plural Noun</strong> names <u>more than one</u>. Most nouns add <code>-s</code>. Example: <em>two books</em></li>
+      <li>Some nouns have special plural forms (e.g., <em>man → men</em>, <em>child → children</em>), but this exercise focuses on regular forms.</li>
+    </ul>
+  </div>
+
+  <div class="grid">
+    <div class="column">
+      <h3>Singular ➝ Fill Plural</h3>
+      <div class="item">1. one meal ➝ two <input id="s0"> <button onclick="check(0)">Check</button> <button onclick="speak(0)">🔊</button> <span id="r0"></span></div>
+      <div class="item">3. one holiday ➝ four <input id="s1"> <button onclick="check(1)">Check</button> <button onclick="speak(1)">🔊</button> <span id="r1"></span></div>
+      <div class="item">5. one park ➝ three <input id="s2"> <button onclick="check(2)">Check</button> <button onclick="speak(2)">🔊</button> <span id="r2"></span></div>
+    </div>
+    <div class="column">
+      <h3>Plural ➝ Fill Singular</h3>
+      <div class="item">2. three brothers ➝ one <input id="p0"> <button onclick="check(3)">Check</button> <button onclick="speak(3)">🔊</button> <span id="r3"></span></div>
+      <div class="item">4. two mothers ➝ one <input id="p1"> <button onclick="check(4)">Check</button> <button onclick="speak(4)">🔊</button> <span id="r4"></span></div>
+      <div class="item">6. four sons ➝ one <input id="p2"> <button onclick="check(5)">Check</button> <button onclick="speak(5)">🔊</button> <span id="r5"></span></div>
+    </div>
+  </div>
+
+  <script>
+    const items = [
+      { answer: 'meals', speak: 'meal, meals' },
+      { answer: 'holidays', speak: 'holiday, holidays' },
+      { answer: 'parks', speak: 'park, parks' },
+      { answer: 'brother', speak: 'brothers, brother' },
+      { answer: 'mother', speak: 'mothers, mother' },
+      { answer: 'son', speak: 'sons, son' }
+    ];
+
+    function check(i) {
+      const id = i < 3 ? `s${i}` : `p${i - 3}`;
+      const input = document.getElementById(id).value.trim().toLowerCase();
+      const result = document.getElementById(`r${i}`);
+      if (input === items[i].answer) {
+        result.textContent = "✔️ Correct!";
+        result.className = "correct";
+      } else {
+        result.textContent = `❌ Wrong. Answer: "${items[i].answer}"`;
+        result.className = "wrong";
+      }
+    }
+
+    function speak(i) {
+      const synth = window.speechSynthesis;
+      const voices = synth.getVoices();
+      if (!voices.length) {
+        synth.onvoiceschanged = () => speak(i);
+        return;
+      }
+      const utterance = new SpeechSynthesisUtterance(items[i].speak);
+      utterance.lang = 'en-US';
+      if (voices.length >= 114) utterance.voice = voices[113];
+      synth.speak(utterance);
+    }
+  </script>
+</body>
+</html>
